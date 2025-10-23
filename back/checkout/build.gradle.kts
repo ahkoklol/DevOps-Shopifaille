@@ -32,6 +32,9 @@ val kotestArrowVersion = "2.0.0"
 val kotlinLoggingJvmVersion = "7.0.3"
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging") 
+    }
 	implementation(platform("io.arrow-kt:arrow-stack:$arrowKtVersion"))
     implementation("io.arrow-kt:arrow-core")
     implementation("io.arrow-kt:arrow-fx-coroutines")
@@ -61,6 +64,9 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-property:$kotestVersion")
     testImplementation("io.kotest.extensions:kotest-assertions-arrow:$kotestArrowVersion")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+    }
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
