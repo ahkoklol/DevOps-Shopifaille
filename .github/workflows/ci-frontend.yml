@@ -5,13 +5,18 @@ name: Frontend CI (Pull Request)
 on:
   # Trigger this workflow for each push to main and dev, and for each pull requests targeting main or dev
   push:
-      branches:
-        - main
-        - dev
+    branches:
+      - main
+      - dev
+    paths:
+      # Only run if files in the products directory have changed
+      - 'front/**'
   pull_request:
     branches:
       - main
       - dev
+    paths:
+      - 'front/**'
 
 # Define global settings for the job
 defaults:
