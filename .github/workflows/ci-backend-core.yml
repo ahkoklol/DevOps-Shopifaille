@@ -1,0 +1,54 @@
+# .github/workflows/ci-backend-core.yml
+
+name: Core Microservice CI (Deno)
+
+on:
+  # Triggers for all pushes and pull requests targeting the main or dev branches
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      # Only run if files in the core directory have changed
+      - 'back/core/**'
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'back/core/**'
+
+# Define global settings for the job
+defaults:
+  run:
+    # Set the default working directory to the core service folder
+    working-directory: back/core
+
+jobs:
+  build_and_test:
+    name: Test Deno Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        # Use the official Deno setup action
+        uses: denoland/setup-deno@v1
+        with:
+          # Use the latest stable version of Deno
+          deno-version: v2.5.4
+
+      - name: Format Check (Linting)
+        # Check if code is formatted correctly (good practice for Deno projects)
+        run: deno fmt --check
+        
+      - name: Lint Check
+        # Check for linting errors
+        run: deno lint
+        
+      - name: Run Tests
+        # Run tests defined in back/core/main_test.ts (which uses @std/assert)
+        # The --lock-write=false flag ensures CI uses the existing lock file but doesn't modify it.
+        run: deno test --allow-read --no-check --lock=deno.lock main_test.ts
