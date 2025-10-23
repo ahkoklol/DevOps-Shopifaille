@@ -32,16 +32,17 @@ val kotestArrowVersion = "2.0.0"
 val kotlinLoggingJvmVersion = "7.0.3"
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging") 
-    }
 	implementation(platform("io.arrow-kt:arrow-stack:$arrowKtVersion"))
     implementation("io.arrow-kt:arrow-core")
     implementation("io.arrow-kt:arrow-fx-coroutines")
     implementation("io.arrow-kt:arrow-autoclose")
     implementation("io.arrow-kt:suspendapp")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa") {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+    }
+	implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+    }
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation(platform("org.apache.logging.log4j:log4j-bom:$log4jBomVersion")) 
@@ -57,7 +58,6 @@ dependencies {
 	implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingJvmVersion")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation(kotlin("test"))
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
