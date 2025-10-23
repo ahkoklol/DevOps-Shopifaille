@@ -33,8 +33,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          # Cache dependencies using the lock file specific to the frontend directory
-          cache-key: ${{ runner.os }}-node-${{ hashFiles('front/package-lock.json') }}
+          cache-dependency-path: front/package-lock.json
 
       - name: Install Dependencies
         # Use npm ci for clean and fast installation in CI environments
