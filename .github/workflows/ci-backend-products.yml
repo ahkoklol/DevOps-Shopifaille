@@ -1,0 +1,56 @@
+# .github/workflows/ci-products.yml
+
+name: Products Microservice CI (Go)
+
+on:
+  # Triggers for all pushes and pull requests targeting the main or dev branches
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      # Only run if files in the products directory have changed
+      - 'back/products/**'
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'back/products/**'
+
+# Define global settings for the job
+defaults:
+  run:
+    # Set the default working directory to the products service folder
+    working-directory: back/products
+
+jobs:
+  build_and_test:
+    name: Build Go Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go 1.25.3
+        # Uses the Go version specified in go.mod
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.3'
+          cache: true
+          # Cache dependencies using the go.sum (which is generated from go.mod)
+          cache-dependency-path: back/products/go.mod
+
+      - name: Check Go Modules
+        # Download modules and verify go.mod and go.sum are in sync
+        run: go mod tidy
+
+      - name: Build Project
+        # Attempt to compile the Go application
+        # This checks for compilation errors and confirms dependencies resolve.
+        run: go build -v ./...
+        
+      # === ADD THIS STEP WHEN YOU HAVE TESTS ===
+      # - name: Run Unit Tests
+      #   run: go test -v ./...
