@@ -37,7 +37,7 @@ jobs:
 
       - name: Install Dependencies
         # Use npm ci for clean and fast installation in CI environments
-        run: npm ci
+        run: npm install
         
       - name: Run ESLint
         # Executes the "lint" script defined in front/package.json
