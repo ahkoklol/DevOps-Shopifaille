@@ -23,7 +23,7 @@ repositories {
 }
 
 extra["springGrpcVersion"] = "0.11.0"
-val kotestVersion = "6.0.1"
+val kotestVersion = "5.6.2"
 val arrowVersion = "1.2.4"
 val kotestArrowVersion = "1.4.0"
 val mockkVersion = "1.13.10"
