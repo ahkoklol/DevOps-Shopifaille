@@ -21,7 +21,7 @@ on:
 # Define global settings for the job
 defaults:
   run:
-    # Set the default working directory to the new store-gateway service folder
+    # Set the default working directory to the store-gateway service folder
     working-directory: back/store-gateway
 
 jobs:
@@ -36,24 +36,24 @@ jobs:
       - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
-          # Use JDK 21, consistent with your checkout service
+          # Use JDK 21
           java-version: '21'
           distribution: 'temurin'
-          # Enable built-in Gradle dependency caching
-          cache: 'gradle'
+          # CORRECTED: Use Maven dependency caching
+          cache: 'maven'
           
-      - name: Grant execution permission for gradlew
-        # Make the Gradle wrapper script executable for Linux runners
-        run: chmod +x gradlew
+      # Removed the step to grant execution permission for gradlew as it is a Maven project.
         
-      - name: Build and Test with Gradle
-        # The 'build' task will compile the Java code and run tests.
-        run: ./gradlew build --no-daemon
+      - name: Build and Test with Maven
+        # CORRECTED: Use the Maven 'package' lifecycle phase.
+        # The '-B' flag runs in batch mode (non-interactive).
+        # Assuming the Maven executable is on the PATH after setup-java.
+        run: mvn -B package
         
       - name: Upload Build Artifact (Optional)
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: store-gateway-jar
-          # Path to the generated Spring Boot JAR file (adjust if needed)
-          path: back/store-gateway/build/libs/*.jar
+          # CORRECTED: Path to the generated Spring Boot JAR file (Maven convention: target folder)
+          path: back/store-gateway/target/*.jar
