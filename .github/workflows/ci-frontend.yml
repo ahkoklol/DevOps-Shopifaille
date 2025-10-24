@@ -26,7 +26,7 @@ defaults:
 
 jobs:
   ci:
-    name: Lint, Build, and Test
+    name: Lint, Type Check, Build, and Test # split buil with type scheck for SWC
     runs-on: ubuntu-latest
     
     steps:
@@ -47,6 +47,10 @@ jobs:
       - name: Run ESLint
         # Executes the "lint" script defined in front/package.json
         run: npm run lint
+
+      - name: Run Type Check
+        # Executes a new "type-check" script (e.g., tsc --noEmit)
+        run: npm run type-check
         
       - name: Build Project
         # Executes the "build" script (tsc -b && vite build) defined in front/package.json
