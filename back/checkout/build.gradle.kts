@@ -28,6 +28,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.grpc:grpc-services")
+    implementation("io.grpc:grpc-kotlin-stub")
+    implementation("io.grpc:grpc-protobuf")
+    implementation("io.grpc:grpc-stub")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.grpc:spring-grpc-server-web-spring-boot-starter")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -57,6 +60,10 @@ protobuf {
 		id("grpc") {
 			artifact = "io.grpc:protoc-gen-grpc-java"
 		}
+        id("grpckt") {
+            // Must use the full artifact path with the version and @jar suffix
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.5.0:jdk8@jar"
+        }
 	}
 	generateProtoTasks {
 		all().forEach {
@@ -64,6 +71,10 @@ protobuf {
 				id("grpc") {
 					option("@generated=omit")
 				}
+                id("grpckt") { }
+                it.builtins {
+                    id("kotlin")
+                }
 			}
 		}
 	}
