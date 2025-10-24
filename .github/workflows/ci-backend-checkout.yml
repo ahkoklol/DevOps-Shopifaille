@@ -36,25 +36,20 @@ jobs:
       - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
-          # Java 21 is specified in back/checkout/build.gradle.kts
           java-version: '21'
           distribution: 'temurin'
           # Enable built-in Gradle dependency caching
-          cache: 'gradle'
+          cache: 'maven'
           
-      - name: Grant execution permission for gradlew
-        # Make the Gradle wrapper script executable for Linux runners
-        run: chmod +x gradlew
-        
-      - name: Build and Test with Gradle
-        # The 'build' task typically runs: assemble (compile), check (lint/test), and build.
-        # The '--no-daemon' flag is often used to prevent cache-related issues in CI.
-        run: ./gradlew build --no-daemon
+      - name: Build and Test with Maven
+        # The '-B' flag runs in batch mode (non-interactive).
+        # Assuming the Maven executable is on the PATH after setup-java.
+        run: mvn -B package
         
       - name: Upload Build Artifact (Optional)
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: checkout-jar
-          # Path to the generated Spring Boot JAR file (adjust if needed)
-          path: back/checkout/build/libs/*.jar
+          name: store-gateway-jar
+          # CORRECTED: Path to the generated Spring Boot JAR file (Maven convention: target folder)
+          path: back/store-gateway/target/*.jar
