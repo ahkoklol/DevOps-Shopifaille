@@ -23,9 +23,7 @@ repositories {
 }
 
 extra["springGrpcVersion"] = "0.11.0"
-val kotestVersion = "5.6.2"
 val arrowVersion = "1.2.4"
-val kotestArrowVersion = "1.4.0"
 val mockkVersion = "1.13.10"
 val oshaiLogVersion = "7.0.3"
 
@@ -40,13 +38,9 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.grpc:spring-grpc-server-web-spring-boot-starter")
     implementation("io.github.oshai:kotlin-logging-jvm:${oshaiLogVersion}")
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:${kotestVersion}")
-    testImplementation("io.kotest:kotest-assertions-core:${kotestVersion}")
-    testImplementation("io.kotest:kotest-extensions-spring:${kotestVersion}")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation("io.kotest.extensions:kotest-assertions-arrow:${kotestArrowVersion}")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	// testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation("org.springframework.grpc:spring-grpc-test")
     testImplementation("io.mockk:mockk:${mockkVersion}")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
