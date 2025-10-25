@@ -1,0 +1,45 @@
+name: Core Microservice CD - Build, Push to GHCR (Deno)
+
+on:
+  push:
+    branches:
+      - main # Trigger CD only on merges to main
+    paths:
+      - 'back/core/**'
+      # Keep the deployment path trigger, even though deployment is skipped for now
+      - 'kubernetes/core-deployment.yaml' 
+      
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # Necessary to push Docker image to GHCR
+      
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # --- 1. Docker Build and Push to GHCR ---
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }} 
+
+      - name: Build and Push Deno Docker image
+        uses: docker/build-push-action@v6
+        with:
+          # Context must point to the directory containing the Dockerfile and source files
+          context: ./back/core 
+          file: ./back/core/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/core-service:latest
+
+      - name: Image Pushed Confirmation
+        run: echo "Deno service image successfully pushed to ghcr.io/${{ github.repository_owner }}/core-service:latest"
