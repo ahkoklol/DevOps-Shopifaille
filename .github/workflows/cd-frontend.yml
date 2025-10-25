@@ -52,7 +52,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           # Use the repository root as the build context since the Dockerfile references 'front/' contents
-          context: . 
+          context: ./front
           # Specify the Dockerfile path
           file: ./front/Dockerfile
           push: true
