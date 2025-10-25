@@ -50,6 +50,5 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: store-gateway-jar
-          # CORRECTED: Path to the generated Spring Boot JAR file (Maven convention: target folder)
-          path: back/store-gateway/target/*.jar
+          name: checkout-jar
+          path: back/checkout/target/*.jar
