@@ -6,7 +6,6 @@ on:
       - main # CD runs only on merges to main
     paths:
       - 'back/products/**'
-      # Include the deployment file path to trigger CD when K8s config changes
       - 'kubernetes/products-deployment.yaml' 
       
 jobs:
@@ -20,7 +19,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # --- 1. CI/Build (Ensures the binary compiles successfully first) ---
+      # --- 1. CI/Build Preparation ---
       
       - name: Set up Go 1.25.3
         uses: actions/setup-go@v5
@@ -29,9 +28,12 @@ jobs:
           cache: true
           cache-dependency-path: back/products/go.mod
 
+      - name: Generate Go Modules (FIXED STEP)
+        working-directory: back/products 
+        # This step downloads dependencies and creates the necessary go.sum file
+        run: go mod tidy
+          
       - name: Build Go Binary (Optional but Recommended)
-        # Running the build step ensures the repository has a freshly compiled binary
-        # before submitting the context to Docker, which improves feedback time.
         working-directory: back/products 
         run: go build -v ./...
           
@@ -50,11 +52,8 @@ jobs:
       - name: Build and Push Go Docker image
         uses: docker/build-push-action@v6
         with:
-          # Context must point to the directory containing the Dockerfile, go.mod, and source files
+          # Context must point to the directory containing the Dockerfile, go.mod, and go.sum
           context: ./back/products 
           file: ./back/products/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/products-service:latest
-
-      - name: Image Pushed Confirmation
-        run: echo "Go service image successfully pushed to ghcr.io/${{ github.repository_owner }}/products-service:latest"
