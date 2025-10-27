@@ -26,6 +26,12 @@ public class CartController {
         return new ResponseEntity<>(cartId, HttpStatus.CREATED);
     }
 
-
+    @GetMapping("/{cartId}")
+    public ResponseEntity<Cart> getCart(@PathVariable String cartId) {
+        log.info("Fetching cart with id {}", cartId);
+        return cartService.getCartById(cartId)
+                .map(ResponseEntity::ok) // 200 OK with body
+                .orElseGet(() -> ResponseEntity.notFound().build()); // 404 Not Found
+    }
 
 }

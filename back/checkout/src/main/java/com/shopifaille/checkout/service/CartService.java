@@ -35,6 +35,7 @@ public class CartService {
         cart.setDateCreated(date);
         cart.setDateModified(date);
         cartRepository.save(cart);
+        log.info("Cart created");
         return cart.getCartId();
     }
 
@@ -43,7 +44,7 @@ public class CartService {
      * @param cartId the id of the cart to fetch
      * @return a Cart object or null
      */
-    public Optional<Cart> getCart(String cartId) {
+    public Optional<Cart> getCartById(String cartId) {
         return cartRepository.findById(cartId);
     }
 }
