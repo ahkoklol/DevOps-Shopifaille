@@ -2,6 +2,9 @@ package com.shopifaille.checkout.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+
+import java.util.UUID;
 
 @Data
 @Entity
@@ -10,8 +13,9 @@ public class CartItem {
 
     @Id
     @Column(name = "cart_item_id")
-    private String cartItemId;
+    private String cartItemId = UUID.randomUUID().toString();
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false) // Définit la colonne de clé étrangère
     private Cart cart;
@@ -25,4 +29,12 @@ public class CartItem {
     private int quantity;
     private double price;
     private double discount;
+
+    // method to establish bidirectional relationship between Cart and CartItem
+    public void setCart(Cart cart) {
+        this.cart = cart;
+        if (!cart.getCartItems().contains(this)) {
+            cart.getCartItems().add(this);
+        }
+    }
 }

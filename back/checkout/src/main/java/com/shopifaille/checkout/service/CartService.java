@@ -1,6 +1,7 @@
 package com.shopifaille.checkout.service;
 
 import com.shopifaille.checkout.entity.Cart;
+import com.shopifaille.checkout.entity.CartItem;
 import com.shopifaille.checkout.repository.CartRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +18,8 @@ public class CartService {
 
     private final CartRepository cartRepository;
 
-    public CartService(CartRepository cartRepository, CartRepository cartRepository1) {
-        this.cartRepository = cartRepository1;
+    public CartService(CartRepository cartRepository) {
+        this.cartRepository = cartRepository;
     }
 
     /**
@@ -46,5 +47,35 @@ public class CartService {
      */
     public Optional<Cart> getCartById(String cartId) {
         return cartRepository.findById(cartId);
+    }
+
+    public void addItemToCart(String cartId, CartItem item) {
+        Optional<Cart> cart = getCartById(cartId);
+
+        if (cart.isEmpty()) {
+            log.error("Cart with id {} not found", cartId);
+            throw new IllegalStateException("Cart with id " + cartId + " not found");
+        }
+
+        // check if item exists in cart
+        Optional<CartItem> existingItem = cart.get().getCartItems().stream()
+                .filter(i -> i.getProductId().equals(item.getProductId()) &&
+                        i.getVariantId().equals(item.getVariantId()))
+                .findFirst();
+
+        if (existingItem.isPresent()) {
+            // if item already exists, increment quantity by 1
+            CartItem itemToUpdate = existingItem.get();
+            itemToUpdate.setQuantity(itemToUpdate.getQuantity() + item.getQuantity());
+            log.info("Item already exists, updated quantity for item {} in cart {}", itemToUpdate.getCartItemId(), cartId);
+        } else {
+            // else add the item to cart
+            item.setCartItemId(UUID.randomUUID().toString());
+            item.setCart(cart.get());
+            log.info("Added new item {} to cart {}", item.getProductId(), cartId);
+        }
+
+        cart.get().setDateModified(new Date());
+        cartRepository.save(cart.get());
     }
 }

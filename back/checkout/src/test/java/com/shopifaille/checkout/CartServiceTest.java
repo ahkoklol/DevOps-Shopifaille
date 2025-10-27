@@ -1,6 +1,7 @@
 package com.shopifaille.checkout;
 
 import com.shopifaille.checkout.entity.Cart;
+import com.shopifaille.checkout.entity.CartItem;
 import com.shopifaille.checkout.repository.CartRepository;
 import com.shopifaille.checkout.service.CartService;
 import jakarta.transaction.Transactional;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 public class CartServiceTest extends PostgresTestcontainer {
@@ -21,6 +23,8 @@ public class CartServiceTest extends PostgresTestcontainer {
 
     @Autowired
     private CartRepository cartRepository;
+
+    private String testcartid = "testcartid";
 
     private Cart createBaseCart(String cartId, String storeId) {
         Cart cart = new Cart();
@@ -33,10 +37,20 @@ public class CartServiceTest extends PostgresTestcontainer {
         return cart;
     }
 
+    private CartItem createCartItem(String productId, String variantId) {
+        CartItem item = new CartItem();
+        item.setProductId(productId);
+        item.setVariantId(variantId);
+        item.setQuantity(1);
+        item.setPrice(100.0);
+        item.setDiscount(0.0);
+        return item;
+    }
+
     @BeforeEach
     void setUp() {
         // cart1
-        Cart baseCart1 = createBaseCart("testcartid", "teststoreid");
+        Cart baseCart1 = createBaseCart(testcartid, "teststoreid");
         cartRepository.save(baseCart1);
     }
 
@@ -51,8 +65,49 @@ public class CartServiceTest extends PostgresTestcontainer {
 
     @Test
     void testGetCartById_Success() {
-        Optional<Cart> cart = cartService.getCartById("testcartid");
+        Optional<Cart> cart = cartService.getCartById(testcartid);
 
         assertThat(cart).isPresent();
+    }
+
+    @Test
+    void testAddItemToCart_NewItem_Success() {
+        CartItem newItem = createCartItem("testproductid", "testvariantid");
+
+        cartService.addItemToCart(testcartid, newItem);
+
+        Optional<Cart> updatedCart = cartService.getCartById(testcartid);
+        assertThat(updatedCart).isPresent();
+        assertThat(updatedCart.get().getCartItems()).hasSize(1);
+
+        CartItem savedItem = updatedCart.get().getCartItems().getFirst();
+        assertThat(savedItem.getProductId()).isEqualTo("testproductid");
+        assertThat(savedItem.getQuantity()).isEqualTo(1);
+    }
+
+    @Test
+    void testAddItemToCart_ExistingItem_IncrementQuantity() {
+        CartItem initialItem = createCartItem("testproductid", "testvariantid");
+        cartService.addItemToCart(testcartid, initialItem);
+
+        // check that adding an existing productid-variantid increments quantity by one
+        CartItem incrementItem = createCartItem("testproductid", "testvariantid");
+        cartService.addItemToCart(testcartid, incrementItem);
+
+        Optional<Cart> updatedCart = cartService.getCartById(testcartid);
+        assertThat(updatedCart).isPresent();
+        assertThat(updatedCart.get().getCartItems()).hasSize(1); // only one CartItem
+
+        CartItem savedItem = updatedCart.get().getCartItems().getFirst();
+        assertThat(savedItem.getQuantity()).isEqualTo(2); // quantity = 2
+    }
+
+    @Test
+    void testAddItemToCart_NotFound_ThrowsException() {
+        CartItem item = createCartItem("testproductid", "testvariantid");
+
+        assertThrows(IllegalStateException.class, () -> {
+            cartService.addItemToCart("non-existent-id", item);
+        });
     }
 }

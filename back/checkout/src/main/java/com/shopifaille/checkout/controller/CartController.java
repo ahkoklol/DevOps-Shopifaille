@@ -1,6 +1,7 @@
 package com.shopifaille.checkout.controller;
 
 import com.shopifaille.checkout.entity.Cart;
+import com.shopifaille.checkout.entity.CartItem;
 import com.shopifaille.checkout.service.CartService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,12 @@ public class CartController {
         return cartService.getCartById(cartId)
                 .map(ResponseEntity::ok) // 200 OK with body
                 .orElseGet(() -> ResponseEntity.notFound().build()); // 404 Not Found
+    }
+
+    @PostMapping("/{cartId}/items")
+    public ResponseEntity<String> addItemToCart(@PathVariable String cartId, @RequestBody CartItem item) {
+        cartService.addItemToCart(cartId, item);
+        return new ResponseEntity<>(cartId, HttpStatus.OK);
     }
 
 }
