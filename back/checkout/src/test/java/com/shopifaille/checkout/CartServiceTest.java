@@ -117,8 +117,7 @@ public class CartServiceTest extends PostgresTestcontainer {
         assertThat(updateItem.getQuantity()).isEqualTo(1);
         cartService.addItemToCart(testcartid, updateItem);
 
-        updateItem.setQuantity(12);
-        cartService.modifyCartItemQuantity(testcartid, updateItem);
+        cartService.modifyCartItemQuantity(testcartid, updateItem.getCartItemId(), 12);
 
         Optional<Cart> updatedCart = cartService.getCartById(testcartid);
         assertThat(updatedCart).isPresent();
@@ -134,7 +133,7 @@ public class CartServiceTest extends PostgresTestcontainer {
         cartService.addItemToCart(testcartid, updateItem);
 
         // check update if quantity is the same
-        cartService.modifyCartItemQuantity(testcartid, updateItem);
+        cartService.modifyCartItemQuantity(testcartid, updateItem.getCartItemId(), 5);
         Optional<Cart> updatedCart = cartService.getCartById(testcartid);
         assertThat(updatedCart).isPresent();
         assertThat(updatedCart.get().getCartItems()).hasSize(1);
@@ -146,17 +145,16 @@ public class CartServiceTest extends PostgresTestcontainer {
         CartItem nonExistentItem = createCartItem("fakeproductid", "fakevariantid");
 
         assertThrows(IllegalStateException.class, () -> {
-            cartService.modifyCartItemQuantity(testcartid, nonExistentItem);
+            cartService.modifyCartItemQuantity(testcartid, nonExistentItem.getCartItemId(), 5);
         });
     }
 
     @Test
     void testModifyQuantity_InvalidQuantity_ThrowsException() {
         CartItem invalidItem = createCartItem("testproductid", "testvariantid");
-        invalidItem.setQuantity(0);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            cartService.modifyCartItemQuantity(testcartid, invalidItem);
+            cartService.modifyCartItemQuantity(testcartid, invalidItem.getCartItemId(), 0);
         });
     }
 }

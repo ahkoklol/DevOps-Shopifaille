@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,9 +88,10 @@ public class CartService {
     /**
      * Modifies the quantity of a CartItem in Cart
      * @param cartId the id of the cart
-     * @param item a CartItem
+     * @param itemId the id of a CartItem
+     * @param quantity the new quantity of the CartItem
      */
-    public void modifyCartItemQuantity(String cartId, CartItem item) {
+    public void modifyCartItemQuantity(String cartId, String itemId, int quantity) {
         Optional<Cart> cart = getCartById(cartId);
 
         if (cart.isEmpty()) {
@@ -97,29 +99,28 @@ public class CartService {
             throw new IllegalStateException("Cart with id " + cartId + " not found");
         }
 
-        if (item.getQuantity() <= 0) {
-            log.error("Invalid quantity {} provided for item {}. Use DELETE endpoint to remove the item.", item.getQuantity(), item.getProductId());
+        if (quantity <= 0) {
+            log.error("Invalid quantity {} provided for item {}. Use DELETE endpoint to remove the item.", quantity, itemId);
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
 
         // check if item exists in cart
         Optional<CartItem> existingItem = cart.get().getCartItems().stream()
-                .filter(i -> i.getProductId().equals(item.getProductId()) &&
-                        i.getVariantId().equals(item.getVariantId()))
+                .filter(i -> i.getCartItemId().equals(itemId))
                 .findFirst();
 
         if (existingItem.isEmpty()) {
-            log.error("Item with id {} not found", item.getProductId());
-            throw new IllegalStateException("Item with id " + item.getProductId() + " not found in cart " + cartId);
+            log.error("Item with id {} not found in cart {}", itemId, cartId);
+            throw new IllegalStateException("Item with id " + itemId + " not found in cart " + cartId);
         }
 
         // check if the current quantity is the new quantity
-        if (existingItem.get().getQuantity() == item.getQuantity()) {
+        if (existingItem.get().getQuantity() == quantity) {
             log.warn("Item quantity is already {}", existingItem.get().getQuantity());
             return;
         }
 
-        existingItem.get().setQuantity(item.getQuantity());
+        existingItem.get().setQuantity(quantity);
         cart.get().setDateModified(new Date());
         cartRepository.save(cart.get());
     }

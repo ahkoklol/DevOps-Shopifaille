@@ -41,9 +41,9 @@ public class CartController {
         return new ResponseEntity<>(cartId, HttpStatus.OK);
     }
 
-    @PutMapping("/{cartId}/items")
-    public ResponseEntity<String> modifyItemQuantity(@PathVariable String cartId, @RequestBody CartItem item) {
-        cartService.modifyCartItemQuantity(cartId, item);
+    @PutMapping("/{cartId}/items/{itemId}")
+    public ResponseEntity<String> modifyItemQuantity(@PathVariable String cartId, @RequestBody int quantity, @PathVariable String itemId) {
+        cartService.modifyCartItemQuantity(cartId, itemId, quantity);
         return new ResponseEntity<>(cartId, HttpStatus.OK);
     }
 
