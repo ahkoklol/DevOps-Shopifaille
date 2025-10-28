@@ -19,7 +19,7 @@ public class CartPricingController {
     }
 
     @PostMapping("/{cartId}/discount/{discountCode}")
-    public ResponseEntity<String> discount(@PathVariable String cartId, @PathVariable String discountCode) {
+    public ResponseEntity<String> applyDiscount(@PathVariable String cartId, @PathVariable String discountCode) {
         boolean discountApplied = cartPricingService.applyDiscount(cartId, discountCode);
         if (!discountApplied) {
             return new ResponseEntity<>(cartId, HttpStatus.NOT_ACCEPTABLE);
