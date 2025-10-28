@@ -4,6 +4,7 @@ import com.google.protobuf.Timestamp;
 import com.shopifaille.checkout.client.CoreGateway;
 import com.shopifaille.checkout.entity.Cart;
 import com.shopifaille.checkout.entity.Discount;
+import com.shopifaille.checkout.entity.ShippingDetail;
 import com.shopifaille.checkout.repository.CartRepository;
 import com.shopifaille.core.grpc.CheckDiscountResponse;
 import org.slf4j.Logger;
@@ -29,6 +30,12 @@ public class CartPricingService {
         this.coreGateway = coreGateway;
     }
 
+    /**
+     * Applies discount to a cart
+     * @param cartId the id of the cart
+     * @param discountCode the discount code
+     * @return true if the discount was applied, false otherwise
+     */
     public boolean applyDiscount(String cartId, String discountCode) {
         Cart cart = cartService.getCartById(cartId)
                 .orElseThrow(() -> {
@@ -50,6 +57,31 @@ public class CartPricingService {
 
         log.info("Successfully applied discount {} to cart {}. Value: {} {}", discountCode, cartId, response.getValue(), response.getType());
         return true;
+    }
+
+    /**
+     * Saves the shipping detail
+     * @param cartId the id of the cart
+     * @param shippingDetail the shipping detail
+     * @return a ShippingDetail object with the shipping information
+     */
+    public ShippingDetail saveShippingDetail(String cartId, ShippingDetail shippingDetail) {
+        Cart cart = cartService.getCartById(cartId)
+                .orElseThrow(() -> {
+                    log.error("Cart with id {} not found for discount application", cartId);
+                    return new IllegalStateException("Cart not found.");
+                });
+
+        ShippingDetail detail = new ShippingDetail();
+        detail.setCartId(cartId);
+        detail.setCart(cart);
+        detail.setBuyerFirstName(shippingDetail.getBuyerFirstName());
+        detail.setBuyerLastName(shippingDetail.getBuyerLastName());
+        detail.setBuyerEmail(shippingDetail.getBuyerEmail());
+        detail.setAddress(shippingDetail.getAddress());
+        detail.setDate(new Date());
+        // get cost from summary
+        return detail;
     }
 
     /**

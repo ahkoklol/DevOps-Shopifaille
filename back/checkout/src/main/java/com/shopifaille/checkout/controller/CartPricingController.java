@@ -1,12 +1,10 @@
 package com.shopifaille.checkout.controller;
 
+import com.shopifaille.checkout.entity.ShippingDetail;
 import com.shopifaille.checkout.service.CartPricingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/carts")
@@ -25,5 +23,11 @@ public class CartPricingController {
             return new ResponseEntity<>(cartId, HttpStatus.NOT_ACCEPTABLE);
         }
         return  new ResponseEntity<>(cartId, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/{cartId}/shipping")
+    public ResponseEntity<ShippingDetail> saveShippingDetail(@PathVariable String cartId, @RequestBody ShippingDetail shippingDetail) {
+        ShippingDetail response = cartPricingService.saveShippingDetail(cartId, shippingDetail);
+
     }
 }
