@@ -157,4 +157,30 @@ public class CartServiceTest extends PostgresTestcontainer {
             cartService.modifyCartItemQuantity(testcartid, invalidItem.getCartItemId(), 0);
         });
     }
+
+    @Test
+    void testRemoveItemFromCart_Success() {
+        CartItem item = createCartItem("testproductid", "testvariantid");
+        cartService.addItemToCart(testcartid, item);
+
+        cartService.removeItemFromCart(testcartid, item.getCartItemId());
+
+        Optional<Cart> updatedCart = cartService.getCartById(testcartid);
+        assertThat(updatedCart).isPresent();
+        assertThat(updatedCart.get().getCartItems()).isEmpty();
+    }
+
+    @Test
+    void testRemoveItemFromCart_CartNotFound_ThrowsException() {
+        assertThrows(IllegalStateException.class, () -> {
+            cartService.removeItemFromCart("fakecartid", "fakecartitemid");
+        });
+    }
+
+    @Test
+    void testRemoveItemFromCart_ItemNotFound_ThrowsException() {
+        assertThrows(IllegalStateException.class, () -> {
+            cartService.removeItemFromCart(testcartid, "fakecartitemid");
+        });
+    }
 }

@@ -124,4 +124,30 @@ public class CartService {
         cart.get().setDateModified(new Date());
         cartRepository.save(cart.get());
     }
+
+    /**
+     * Removes a CartItem from the cart
+     * @param cartId the id of the cart
+     * @param itemId the id of the CartItem
+     */
+    public void removeItemFromCart(String cartId, String itemId) {
+        Optional<Cart> cart = getCartById(cartId);
+
+        if (cart.isEmpty()) {
+            log.error("Cart with id {} not found", cartId);
+            throw new IllegalStateException("Cart with id " + cartId + " not found");
+        }
+
+        Optional<CartItem> existingItem = cart.get().getCartItems().stream()
+                .filter(i -> i.getCartItemId().equals(itemId))
+                .findFirst();
+
+        if (existingItem.isEmpty()) {
+            log.error("Item with id {} not found in cart {}", itemId, cartId);
+            throw new IllegalStateException("Item with id " + itemId + " not found in cart " + cartId);
+        }
+        cart.get().getCartItems().remove(existingItem.get());
+        cart.get().setDateModified(new Date());
+        cartRepository.save(cart.get());
+    }
 }
