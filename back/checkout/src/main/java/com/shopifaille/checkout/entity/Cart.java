@@ -30,6 +30,14 @@ public class Cart {
     )
     private List<CartItem> cartItems = new ArrayList<>();
 
+    @ToString.Exclude
+    @OneToMany(
+            mappedBy = "cart",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Discount> discounts = new ArrayList<>();
+
     @Column(name = "date_created")
     private Date dateCreated;
 

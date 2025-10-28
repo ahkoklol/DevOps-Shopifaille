@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package core.order_management;
+
+option java_package = "com.shopifaille.core.grpc";
+option java_multiple_files = true;
+
+message CheckDiscountRequest {
+  string code = 1;
+}

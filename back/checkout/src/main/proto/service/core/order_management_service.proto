@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package core.order_management;
+
+option java_package = "com.shopifaille.core.grpc";
+option java_multiple_files = true;
+
+import "service/core/check_discount_request.proto";
+import "service/core/check_discount_response.proto";
+
+service OrderManagementService {
+  rpc CheckDiscount(CheckDiscountRequest) returns (CheckDiscountResponse);
+}
