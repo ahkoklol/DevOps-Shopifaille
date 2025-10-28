@@ -28,7 +28,7 @@ public class CartItem {
 
     private int quantity;
     private double price;
-    private double discount;
+    private double discount; // in percentage
 
     // method to establish bidirectional relationship between Cart and CartItem
     public void setCart(Cart cart) {

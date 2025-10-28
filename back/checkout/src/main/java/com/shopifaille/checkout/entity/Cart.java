@@ -38,6 +38,15 @@ public class Cart {
     )
     private List<Discount> discounts = new ArrayList<>();
 
+    @OneToOne(
+            mappedBy = "cart", // Points to the 'private Cart cart' field in ShippingDetail
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @ToString.Exclude
+    private ShippingDetail shippingDetail;
+
     @Column(name = "date_created")
     private Date dateCreated;
 

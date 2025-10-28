@@ -1,6 +1,7 @@
 package com.shopifaille.checkout.controller;
 
 import com.shopifaille.checkout.entity.ShippingDetail;
+import com.shopifaille.checkout.entity.Summary;
 import com.shopifaille.checkout.service.CartPricingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,14 @@ public class CartPricingController {
     }
 
     @PostMapping("/{cartId}/shipping")
-    public ResponseEntity<ShippingDetail> saveShippingDetail(@PathVariable String cartId, @RequestBody ShippingDetail shippingDetail) {
-        ShippingDetail response = cartPricingService.saveShippingDetail(cartId, shippingDetail);
+    public ResponseEntity<Void> saveShippingDetail(@PathVariable String cartId, @RequestBody ShippingDetail shippingDetail) {
+        cartPricingService.saveShippingDetail(cartId, shippingDetail);
+        return ResponseEntity.ok().build();
+    }
 
+    @GetMapping("/{cartId}/summary")
+    public ResponseEntity<Summary> getSummary(@PathVariable String cartId) {
+        Summary summary = cartPricingService.getSummary(cartId);
+        return ResponseEntity.ok().body(summary);
     }
 }

@@ -12,9 +12,6 @@ import java.util.Date;
 public class ShippingDetail {
 
     @Id
-    @Column(name = "cart_id")
-    private String cartId;
-
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "cart_id")
