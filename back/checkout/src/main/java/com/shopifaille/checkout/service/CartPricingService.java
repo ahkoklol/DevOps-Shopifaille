@@ -5,7 +5,6 @@ import com.shopifaille.checkout.client.CoreGateway;
 import com.shopifaille.checkout.entity.Cart;
 import com.shopifaille.checkout.entity.Discount;
 import com.shopifaille.checkout.repository.CartRepository;
-import com.shopifaille.checkout.repository.DiscountRepository;
 import com.shopifaille.core.grpc.CheckDiscountResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -48,7 +48,7 @@ public class CartServiceTest extends PostgresTestcontainer {
     }
 
     @BeforeEach
-    void setUp() {
+    void setup() {
         // cart1
         Cart baseCart1 = createBaseCart(testcartid, "teststoreid");
         cartRepository.save(baseCart1);
