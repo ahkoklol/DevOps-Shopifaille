@@ -41,4 +41,10 @@ public class CartController {
         return new ResponseEntity<>(cartId, HttpStatus.OK);
     }
 
+    @PutMapping("/{cartId}/items")
+    public ResponseEntity<String> modifyItemQuantity(@PathVariable String cartId, @RequestBody CartItem item) {
+        cartService.modifyCartItemQuantity(cartId, item);
+        return new ResponseEntity<>(cartId, HttpStatus.OK);
+    }
+
 }

@@ -110,4 +110,53 @@ public class CartServiceTest extends PostgresTestcontainer {
             cartService.addItemToCart("non-existent-id", item);
         });
     }
+
+    @Test
+    void testModifyQuantity_Update_Success() {
+        CartItem updateItem = createCartItem("testproductid", "testvariantid");
+        assertThat(updateItem.getQuantity()).isEqualTo(1);
+        cartService.addItemToCart(testcartid, updateItem);
+
+        updateItem.setQuantity(12);
+        cartService.modifyCartItemQuantity(testcartid, updateItem);
+
+        Optional<Cart> updatedCart = cartService.getCartById(testcartid);
+        assertThat(updatedCart).isPresent();
+
+        CartItem savedItem = updatedCart.get().getCartItems().getFirst();
+        assertThat(savedItem.getQuantity()).isEqualTo(12);
+    }
+
+    @Test
+    void testModifyQuantity_Idempotence_NoChange() {
+        CartItem updateItem = createCartItem("testproductid", "testvariantid");
+        updateItem.setQuantity(5);
+        cartService.addItemToCart(testcartid, updateItem);
+
+        // check update if quantity is the same
+        cartService.modifyCartItemQuantity(testcartid, updateItem);
+        Optional<Cart> updatedCart = cartService.getCartById(testcartid);
+        assertThat(updatedCart).isPresent();
+        assertThat(updatedCart.get().getCartItems()).hasSize(1);
+        assertThat(updatedCart.get().getCartItems().getFirst().getQuantity()).isEqualTo(5);
+    }
+
+    @Test
+    void testModifyQuantity_ItemNotFound_ThrowsException() {
+        CartItem nonExistentItem = createCartItem("fakeproductid", "fakevariantid");
+
+        assertThrows(IllegalStateException.class, () -> {
+            cartService.modifyCartItemQuantity(testcartid, nonExistentItem);
+        });
+    }
+
+    @Test
+    void testModifyQuantity_InvalidQuantity_ThrowsException() {
+        CartItem invalidItem = createCartItem("testproductid", "testvariantid");
+        invalidItem.setQuantity(0);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            cartService.modifyCartItemQuantity(testcartid, invalidItem);
+        });
+    }
 }

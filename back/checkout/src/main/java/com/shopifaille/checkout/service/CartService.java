@@ -49,6 +49,11 @@ public class CartService {
         return cartRepository.findById(cartId);
     }
 
+    /**
+     * Adds a CartItem to the cart
+     * @param cartId the id of the cart
+     * @param item a CartItem
+     */
     public void addItemToCart(String cartId, CartItem item) {
         Optional<Cart> cart = getCartById(cartId);
 
@@ -75,6 +80,46 @@ public class CartService {
             log.info("Added new item {} to cart {}", item.getProductId(), cartId);
         }
 
+        cart.get().setDateModified(new Date());
+        cartRepository.save(cart.get());
+    }
+
+    /**
+     * Modifies the quantity of a CartItem in Cart
+     * @param cartId the id of the cart
+     * @param item a CartItem
+     */
+    public void modifyCartItemQuantity(String cartId, CartItem item) {
+        Optional<Cart> cart = getCartById(cartId);
+
+        if (cart.isEmpty()) {
+            log.error("Cart with id {} not found", cartId);
+            throw new IllegalStateException("Cart with id " + cartId + " not found");
+        }
+
+        if (item.getQuantity() <= 0) {
+            log.error("Invalid quantity {} provided for item {}. Use DELETE endpoint to remove the item.", item.getQuantity(), item.getProductId());
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+
+        // check if item exists in cart
+        Optional<CartItem> existingItem = cart.get().getCartItems().stream()
+                .filter(i -> i.getProductId().equals(item.getProductId()) &&
+                        i.getVariantId().equals(item.getVariantId()))
+                .findFirst();
+
+        if (existingItem.isEmpty()) {
+            log.error("Item with id {} not found", item.getProductId());
+            throw new IllegalStateException("Item with id " + item.getProductId() + " not found in cart " + cartId);
+        }
+
+        // check if the current quantity is the new quantity
+        if (existingItem.get().getQuantity() == item.getQuantity()) {
+            log.warn("Item quantity is already {}", existingItem.get().getQuantity());
+            return;
+        }
+
+        existingItem.get().setQuantity(item.getQuantity());
         cart.get().setDateModified(new Date());
         cartRepository.save(cart.get());
     }
