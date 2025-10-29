@@ -49,7 +49,7 @@ func validateID(id string) error {
 // --- REST Endpoint Implementations (Store Gateway / Merchant UI) ---
 
 // GetByID retrieves a product by its unique ID.
-func (s *Service) GetByID(ctx context.Context, id string) (*Product, error) {
+func (s *Service) GetById(ctx context.Context, id string) (*Product, error) {
 	// REAL CHECK 1: Input Validation
 	if err := validateID(id); err != nil {
 		return nil, err
@@ -237,4 +237,69 @@ func (s *Service) GetProductStockLevel(ctx context.Context, productID string) (i
     }
     
 	return s.repo.GetStockLevel(ctx, productID)
+}
+
+// CreateCategory validates category data (name, store, parent existence) and saves it.
+func (s *Service) CreateCategory(ctx context.Context, c *Category) error {
+	// REAL CHECK 1: Input Validation
+	if c == nil || c.Name == "" || c.StoreId == "" {
+		return fmt.Errorf("%w: Category Name and StoreId are mandatory", ErrValidation)
+	}
+	
+	// REAL CHECK 2: Validate IDs
+	// The CategoryID will be generated in the Repository or Service (uuid.New().String()).
+	// Validate c.StoreId (optional: validate StoreId format if applicable)
+	
+	// REAL CHECK 3: Parent Existence and Ownership Check (CRITICAL)
+	if c.ParentId != nil && *c.ParentId != "" {
+        // Parent must exist AND belong to the same store for multi-tenancy integrity.
+		parent, err := s.repo.GetCategoryByID(ctx, *c.ParentId)
+		if errors.Is(err, ErrNotFound) {
+			return fmt.Errorf("%w: Parent category does not exist", ErrValidation)
+		}
+		if err != nil {
+			return fmt.Errorf("failed to retrieve parent category: %w", err)
+		}
+		if parent.StoreId != c.StoreId {
+            // Business Rule: Cannot link a parent from a different store.
+			return fmt.Errorf("%w: Parent category does not belong to the same store", ErrInsufficientPrivileges)
+		}
+	}
+    
+	// REAL CHECK 4: ID Generation (if not done upstream)
+	if c.CategoryId == "" {
+		c.CategoryId = uuid.New().String()
+	}
+
+	return s.repo.CreateCategory(ctx, c)
+}
+
+// DeleteCategory removes a category.
+func (s *Service) DeleteCategory(ctx context.Context, id string) error {
+    // REAL CHECK 1: Input Validation
+    if err := validateID(id); err != nil {
+        return err
+    }
+    
+    // REAL CHECK 2: Existence Check
+    // On utilise "_" car la variable 'category' n'est pas utilisée après cette ligne.
+    _, err := s.repo.GetCategoryByID(ctx, id)
+    if errors.Is(err, ErrNotFound) {
+        return ErrNotFound
+    }
+    if err != nil {
+        return fmt.Errorf("failed to retrieve category: %w", err)
+    }
+    
+    // ... (Code de suppression)
+    return s.repo.DeleteCategory(ctx, id)
+}
+
+// GetAllCategories retrieves all categories without complex filtering.
+func (s *Service) GetAllCategories(ctx context.Context) ([]*Category, error) {
+    // Business Logic: The service layer may perform authorization checks here (e.g., check if 
+    // the user in context has the right privileges to view the full category list across stores).
+    
+    // Since this is a simple list retrieval, we just call the repository.
+    return s.repo.GetAllCategories(ctx)
 }

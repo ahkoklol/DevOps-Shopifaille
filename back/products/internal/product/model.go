@@ -31,6 +31,7 @@ type Variant struct {
 type Category struct {
 	CategoryId string `json:"category_id"`
 	Name string `json:"name"`
+	StoreId string `json:"store_id"`
 	ParentId *string `json:"parent_id"`
 }
 

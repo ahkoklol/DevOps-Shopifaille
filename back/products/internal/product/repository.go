@@ -30,6 +30,18 @@ type Repository interface {
 	// GetStockLevel retrieves the stock level for a product.
 	GetStockLevel(ctx context.Context, productId string) (int, error)
 
+	// CreateCategory inserts a new category record.
+	CreateCategory(ctx context.Context, c *Category) error
+    
+    // DeleteCategory removes a category by ID.
+	DeleteCategory(ctx context.Context, id string) error
+    
+    // GetCategoryByID is helpful for validation and lookup.
+    GetCategoryByID(ctx context.Context, id string) (*Category, error)
+
+	// GetAllCategories retrieves a list of all categories.
+	GetAllCategories(ctx context.Context) ([]*Category, error)
+
 
 	// gRPC methods
 }
