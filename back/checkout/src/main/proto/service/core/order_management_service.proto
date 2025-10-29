@@ -7,7 +7,10 @@ option java_multiple_files = true;
 
 import "service/core/check_discount_request.proto";
 import "service/core/check_discount_response.proto";
+import "service/core/place_order_request.proto";
+import "service/core/place_order_response.proto";
 
 service OrderManagementService {
   rpc CheckDiscount(CheckDiscountRequest) returns (CheckDiscountResponse);
+  rpc PlaceOrder(PlaceOrderRequest) returns (PlaceOrderResponse);
 }

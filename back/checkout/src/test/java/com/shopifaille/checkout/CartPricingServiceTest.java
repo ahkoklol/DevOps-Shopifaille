@@ -6,6 +6,7 @@ import com.shopifaille.checkout.entity.*;
 import com.shopifaille.checkout.repository.CartRepository;
 import com.shopifaille.checkout.service.CartPricingService;
 import com.shopifaille.checkout.service.CartService;
+import com.shopifaille.core.grpc.CheckDiscountRequest;
 import com.shopifaille.core.grpc.CheckDiscountResponse;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -116,6 +117,8 @@ public class CartPricingServiceTest extends PostgresTestcontainer {
     @Test
     void testApplyDiscount_ValidCode_Success() {
         final String VALID_CODE = "validdiscountcode";
+        CheckDiscountRequest request = CheckDiscountRequest.newBuilder()
+                .setCode(VALID_CODE).build();
 
         // ARRANGE: Get the currently persisted Cart instance
         Optional<Cart> optionalCart = cartRepository.findById(TEST_CART_ID);
@@ -126,7 +129,7 @@ public class CartPricingServiceTest extends PostgresTestcontainer {
         when(cartService.getCartById(TEST_CART_ID)).thenReturn(Optional.of(realCart));
 
         // 2. Stub the mocked CoreGateway to return a valid response
-        when(coreGateway.validateDiscountCode(VALID_CODE)).thenReturn(createMockValidResponse());
+        when(coreGateway.validateDiscountCode(request)).thenReturn(createMockValidResponse());
 
         // ACT
         boolean result = cartPricingService.applyDiscount(TEST_CART_ID, VALID_CODE);
@@ -150,6 +153,8 @@ public class CartPricingServiceTest extends PostgresTestcontainer {
     @Test
     void testApplyDiscount_InvalidCode_ReturnsFalse() {
         final String INVALID_CODE = "invaliddiscountcode";
+        CheckDiscountRequest request = CheckDiscountRequest.newBuilder()
+                .setCode(INVALID_CODE).build();
 
         // ARRANGE: Get the currently persisted Cart instance
         Optional<Cart> optionalCart = cartRepository.findById(TEST_CART_ID);
@@ -160,7 +165,7 @@ public class CartPricingServiceTest extends PostgresTestcontainer {
         when(cartService.getCartById(TEST_CART_ID)).thenReturn(Optional.of(realCart));
 
         // 2. Stub the CoreGateway to return an invalid response
-        when(coreGateway.validateDiscountCode(INVALID_CODE)).thenReturn(createMockInvalidResponse());
+        when(coreGateway.validateDiscountCode(request)).thenReturn(createMockInvalidResponse());
 
         // ACT
         boolean result = cartPricingService.applyDiscount(TEST_CART_ID, INVALID_CODE);

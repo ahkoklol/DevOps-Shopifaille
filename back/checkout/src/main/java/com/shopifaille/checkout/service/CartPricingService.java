@@ -4,6 +4,7 @@ import com.google.protobuf.Timestamp;
 import com.shopifaille.checkout.client.CoreGateway;
 import com.shopifaille.checkout.entity.*;
 import com.shopifaille.checkout.repository.CartRepository;
+import com.shopifaille.core.grpc.CheckDiscountRequest;
 import com.shopifaille.core.grpc.CheckDiscountResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +43,21 @@ public class CartPricingService {
                 });
 
         // check the discount code validity with the core client stub
-        CheckDiscountResponse response = coreGateway.validateDiscountCode(discountCode);
-        if (!response.getIsValid()) {
+        CheckDiscountRequest checkDiscountRequest = CheckDiscountRequest.newBuilder()
+                .setCode(discountCode)
+                .build();
+        CheckDiscountResponse checkDiscountResponse = coreGateway.validateDiscountCode(checkDiscountRequest);
+        if (!checkDiscountResponse.getIsValid()) {
             log.warn("Discount code {} is invalid according to Core.", discountCode);
             return false;
         }
 
-        Discount discount = createDiscount(cart, discountCode, response);
+        Discount discount = createDiscount(cart, discountCode, checkDiscountResponse);
         cart.getDiscounts().add(discount);
         cart.setDateModified(new Date());
         cartRepository.save(cart);
 
-        log.info("Successfully applied discount {} to cart {}. Value: {} {}", discountCode, cartId, response.getValue(), response.getType());
+        log.info("Successfully applied discount {} to cart {}. Value: {} {}", discountCode, cartId, checkDiscountResponse.getValue(), checkDiscountResponse.getType());
         return true;
     }
 
