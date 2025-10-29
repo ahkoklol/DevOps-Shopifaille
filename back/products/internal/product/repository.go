@@ -1,0 +1,35 @@
+package product
+
+import (
+    "context"
+)
+
+type Repository interface {
+
+	// REST methods
+
+	// FindByID retrieves a single product by its ID. Returns nil, nil if not found.
+	FindByID(ctx context.Context, id string) (*Product, error)
+
+	// FindByCategory retrieves a paginated list of products for a given category.
+	// Returns a slice of products and the total count.
+	FindByCategory(ctx context.Context, categoryId string, page, size int) ([]*Product, int, error)
+
+	// FindAll retrieves all products, supporting pagination/filtering for GET /products.
+	FindAll(ctx context.Context, page, size int, filters map[string]string) ([]*Product, int, error)
+
+	// Create saves a new product to the database. The pointer is used so the ID can be set.
+	Create(ctx context.Context, p *Product) error
+
+	// Update modifies an existing product.
+	Update(ctx context.Context, p *Product) error
+
+	// Delete removes a product by its ID.
+	Delete(ctx context.Context, id string) error
+	
+	// GetStockLevel retrieves the stock level for a product.
+	GetStockLevel(ctx context.Context, productId string) (int, error)
+
+
+	// gRPC methods
+}

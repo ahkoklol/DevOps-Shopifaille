@@ -1,7 +1,7 @@
 package product
 
 import (
-	"encoding/json" // Required to handle the raw JSON data for attributes
+	"encoding/json"
 	"time"
 )
 
