@@ -16,5 +16,5 @@ message PlaceOrderRequest {
   double shipping = 6;
   string status = 7;
   string transactionId = 8;
-  string date = 9;
+  google.protobuf.Timestamp date = 9;
 }

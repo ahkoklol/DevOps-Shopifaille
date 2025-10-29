@@ -6,12 +6,14 @@ import com.shopifaille.checkout.entity.*;
 import com.shopifaille.checkout.repository.CartRepository;
 import com.shopifaille.core.grpc.CheckDiscountRequest;
 import com.shopifaille.core.grpc.CheckDiscountResponse;
+import com.shopifaille.core.grpc.PlaceOrderRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -46,6 +48,7 @@ public class CartPricingService {
         CheckDiscountRequest checkDiscountRequest = CheckDiscountRequest.newBuilder()
                 .setCode(discountCode)
                 .build();
+
         CheckDiscountResponse checkDiscountResponse = coreGateway.validateDiscountCode(checkDiscountRequest);
         if (!checkDiscountResponse.getIsValid()) {
             log.warn("Discount code {} is invalid according to Core.", discountCode);
@@ -130,42 +133,18 @@ public class CartPricingService {
         }
 
         // 1. CALCULATE GROSS SUBTOTAL
-        int totalItems = cart.getCartItems().stream()
-                .mapToInt(CartItem::getQuantity)
-                .sum();
-
-        // Subtotal before any discounts
-        double subtotalGross = cart.getCartItems().stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity())
-                .sum();
-
         // 2. CALCULATE TOTAL DISCOUNT AMOUNT
-
-        // FIX: Line-item discount AMOUNT. Formula: Price * Quantity * (Item Discount Percentage / 100)
-        double itemDiscountAmount = cart.getCartItems().stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity() * (item.getDiscount() / 100.0))
-                .sum();
-
-        // General discount AMOUNT (Only used for shipping cost reduction based on your rules,
-        // but its fixed monetary value is summed here)
-        double generalCouponDiscountAmount = cart.getDiscounts().stream()
-                .mapToDouble(Discount::getValue)
-                .sum();
-
-        // Total monetary discount deducted from the subtotal
-        double totalDiscountAmount = itemDiscountAmount + generalCouponDiscountAmount;
-
         // 3. CALCULATE NET TAXABLE BASE
-        double shippingCost = cart.getShippingDetail().getCost();
-
-        // Net Taxable Base = (Subtotal Gross - Total Discount Amount) + Shipping Cost
-        double netTaxableBase = subtotalGross - totalDiscountAmount + shippingCost;
-
-
         // 4. CALCULATE TAXES (Standard 20% on the net taxable base)
-        double totalTaxAmount = netTaxableBase * 0.20;
-
         // 5. CALCULATE FINAL TOTAL (TTC)
+        int totalItems = calculateTotalItems(cart.getCartItems());
+        double subtotalGross = calculateGrossSubtotal(cart.getCartItems()); // subtotal before any discounts
+        double itemDiscountAmount = calculateItemsTotalDiscount(cart); // discount from items
+        double generalCouponDiscountAmount = calculateGeneralCouponDiscount(cart.getDiscounts()); // discount from coupons
+        double totalDiscountAmount = itemDiscountAmount + generalCouponDiscountAmount; // total discount
+        double shippingCost = cart.getShippingDetail().getCost(); // shipping cost
+        double netTaxableBase = subtotalGross - totalDiscountAmount + shippingCost;
+        double totalTaxAmount = netTaxableBase * 0.20;
         double finalTotal = netTaxableBase + totalTaxAmount;
 
         Summary summary = new Summary();
@@ -179,7 +158,68 @@ public class CartPricingService {
         summary.setShippingCost(shippingCost);
         summary.setTotalTaxAmount(totalTaxAmount);
         summary.setTotal(finalTotal); // Final price TTC
+        summary.setDate(cart.getShippingDetail().getDate());
+
+        // place the order
+        PlaceOrderRequest placeOrderRequest = PlaceOrderRequest.newBuilder()
+                .setStoreId(cart.getStoreId())
+                .setShippingAddress(cart.getShippingDetail().getAddress())
+                .setBillingAddress(cart.getShippingDetail().getAddress())
+                .setTotal(finalTotal)
+                .setTaxes(totalTaxAmount)
+                .setShipping(shippingCost)
+                .setStatus("Out for delivery")
+                .setTransactionId(summary.getSummaryId())
+                .setDate(convertDateToTimestamp(cart.getShippingDetail().getDate()))
+                .build();
+
+        coreGateway.placeOrder(placeOrderRequest);
+
         return summary;
+    }
+
+    /**
+     * Helper to calculate total number of cart items
+     * @param cartItems the cart
+     * @return the total number of CartItem in the cart
+     */
+    private int calculateTotalItems(List<CartItem> cartItems) {
+        return cartItems.stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum();
+    }
+
+    /**
+     * Helper to calculate the gross subtotal = total without discount or shipping
+     * @param cartItems a list of CartItem
+     * @return the gross subtotal
+     */
+    private double calculateGrossSubtotal(List<CartItem> cartItems) {
+        return cartItems.stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
+
+    /**
+     * Helper to calculate the total discount from items
+     * @param cart the cart
+     * @return the total discount from items
+     */
+    private double calculateItemsTotalDiscount(Cart cart) {
+        return cart.getCartItems().stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity() * (item.getDiscount() / 100.0))
+                .sum();
+    }
+
+    /**
+     * Helper to calculate the discount from coupons (on the cart total after discount from items discount)
+     * @param discounts coupon discount codes
+     * @return the discount from coupons
+     */
+    private double calculateGeneralCouponDiscount(List<Discount> discounts) {
+        return discounts.stream()
+                .mapToDouble(Discount::getValue)
+                .sum();
     }
 
     /**
@@ -212,5 +252,21 @@ public class CartPricingService {
             return null;
         }
         return Date.from(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()));
+    }
+
+    /**
+     * Converts a java.util.Date object to a Protobuf Timestamp object.
+     * @param date a java.util.Date
+     * @return a google.protobuf.Timestamp
+     */
+    private Timestamp convertDateToTimestamp(Date date) {
+        if (date == null) {
+            return null;
+        }
+        Instant instant = date.toInstant();
+        return Timestamp.newBuilder()
+                .setSeconds(instant.getEpochSecond())
+                .setNanos(instant.getNano())
+                .build();
     }
 }

@@ -16,12 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.lang.reflect.Method;
+import java.time.Instant;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -33,21 +33,17 @@ public class CartPricingServiceTest extends PostgresTestcontainer {
     @Autowired
     private CartPricingService cartPricingService;
 
-    // Mock instance injected via MockConfig
     @Autowired
     private CartService cartService;
 
-    // Real instance (DB interaction)
     @Autowired
     private CartRepository cartRepository;
 
-    // Mock instance injected via MockConfig (gRPC client)
     @Autowired
     private CoreGateway coreGateway;
 
     private final String TEST_CART_ID = "testcartid";
 
-    // --- Configuration to replace real CartService and CoreGateway with Mocks ---
     @TestConfiguration
     static class MockConfig {
         @Bean
@@ -102,15 +98,19 @@ public class CartPricingServiceTest extends PostgresTestcontainer {
                 .build();
     }
 
+    // invoker for private methods
+    private <T> T invokePrivateMethod(String methodName, Class<?>[] parameterTypes, Object... args) throws Exception {
+        Method method = CartPricingService.class.getDeclaredMethod(methodName, parameterTypes);
+        method.setAccessible(true);
+        return (T) method.invoke(cartPricingService, args);
+    }
+
     @BeforeEach
     void setup() {
-        // Save a real cart instance to the database
         Cart baseCart = createBaseCart(TEST_CART_ID, "teststoreid");
         //cartRepository.save(baseCart);
         baseCart.setShippingDetail(null);
         cartRepository.saveAndFlush(baseCart);
-
-        // Reset mocks before each test
         reset(cartService, coreGateway);
     }
 
@@ -333,6 +333,7 @@ public class CartPricingServiceTest extends PostgresTestcontainer {
         ShippingDetail detail = new ShippingDetail();
         detail.setAddress("Summary Address");
         detail.setCost(7.50);
+        detail.setDate(new Date());
         detail.setCart(realCart); // Establish bidirectional link
         realCart.setShippingDetail(detail);
 
@@ -341,8 +342,6 @@ public class CartPricingServiceTest extends PostgresTestcontainer {
 
         // 6. Stub the mocked CartService to return the persisted Cart object
         when(cartService.getCartById(TEST_CART_ID)).thenReturn(Optional.of(realCart));
-
-        // ... Calculation remains the same ...
 
         // ACT
         Summary summary = cartPricingService.getSummary(TEST_CART_ID);
@@ -420,5 +419,127 @@ public class CartPricingServiceTest extends PostgresTestcontainer {
         assertThrows(IllegalStateException.class, () -> {
             cartPricingService.getSummary(NON_EXISTENT_ID);
         }, "Should throw IllegalStateException when cart is not found.");
+    }
+
+    @Test
+    void testCalculateTotalItems() throws Exception {
+        List<CartItem> items = List.of(
+                createCartItem("p1", "v1"),
+                createCartItem("p2", "v2"),
+                createCartItem("p3", "v3")
+        );
+        int total = invokePrivateMethod("calculateTotalItems", new Class[]{List.class}, items);
+        assertThat(total).isEqualTo(3);
+    }
+
+    @Test
+    void testCalculateGrossSubtotal() throws Exception {
+        // Helper with price and quantity
+        List<CartItem> items = List.of(
+                createCartItem("p1", "v1"),
+                createCartItem("p2", "v2")
+        );
+        double subtotal = invokePrivateMethod("calculateGrossSubtotal", new Class[]{List.class}, items);
+        assertThat(subtotal).isEqualTo(200.0);
+    }
+
+    @Test
+    void testCalculateItemsTotalDiscount() throws Exception {
+        // Items:
+        // 1. Qty 2, Price 100, Discount 10% -> 2 * 100 * 0.10 = 20.0
+        // 2. Qty 1, Price 50, Discount 0% -> 0.0
+        Cart cart = createBaseCart(TEST_CART_ID, "store");
+        CartItem item1 = createCartItem("p1", "v1");
+        CartItem item2 = createCartItem("p2", "v2");
+        item2.setDiscount(10.0);
+        cart.getCartItems().addAll(List.of(item1, item2));
+
+        double totalDiscount = invokePrivateMethod("calculateItemsTotalDiscount", new Class[]{Cart.class}, cart);
+        assertThat(totalDiscount).isEqualTo(10.0);
+    }
+
+    @Test
+    void testCalculateGeneralCouponDiscount() throws Exception {
+        // Discounts: Value 10.0, Value 5.50
+        Discount discount1 = new Discount();
+        discount1.setValue(10);
+        Discount discount2 = new Discount();
+        discount2.setValue(5.50);
+        List<Discount> discounts = new ArrayList<>();
+        discounts.add(discount1);
+        discounts.add(discount2);
+        double couponDiscount = invokePrivateMethod("calculateGeneralCouponDiscount", new Class[]{List.class}, discounts);
+
+        assertThat(couponDiscount).isEqualTo(15.50);
+    }
+
+    @Test
+    void testCalculateShipping_ValidCode_ReturnsTrue() throws Exception {
+        boolean result = invokePrivateMethod("calculateShipping", new Class[]{String.class}, "shipping25");
+        assertTrue(result);
+    }
+
+    @Test
+    void testCalculateShipping_InvalidCode_ReturnsFalse() throws Exception {
+        boolean result = invokePrivateMethod("calculateShipping", new Class[]{String.class}, "NOTSHIPPING");
+        assertFalse(result);
+    }
+
+    @Test
+    void testConvertTimestampToDate_ValidTimestamp() throws Exception {
+        long epochSeconds = 1672531200L; // Jan 1, 2023 00:00:00 UTC
+        int nanos = 123456789; // 123 milliseconds + 456,789 nanoseconds
+
+        Timestamp timestamp = Timestamp.newBuilder()
+                .setSeconds(epochSeconds)
+                .setNanos(nanos)
+                .build();
+
+        Date date = invokePrivateMethod("convertTimestampToDate", new Class[]{Timestamp.class}, timestamp);
+
+        // Convert the result back to Instant for easy comparison
+        Instant instant = date.toInstant();
+
+        // ASSERTION 1: Seconds should be exact
+        assertThat(instant.getEpochSecond()).isEqualTo(epochSeconds);
+
+        // ASSERTION 2: Nanoseconds must be asserted using tolerance (1 millisecond)
+        // The actual value will be 123,000,000.
+        // The expected is 123,456,789.
+        // The difference is less than 1,000,000 (1 millisecond).
+        assertThat(instant.getNano()).isCloseTo(nanos, within(1_000_000));
+    }
+
+    @Test
+    void testConvertTimestampToDate_NullTimestamp_ReturnsNull() throws Exception {
+        Date date = invokePrivateMethod("convertTimestampToDate", new Class[]{Timestamp.class}, (Timestamp) null);
+        assertThat(date).isNull();
+    }
+
+    @Test
+    void testConvertTimestampToDate_ZeroTimestamp_ReturnsNull() throws Exception {
+        Timestamp timestamp = Timestamp.newBuilder().setSeconds(0).setNanos(0).build();
+        Date date = invokePrivateMethod("convertTimestampToDate", new Class[]{Timestamp.class}, timestamp);
+        assertThat(date).isNull();
+    }
+
+    @Test
+    void testConvertDateToTimestamp_ValidDate() throws Exception {
+        Instant now = Instant.now();
+        Date date = Date.from(now);
+
+        Timestamp timestamp = invokePrivateMethod("convertDateToTimestamp", new Class[]{Date.class}, date);
+
+        assertThat(timestamp.getSeconds()).isEqualTo(now.getEpochSecond());
+        // Note: Date.from(Instant) loses nanosecond precision below milliseconds
+        // but this test still checks the core conversion logic.
+        // We'll primarily check the seconds and ensure nanos isn't wildly off.
+        assertThat(timestamp.getNanos()).isCloseTo(now.getNano(), within(1_000_000)); // Within 1 millisecond
+    }
+
+    @Test
+    void testConvertDateToTimestamp_NullDate_ReturnsNull() throws Exception {
+        Timestamp timestamp = invokePrivateMethod("convertDateToTimestamp", new Class[]{Date.class}, (Date) null);
+        assertThat(timestamp).isNull();
     }
 }
