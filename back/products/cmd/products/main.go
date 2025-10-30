@@ -17,6 +17,38 @@ import (
 	"github.com/ahkoklol/DevOps-Shopify/back/products/internal/repository" 
 )
 
+type contextKey int
+
+const (
+    // contextKeyProductID is the context key for the Product ID path variable.
+    contextKeyProductID contextKey = iota
+    // contextKeyCategoryID is the context key for the Category ID path variable.
+    contextKeyCategoryID
+    // contextKeyMediaID is the context key for the Media ID path variable.
+    contextKeyMediaID
+)
+
+// MuxVarsInjector takes a handler and a list of path variable names (Mux expects these) 
+// and injects them into the request context with the standard key names used by the rest.Handler.
+func MuxVarsInjector(next http.HandlerFunc, keyMap map[string]string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		ctx := r.Context()
+
+		// Inject each required path variable into the context
+		for muxKey, handlerKey := range keyMap {
+			if val, ok := vars[muxKey]; ok {
+				// We use the string expected by the rest.Handler for simplicity, 
+				// though best practice is to use the custom contextKey type.
+				ctx = context.WithValue(ctx, handlerKey, val) 
+			}
+		}
+
+		// Call the next handler in the chain
+		next(w, r.WithContext(ctx))
+	}
+}
+
 // main initializes the PostgreSQL connection, the business service, the REST handlers, and starts the server.
 func main() {
     // 0. Load .env file
@@ -84,10 +116,21 @@ func main() {
     // For now, let's keep the existing logic and add the necessary routes for functional testing:
 
     // Routes requiring ID extraction (Use Mux.HandleFunc for path variables)
-    router.HandleFunc("/products/{id}", handler.GetProductByID).Methods("GET")
-    router.HandleFunc("/products/{id}", handler.UpdateProduct).Methods("PUT")
-    router.HandleFunc("/products/{id}", handler.DeleteProduct).Methods("DELETE")
-    router.HandleFunc("/products/{id}/stock", handler.GetStockLevelHandler).Methods("GET")
+    router.HandleFunc("/products/{product_id}", 
+        MuxVarsInjector(handler.GetProductByID, map[string]string{"product_id": "product_id"}),
+    ).Methods("GET")
+    
+    router.HandleFunc("/products/{product_id}", 
+        MuxVarsInjector(handler.UpdateProduct, map[string]string{"product_id": "product_id"}),
+    ).Methods("PUT")
+    
+    router.HandleFunc("/products/{product_id}", 
+        MuxVarsInjector(handler.DeleteProduct, map[string]string{"product_id": "product_id"}),
+    ).Methods("DELETE")
+    
+    router.HandleFunc("/products/{product_id}/stock", 
+        MuxVarsInjector(handler.GetStockLevelHandler, map[string]string{"product_id": "product_id"}),
+    ).Methods("GET")
 
     // Routes for lists/creation
     router.HandleFunc("/products", handler.GetProducts).Methods("GET")
@@ -96,42 +139,24 @@ func main() {
 	// Routes for categories
     router.HandleFunc("/categories", handler.CreateCategoryHandler).Methods("POST")
 	router.HandleFunc("/categories", handler.GetCategoriesHandler).Methods("GET")
-    categoryRouter := router.PathPrefix("/categories").Subrouter()
-    categoryRouter.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
-        vars := mux.Vars(r)
-        id := vars["id"]
-        
-        // Inject the path variable into the request context with the key expected by the handler
-        ctx := context.WithValue(r.Context(), "category_id", id)
-        
-        handler.DeleteCategoryHandler(w, r.WithContext(ctx))
-    }).Methods("DELETE")
+    router.HandleFunc("/categories/{category_id}", 
+        MuxVarsInjector(handler.DeleteCategoryHandler, map[string]string{"category_id": "category_id"}),
+    ).Methods("DELETE")
 
     // Routes for media
-    router.HandleFunc("/products/{productID}/media", func(w http.ResponseWriter, r *http.Request) {
-        productID := mux.Vars(r)["productID"]
-        ctx := context.WithValue(r.Context(), "product_id", productID)
-        handler.GetMediaForProduct(w, r.WithContext(ctx))
-    }).Methods("GET")
+    router.HandleFunc("/products/{product_id}/media", 
+        MuxVarsInjector(handler.GetMediaForProduct, map[string]string{"product_id": "product_id"}),
+    ).Methods("GET")
 
-    // POST /products/{productID}/media: Add a new media item to a product
-    router.HandleFunc("/products/{productID}/media", func(w http.ResponseWriter, r *http.Request) {
-        productID := mux.Vars(r)["productID"]
-        ctx := context.WithValue(r.Context(), "product_id", productID)
-        handler.AddMediaToProduct(w, r.WithContext(ctx))
-    }).Methods("POST")
+    // POST /products/{product_id}/media: Refactored to use MuxVarsInjector
+    router.HandleFunc("/products/{product_id}/media", 
+        MuxVarsInjector(handler.AddMediaToProduct, map[string]string{"product_id": "product_id"}),
+    ).Methods("POST")
 
-    // DELETE /products/{productID}/media/{mediaID}: Delete a specific media item
-    router.HandleFunc("/products/{productID}/media/{mediaID}", func(w http.ResponseWriter, r *http.Request) {
-        mediaID := mux.Vars(r)["mediaID"] 
-        ctx := context.WithValue(r.Context(), "media_id", mediaID)
-        handler.DeleteMediaByID(w, r.WithContext(ctx))
-    }).Methods("DELETE")
-    
-    // Root endpoint
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, DevOps-Shopifaille! Products microservice is active.")
-	})
+    // DELETE /products/{product_id}/media/{media_id}: Refactored to use MuxVarsInjector
+    router.HandleFunc("/products/{product_id}/media/{media_id}", 
+        MuxVarsInjector(handler.DeleteMediaByID, map[string]string{"media_id": "media_id"}),
+    ).Methods("DELETE")
 
 	// 5. Start the Server (Uses the dynamically loaded port)
 	addr := fmt.Sprintf(":%d", port)

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"regexp"
+    "strings"
 
 	"github.com/google/uuid" // Use for ProductID generation
 )
@@ -17,6 +19,18 @@ var (
 	ErrOutOfStock    = errors.New("out of stock")
 	ErrInsufficientPrivileges = errors.New("insufficient privileges")
 )
+
+// slugify converts a string (like a product title) into a URL-safe slug.
+func slugify(s string) string {
+    // 1. Convert to lowercase
+    s = strings.ToLower(s)
+    // 2. Remove non-word characters and replace with a hyphen
+    reg := regexp.MustCompile("[^a-z0-9]+")
+    s = reg.ReplaceAllString(s, "-")
+    // 3. Trim leading/trailing hyphens
+    s = strings.Trim(s, "-")
+    return s
+}
 
 // Service is the core business logic layer.
 type Service struct {
@@ -130,7 +144,7 @@ func (s *Service) CreateProduct(ctx context.Context, p *Product) error {
     // REAL CHECK 3: Slug Validation/Generation
     if p.Slug == "" {
         // Business Logic: Auto-generate a URL-safe slug from p.Title here.
-        p.Slug = uuid.New().String() // Placeholder for a unique, URL-safe slug
+        p.Slug = slugify(p.Title)
     }
     // CRITICAL CHECK: Repository must ensure slug uniqueness. The repo should return ErrConflict if violated.
 
