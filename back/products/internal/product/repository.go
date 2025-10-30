@@ -42,6 +42,14 @@ type Repository interface {
 	// GetAllCategories retrieves a list of all categories.
 	GetAllCategories(ctx context.Context) ([]*Category, error)
 
+	GetMediaByProductID(ctx context.Context, productID string) ([]*Media, error)
+
+	// CreateMedia saves a new media item to the database.
+	CreateMedia(ctx context.Context, m *Media) error
+
+	// DeleteMedia removes a media item by its ID.
+	DeleteMedia(ctx context.Context, mediaID string) error
+
 
 	// gRPC methods
 }

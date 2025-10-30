@@ -69,26 +69,106 @@ func (r *PostgresRepository) FindByID(ctx context.Context, id string) (*product.
 		&p.DateCreated, &p.DateModified,
 	)
 
-	// Map the pgx error (ErrNoRows) to the domain error (ErrNotFound).
-	return p, mapPostgreError(err)
+	if err != nil {
+        return nil, mapPostgreError(err)
+    }
+
+    // 2. Hydrate Variants (NOUVEAU)
+    variants, err := r.getVariantsByProductID(ctx, p.ProductId)
+    if err != nil {
+        // Traiter l'erreur comme critique, car le produit est incomplet sans ses variants
+        return nil, fmt.Errorf("failed to hydrate variants for product %s: %w", p.ProductId, err)
+    }
+    p.Variants = variants
+
+    return p, nil
 }
 
-// Create inserts a new product record into the database.
-func (r *PostgresRepository) Create(ctx context.Context, p *product.Product) error {
-	query := `
-		INSERT INTO products (
-			product_id, title, description, slug, category_id, store_id, date_created, date_modified
-		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8
-		)
-	`
-	_, err := r.db.Exec(ctx, query,
-		p.ProductId, p.Title, p.Description, p.Slug, p.CategoryId, p.StoreId,
-		p.DateCreated, p.DateModified,
-	)
+func (r *PostgresRepository) getVariantsByProductID(ctx context.Context, productID string) ([]product.Variant, error) {
+    query := `
+        SELECT variant_id, product_id, sku, attributes, price, currency, stock_quantity
+        FROM variants 
+        WHERE product_id = $1
+    `
+    rows, err := r.db.Query(ctx, query, productID)
+    if err != nil {
+        return nil, mapPostgreError(err)
+    }
+    defer rows.Close()
 
-	// Map the PostgreSQL error (e.g., conflict on unique index) to the domain error.
-	return mapPostgreError(err)
+    variants := []product.Variant{}
+    for rows.Next() {
+        v := product.Variant{}
+        err := rows.Scan(
+            &v.VariantId, &v.ProductId, &v.Sku, &v.Attributes, &v.Price, &v.Currency, &v.Quantity,
+        )
+        if err != nil {
+            return nil, mapPostgreError(err)
+        }
+        variants = append(variants, v)
+    }
+    if err := rows.Err(); err != nil {
+        return nil, mapPostgreError(err)
+    }
+    return variants, nil
+}
+
+// Create inserts a new product record into the database, INCLUDING VARIANTS, atomically.
+func (r *PostgresRepository) Create(ctx context.Context, p *product.Product) error {
+    // 1. Begin Transaction (Reste inchangé)
+    tx, err := r.db.Begin(ctx)
+    if err != nil {
+        return mapPostgreError(err)
+    }
+    var commitErr error
+    defer func() {
+        if commitErr != nil {
+            tx.Rollback(ctx)
+        } else {
+            commitErr = tx.Commit(ctx)
+        }
+    }()
+
+    // 2. Insert Product (Reste inchangé)
+    productQuery := `
+        INSERT INTO products ( product_id, title, description, slug, category_id, store_id, date_created, date_modified ) 
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
+    `
+    _, err = tx.Exec(ctx, productQuery,
+        p.ProductId, p.Title, p.Description, p.Slug, p.CategoryId, p.StoreId,
+        p.DateCreated, p.DateModified,
+    )
+    if err != nil {
+        commitErr = err
+        return mapPostgreError(err)
+    }
+
+    // 3. Insert Variants (NOUVEAU)
+    variantQuery := `
+        INSERT INTO variants (
+            variant_id, product_id, sku, attributes, price, currency, stock_quantity
+        ) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+    `
+    for i := range p.Variants {
+        v := &p.Variants[i]
+        
+        // Assurez-vous que l'ID du produit est assigné à chaque variant.
+        v.ProductId = p.ProductId 
+        
+        // Vous devez aussi vous assurer que v.VariantId a un UUID généré
+        // (idéalement dans la couche Service si v.VariantId est vide)
+        
+        _, err = tx.Exec(ctx, variantQuery,
+            v.VariantId, v.ProductId, v.Sku, v.Attributes, v.Price, v.Currency, v.Quantity,
+        )
+        if err != nil {
+            commitErr = err
+            return mapPostgreError(err) // Échec => Rollback via defer
+        }
+    }
+
+    // 4. Commit or Rollback via defer
+    return mapPostgreError(commitErr) 
 }
 
 // Update modifies an existing product record.
@@ -264,7 +344,7 @@ func (r *PostgresRepository) GetCategoryByID(ctx context.Context, id string) (*p
 
 	// Note: pgx handles scanning into a pointer field (*string for ParentId)
 	err := row.Scan(
-		&c.CategoryId, &c.Name, &c.StoreId, &c.ParentId, 
+		&c.CategoryId, &c.Name, &c.ParentId, 
 	)
 
 	return c, mapPostgreError(err)
@@ -281,7 +361,7 @@ func (r *PostgresRepository) CreateCategory(ctx context.Context, c *product.Cate
 	`
 	// Utilise c.ParentId (*string) qui sera mappé à NULL si le pointeur est nil.
 	_, err := r.db.Exec(ctx, query,
-		c.CategoryId, c.Name, c.StoreId, c.ParentId,
+		c.CategoryId, c.Name, c.ParentId,
 	)
 
 	// mapPostgreError doit gérer pgErr.Code == "23505" (conflit unique) ou "23503" (FK violation).
@@ -325,7 +405,7 @@ func (r *PostgresRepository) GetAllCategories(ctx context.Context) ([]*product.C
 		
 		// Scan the result into the struct fields.
 		err := rows.Scan(
-			&c.CategoryId, &c.Name, &c.StoreId, &c.ParentId, // ParentId est un *string
+			&c.CategoryId, &c.Name, &c.ParentId, // ParentId est un *string
 		)
 		if err != nil {
 			return nil, mapPostgreError(err)
@@ -339,4 +419,73 @@ func (r *PostgresRepository) GetAllCategories(ctx context.Context) ([]*product.C
 	}
 
 	return categories, nil
+}
+
+// CreateMedia inserts a new media record associated with a product.
+func (r *PostgresRepository) CreateMedia(ctx context.Context, m *product.Media) error {
+	query := `
+		INSERT INTO product_media (
+			media_id, product_id, url, alt, sort_order
+		) VALUES (
+			$1, $2, $3, $4, $5
+		)
+	`
+	// NOTE: Ensure your database table for media is named 'product_media' 
+	// and has columns matching the fields: media_id, product_id, url, alt, sort_order.
+	_, err := r.db.Exec(ctx, query,
+		m.MediaId, m.ProductId, m.Url, m.Alt, m.SortOrder,
+	)
+
+	// mapPostgreError handles unique constraint violations or foreign key errors.
+	return mapPostgreError(err)
+}
+
+// GetMediaByProductID retrieves all media linked to a product ID.
+func (r *PostgresRepository) GetMediaByProductID(ctx context.Context, productID string) ([]*product.Media, error) {
+	query := `
+		SELECT media_id, product_id, url, alt, sort_order
+		FROM product_media 
+		WHERE product_id = $1
+		ORDER BY sort_order ASC
+	`
+	rows, err := r.db.Query(ctx, query, productID)
+	if err != nil {
+		return nil, mapPostgreError(err)
+	}
+	defer rows.Close()
+
+	mediaList := []*product.Media{}
+	for rows.Next() {
+		m := &product.Media{}
+		
+		err := rows.Scan(
+			&m.MediaId, &m.ProductId, &m.Url, &m.Alt, &m.SortOrder,
+		)
+		if err != nil {
+			return nil, mapPostgreError(err)
+		}
+		mediaList = append(mediaList, m)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, mapPostgreError(err)
+	}
+
+	return mediaList, nil
+}
+
+// DeleteMedia removes a media record by its unique MediaId.
+func (r *PostgresRepository) DeleteMedia(ctx context.Context, mediaID string) error {
+	query := `DELETE FROM product_media WHERE media_id = $1`
+	
+	result, err := r.db.Exec(ctx, query, mediaID)
+	if err != nil {
+		return mapPostgreError(err)
+	}
+
+	if result.RowsAffected() == 0 {
+		return product.ErrNotFound
+	}
+	
+	return nil
 }

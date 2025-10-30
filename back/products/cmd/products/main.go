@@ -93,7 +93,7 @@ func main() {
     router.HandleFunc("/products", handler.GetProducts).Methods("GET")
     router.HandleFunc("/products", handler.CreateProduct).Methods("POST")
 
-	// Toutes for categories
+	// Routes for categories
     router.HandleFunc("/categories", handler.CreateCategoryHandler).Methods("POST")
 	router.HandleFunc("/categories", handler.GetCategoriesHandler).Methods("GET")
     categoryRouter := router.PathPrefix("/categories").Subrouter()
@@ -105,6 +105,27 @@ func main() {
         ctx := context.WithValue(r.Context(), "category_id", id)
         
         handler.DeleteCategoryHandler(w, r.WithContext(ctx))
+    }).Methods("DELETE")
+
+    // Routes for media
+    router.HandleFunc("/products/{productID}/media", func(w http.ResponseWriter, r *http.Request) {
+        productID := mux.Vars(r)["productID"]
+        ctx := context.WithValue(r.Context(), "product_id", productID)
+        handler.GetMediaForProduct(w, r.WithContext(ctx))
+    }).Methods("GET")
+
+    // POST /products/{productID}/media: Add a new media item to a product
+    router.HandleFunc("/products/{productID}/media", func(w http.ResponseWriter, r *http.Request) {
+        productID := mux.Vars(r)["productID"]
+        ctx := context.WithValue(r.Context(), "product_id", productID)
+        handler.AddMediaToProduct(w, r.WithContext(ctx))
+    }).Methods("POST")
+
+    // DELETE /products/{productID}/media/{mediaID}: Delete a specific media item
+    router.HandleFunc("/products/{productID}/media/{mediaID}", func(w http.ResponseWriter, r *http.Request) {
+        mediaID := mux.Vars(r)["mediaID"] 
+        ctx := context.WithValue(r.Context(), "media_id", mediaID)
+        handler.DeleteMediaByID(w, r.WithContext(ctx))
     }).Methods("DELETE")
     
     // Root endpoint

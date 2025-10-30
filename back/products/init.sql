@@ -2,14 +2,11 @@ CREATE TABLE categories (
     category_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     
-    -- AJOUT CRITIQUE: Identifiant du magasin auquel appartient cette catégorie
-    store_id VARCHAR(50) NOT NULL, 
-    
-    -- Clé auto-référencée. La contrainte FK vérifie toujours la catégorie locale.
+    -- Utilise 'UUID' pour la FK auto-référencée. NULL si c'est une catégorie racine.
     parent_id UUID REFERENCES categories(category_id) ON DELETE SET NULL, 
     
-    -- NOUVELLE CONTRAINTE D'UNICITÉ: Le nom de la catégorie doit être unique POUR UN MAGASIN ET UN PARENT DONNÉS.
-    UNIQUE (store_id, name, parent_id)
+    -- NOUVELLE CONTRAINTE D'UNICITÉ: Le nom de la catégorie doit être unique globalement pour un parent donné.
+    UNIQUE (name, parent_id)
 );
 
 CREATE TABLE products (

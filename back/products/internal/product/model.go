@@ -14,6 +14,7 @@ type Product struct {
 	Slug string `json:"slug"`
 	CategoryId string `json:"category_id"`
 	StoreId string `json:"store_id"`
+	Variants []Variant `json:"variants"`
 	DateCreated time.Time `json:"date_created"`
 	DateModified time.Time `json:"date_modified"`
 }
@@ -31,7 +32,6 @@ type Variant struct {
 type Category struct {
 	CategoryId string `json:"category_id"`
 	Name string `json:"name"`
-	StoreId string `json:"store_id"`
 	ParentId *string `json:"parent_id"`
 }
 

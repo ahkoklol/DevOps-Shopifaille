@@ -24,6 +24,9 @@ type Service interface {
 	CreateCategory(ctx context.Context, c *product.Category) error
 	DeleteCategory(ctx context.Context, id string) error
 	GetAllCategories(ctx context.Context) ([]*product.Category, error)
+	GetMediaByProductID(ctx context.Context, productID string) ([]*product.Media, error)
+    CreateMedia(ctx context.Context, m *product.Media) error
+    DeleteMedia(ctx context.Context, mediaID string) error
 }
 
 // Handler holds the business logic service dependency.
@@ -265,4 +268,58 @@ func (h *Handler) GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(categories) // Returns the list of categories
+}
+
+// GetMediaForProduct handles GET /products/{id}/media endpoint.
+func (h *Handler) GetMediaForProduct(w http.ResponseWriter, r *http.Request) {
+    // Assume product_id is extracted from the URL path
+    productID := r.Context().Value("product_id").(string) 
+    
+    mediaList, err := h.service.GetMediaByProductID(r.Context(), productID)
+
+    if err != nil {
+        responseError(w, err)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK) 
+    json.NewEncoder(w).Encode(mediaList)
+}
+
+// AddMediaToProduct handles POST /products/{id}/media endpoint.
+func (h *Handler) AddMediaToProduct(w http.ResponseWriter, r *http.Request) {
+    productID := r.Context().Value("product_id").(string)
+    
+    var m product.Media
+
+    if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
+        responseError(w, fmt.Errorf("%w: invalid JSON body", product.ErrValidation))
+        return
+    }
+
+    // CRITICAL: Ensure the ProductId from the URL path is used for the creation.
+    m.ProductId = productID
+    
+    if err := h.service.CreateMedia(r.Context(), &m); err != nil {
+        responseError(w, err)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated) // 201 Created
+    json.NewEncoder(w).Encode(m)
+}
+
+// DeleteMediaByID handles DELETE /products/{id}/media/{mediaId} endpoint.
+func (h *Handler) DeleteMediaByID(w http.ResponseWriter, r *http.Request) {
+    // Assume media_id is extracted from the URL path
+    mediaID := r.Context().Value("media_id").(string) 
+
+    if err := h.service.DeleteMedia(r.Context(), mediaID); err != nil {
+        responseError(w, err)
+        return
+    }
+
+    w.WriteHeader(http.StatusNoContent) // 204 No Content
 }
