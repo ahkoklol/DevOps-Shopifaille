@@ -646,9 +646,6 @@ func (r *PostgresRepository) IncrementStock(ctx context.Context, productID strin
 // FindCategoryByNameAndParentID retrieves a single category by its name and parent ID.
 // Returns nil, nil if not found.
 func (r *PostgresRepository) FindCategoryByNameAndParentID(ctx context.Context, name string, parentID *string) (*product.Category, error) {
-    // CRITICAL: IS NOT DISTINCT FROM handles both cases:
-    // 1. parent_id IS NULL AND $2 IS NULL (match root category)
-    // 2. parent_id = $2 (match sub-category)
     query := `
         SELECT category_id, name, parent_id
         FROM categories 
@@ -656,12 +653,17 @@ func (r *PostgresRepository) FindCategoryByNameAndParentID(ctx context.Context, 
     `
     c := &product.Category{}
     
-    // parentID can be passed as a *string (or nil) to pgx
     row := r.db.QueryRow(ctx, query, name, parentID)
 
     err := row.Scan(
         &c.CategoryId, &c.Name, &c.ParentId, 
     )
 
+    // CRITICAL FIX: Intercept pgx.ErrNoRows and return nil object, nil error.
+    if errors.Is(err, pgx.ErrNoRows) {
+        return nil, nil 
+    }
+
+    // Map any other database error (like constraint violation or true connection error)
     return c, mapPostgreError(err)
 }
