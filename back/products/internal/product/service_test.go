@@ -113,6 +113,11 @@ func (m *MockRepository) CreateVariant(ctx context.Context, v *Variant) error {
 	return args.Error(0)
 }
 
+func (m *MockRepository) UpdateProductModifiedDate(ctx context.Context, productID string, modifiedDate time.Time) error {
+	args := m.Called(ctx, productID, modifiedDate)
+	return args.Error(0)
+}
+
 // --- TEST SUITE: CreateProduct ---
 
 func TestCreateProduct(t *testing.T) {

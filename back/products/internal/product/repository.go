@@ -2,6 +2,7 @@ package product
 
 import (
     "context"
+	"time"
 )
 
 type Repository interface {
@@ -53,6 +54,8 @@ type Repository interface {
 	FindCategoryByNameAndParentID(ctx context.Context, name string, parentID *string) (*Category, error)
 
 	CreateVariant(ctx context.Context, v *Variant) error
+
+	UpdateProductModifiedDate(ctx context.Context, productID string, modifiedDate time.Time) error
 
 
 	// gRPC methods

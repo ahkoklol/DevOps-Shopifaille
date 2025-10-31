@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 	"strconv"
 	"strings"
 
@@ -681,4 +682,26 @@ func (r *PostgresRepository) CreateVariant(ctx context.Context, v *product.Varia
     )
 
     return mapPostgreError(err)
+}
+
+// UpdateProductModifiedDate updates only the date_modified column for a product.
+func (r *PostgresRepository) UpdateProductModifiedDate(ctx context.Context, productID string, modifiedDate time.Time) error {
+	query := `
+		UPDATE products 
+		SET date_modified = $1
+		WHERE product_id = $2
+	`
+    // Execute the update
+	result, err := r.db.Exec(ctx, query, modifiedDate, productID)
+
+	if err != nil {
+		return mapPostgreError(err)
+	}
+
+	// Check if any row was affected (i.e., if the product existed)
+	if result.RowsAffected() == 0 {
+		return product.ErrNotFound
+	}
+	
+	return nil
 }

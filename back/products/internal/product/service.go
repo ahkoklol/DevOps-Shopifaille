@@ -395,5 +395,19 @@ func (s *Service) CreateVariant(ctx context.Context, v *Variant) error {
         v.VariantId = uuid.New().String()
     }
 
-    return s.repo.CreateVariant(ctx, v)
+    // 1. Create the variant record
+    if err := s.repo.CreateVariant(ctx, v); err != nil {
+        return err // Return if variant creation failed
+    }
+
+    // 2. CRITICAL FIX: Update the parent product's date_modified timestamp
+    now := time.Now()
+    if err := s.repo.UpdateProductModifiedDate(ctx, v.ProductId, now); err != nil {
+        // Log this error as it's critical, but don't fail the whole operation if the variant insert succeeded.
+        // For production, you might want to retry this or publish a message queue event.
+        fmt.Printf("Warning: Failed to update parent product %s modified date: %v\n", v.ProductId, err)
+        // We continue and return success for the variant creation despite the timestamp warning.
+    }
+    
+    return nil // Return success for variant creation
 }
