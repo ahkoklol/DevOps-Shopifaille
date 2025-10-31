@@ -14,7 +14,7 @@ export default function AdminRegisterPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: appel API d'inscription ici
-    navigate("/admin/dashboard");
+    navigate("/admin/home");
   };
 
   return (

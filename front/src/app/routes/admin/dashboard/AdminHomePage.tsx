@@ -1,16 +1,19 @@
-// src/app/routes/admin/dashboard/AdminDashboardPage.tsx
+// src/app/routes/admin/dashboard/AdminHomePage.tsx
 import { useNavigate } from "react-router-dom";
 import { Plus, Store, ExternalLink, Settings } from "lucide-react";
 import { Button } from "../../../../shared/components/ui/Button";
 import { Card } from "../../../../shared/components/ui/Card";
 import { getShopsByUserId } from "../../../../shared/lib/mock-data";
+import { Navbar } from "../Navbar";
 
-export default function AdminDashboardPage() {
+
+export default function AdminHomePage() {
   const navigate = useNavigate();
   const userShops = getShopsByUserId("1");
 
   return (
     <div className="min-h-screen bg-gray-50">
+    <Navbar variant="platform" onNavigate={() => { /* not used on home */ }} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -68,7 +71,13 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button className="flex-1" onClick={() => navigate(`/admin/${shop.id}`)}>
+                    <Button
+                      className="flex-1"
+                      onClick={() => {
+                        sessionStorage.setItem("activeShopId", shop.id); // optionnel mais utile en fallback
+                        navigate(`/admin/${shop.id}/dashboard`);        // ⬅️ vers le dashboard de CETTE boutique
+                      }}
+                    >
                       <Settings className="w-4 h-4 mr-2" />
                       Administrer
                     </Button>

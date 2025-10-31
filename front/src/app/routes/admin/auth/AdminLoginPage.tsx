@@ -14,7 +14,7 @@ export default function AdminLoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: vérification des identifiants
-    navigate("/admin/dashboard");
+    navigate("/admin/home");
   };
 
   return (
@@ -65,7 +65,7 @@ export default function AdminLoginPage() {
         <div className="mt-6 text-center">
           <span className="text-gray-600">Pas encore de compte ? </span>
           <button
-            onClick={() => navigate("/admin/register")}
+            onClick={() => navigate("/subscribe")}
             className="text-blue-600 hover:underline"
           >
             Créer un compte

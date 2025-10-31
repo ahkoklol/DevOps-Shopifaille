@@ -1,4 +1,4 @@
-// Mock data pour simuler la plateforme WayneShopify
+// Mock data pour simuler la plateforme Shopifaille
 
 export interface User {
   id: string;

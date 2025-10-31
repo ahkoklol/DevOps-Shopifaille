@@ -1,36 +1,62 @@
 // src/app/routes/index.tsx
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter, Navigate, useParams } from "react-router-dom";
 
-// --- Admin (auth) ---
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
 import AdminRegisterPage from "./admin/auth/AdminRegisterPage";
 import AdminForgotPasswordPage from "./admin/auth/AdminForgotPasswordPage";
 
-// --- Admin (protected area) ---
+import SubscriptionChoice from "./admin/suscription/SuscriptionChoice";
+
 import AdminLayout from "./admin/AdminLayout";
-import AdminDashboardPage from "./admin/dashboard/AdminDashboardPage";
-// import AdminSettingsPage from "./admin/settings/AdminSettingsPage";
+import HomePage from "./admin/HomePage";
+import AdminHomePage from "./admin/dashboard/AdminHomePage";
+import AdminDashboard from "./admin/dashboard/AdminDashboard";
+
+// Import direct
+import { ProductList } from "./admin/dashboard/ProductManagement";
+import { CategoryList } from "./admin/dashboard/CategoryManagement";
+
+// ⬇️ Petits wrappers internes (déclarés dans CE fichier) pour injecter le shopId param
+function ProductsRoute() {
+  const { shopId } = useParams();
+  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  return <ProductList shopId={shopId ?? saved ?? "1"} />;
+}
+function CategoriesRoute() {
+  const { shopId } = useParams();
+  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  return <CategoryList shopId={shopId ?? saved ?? "1"} />;
+}
 
 export const router = createBrowserRouter([
-  // Redirect root -> admin login for now
-  { path: "/", element: <Navigate to="/admin/login" replace /> },
+  { path: "/", element: <Navigate to="/homepage" replace /> },
 
-  // Public admin auth routes
+  // Homepage publique
+  { path: "/homepage", element: <HomePage /> },
+
+  // Auth
   { path: "/admin/login", element: <AdminLoginPage /> },
   { path: "/admin/register", element: <AdminRegisterPage /> },
   { path: "/admin/forgot-password", element: <AdminForgotPasswordPage /> },
 
-  // Admin protected area
+  // Souscription
+  { path: "/subscribe", element: <SubscriptionChoice /> },
+
+  // ⬇️ AdminHomePage SANS sidebar (hors layout)
+  { path: "/admin/home", element: <AdminHomePage /> },
+
+  // ⬇️ Espace admin AVEC sidebar par boutique
   {
-    path: "/admin",
+    path: "/admin/:shopId",
     element: <AdminLayout />,
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
-      { path: "dashboard", element: <AdminDashboardPage /> },
-      // { path: "settings", element: <AdminSettingsPage /> },
+      { path: "dashboard", element: <AdminDashboard /> },
+      { path: "products", element: <ProductsRoute /> },
+      { path: "categories", element: <CategoriesRoute /> },
+      // tu pourras ajouter ici orders/customers/etc. sur le même modèle
     ],
   },
 
-  // Fallback 404
   { path: "*", element: <div>404 - Page non trouvée</div> },
 ]);
