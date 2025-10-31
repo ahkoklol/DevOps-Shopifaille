@@ -372,3 +372,28 @@ func (s *Service) DeleteMedia(ctx context.Context, mediaID string) error {
 
     return s.repo.DeleteMedia(ctx, mediaID)
 }
+
+// CreateVariant validates and creates a new variant for a product.
+func (s *Service) CreateVariant(ctx context.Context, v *Variant) error {
+    // REAL CHECK 1: Input Validation
+    if v == nil || v.ProductId == "" || v.Sku == "" || v.Price <= 0 || v.Currency == "" {
+        return fmt.Errorf("%w: ProductId, Sku, Price, and Currency are mandatory for variants", ErrValidation)
+    }
+
+    // REAL CHECK 2: Product Existence Check
+    // We check for the product's existence to ensure the Foreign Key constraint will pass.
+    _, err := s.repo.FindByID(ctx, v.ProductId)
+    if errors.Is(err, ErrNotFound) {
+        return fmt.Errorf("%w: Cannot link variant to a non-existent product", ErrValidation)
+    }
+    if err != nil {
+        return fmt.Errorf("failed to verify product existence: %w", err)
+    }
+
+    // REAL CHECK 3: ID Generation
+    if v.VariantId == "" {
+        v.VariantId = uuid.New().String()
+    }
+
+    return s.repo.CreateVariant(ctx, v)
+}

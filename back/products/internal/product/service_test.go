@@ -108,6 +108,11 @@ func (m *MockRepository) FindCategoryByNameAndParentID(ctx context.Context, name
 	return args.Get(0).(*Category), args.Error(1)
 }
 
+func (m *MockRepository) CreateVariant(ctx context.Context, v *Variant) error {
+	args := m.Called(ctx, v)
+	return args.Error(0)
+}
+
 // --- TEST SUITE: CreateProduct ---
 
 func TestCreateProduct(t *testing.T) {

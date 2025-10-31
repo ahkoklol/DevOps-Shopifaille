@@ -52,6 +52,8 @@ type Repository interface {
 
 	FindCategoryByNameAndParentID(ctx context.Context, name string, parentID *string) (*Category, error)
 
+	CreateVariant(ctx context.Context, v *Variant) error
+
 
 	// gRPC methods
 }

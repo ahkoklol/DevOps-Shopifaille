@@ -147,16 +147,17 @@ func main() {
     router.HandleFunc("/products/{product_id}/media", 
         MuxVarsInjector(handler.GetMediaForProduct, map[string]string{"product_id": "product_id"}),
     ).Methods("GET")
-
-    // POST /products/{product_id}/media: Refactored to use MuxVarsInjector
     router.HandleFunc("/products/{product_id}/media", 
         MuxVarsInjector(handler.AddMediaToProduct, map[string]string{"product_id": "product_id"}),
     ).Methods("POST")
-
-    // DELETE /products/{product_id}/media/{media_id}: Refactored to use MuxVarsInjector
     router.HandleFunc("/products/{product_id}/media/{media_id}", 
         MuxVarsInjector(handler.DeleteMediaByID, map[string]string{"media_id": "media_id"}),
     ).Methods("DELETE")
+
+    // Routes for variants
+    router.HandleFunc("/products/{product_id}/variants", 
+        MuxVarsInjector(handler.CreateVariantHandler, map[string]string{"product_id": "product_id"}),
+    ).Methods("POST")
 
 	// 5. Start the Server (Uses the dynamically loaded port)
 	addr := fmt.Sprintf(":%d", port)

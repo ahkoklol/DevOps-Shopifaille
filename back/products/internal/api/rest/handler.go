@@ -27,6 +27,7 @@ type Service interface {
 	GetMediaByProductID(ctx context.Context, productID string) ([]*product.Media, error)
     CreateMedia(ctx context.Context, m *product.Media) error
     DeleteMedia(ctx context.Context, mediaID string) error
+	CreateVariant(ctx context.Context, v *product.Variant) error
 }
 
 // Handler holds the business logic service dependency.
@@ -322,4 +323,32 @@ func (h *Handler) DeleteMediaByID(w http.ResponseWriter, r *http.Request) {
     }
 
     w.WriteHeader(http.StatusNoContent) // 204 No Content
+}
+
+// CreateVariantHandler handles POST /products/{id}/variants endpoint.
+func (h *Handler) CreateVariantHandler(w http.ResponseWriter, r *http.Request) {
+    // NOTE: We assume the product_id is extracted by the router into the context.
+    productID := r.Context().Value("product_id").(string) 
+    
+    var v product.Variant
+
+    // 1. Decode incoming JSON body
+    if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
+        responseError(w, fmt.Errorf("%w: invalid JSON body", product.ErrValidation))
+        return
+    }
+
+    // 2. CRITICAL: Ensure the ProductId from the URL path is used
+    v.ProductId = productID 
+    
+    // 3. Call the business logic
+    if err := h.service.CreateVariant(r.Context(), &v); err != nil {
+        responseError(w, err)
+        return
+    }
+
+    // 4. Send Response (201 Created)
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated) 
+    json.NewEncoder(w).Encode(v) // Return the newly created object
 }

@@ -667,3 +667,18 @@ func (r *PostgresRepository) FindCategoryByNameAndParentID(ctx context.Context, 
     // Map any other database error (like constraint violation or true connection error)
     return c, mapPostgreError(err)
 }
+
+// CreateVariant inserts a single new variant record into the database.
+func (r *PostgresRepository) CreateVariant(ctx context.Context, v *product.Variant) error {
+    query := `
+        INSERT INTO variants (
+            variant_id, product_id, sku, attributes, price, currency, stock_quantity
+        ) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+    `
+    // No transaction needed as this is a single insert.
+    _, err := r.db.Exec(ctx, query,
+        v.VariantId, v.ProductId, v.Sku, v.Attributes, v.Price, v.Currency, v.Quantity,
+    )
+
+    return mapPostgreError(err)
+}
