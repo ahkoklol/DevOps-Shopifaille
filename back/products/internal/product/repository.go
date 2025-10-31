@@ -50,6 +50,8 @@ type Repository interface {
 	// DeleteMedia removes a media item by its ID.
 	DeleteMedia(ctx context.Context, mediaID string) error
 
+	FindCategoryByNameAndParentID(ctx context.Context, name string, parentID *string) (*Category, error)
+
 
 	// gRPC methods
 }

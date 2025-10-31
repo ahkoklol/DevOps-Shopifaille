@@ -98,6 +98,16 @@ func (m *MockRepository) DeleteMedia(ctx context.Context, mediaID string) error 
     return args.Error(0)
 }
 
+func (m *MockRepository) FindCategoryByNameAndParentID(ctx context.Context, name string, parentID *string) (*Category, error) {
+	args := m.Called(ctx, name, parentID)
+	
+    // Checks if the first argument (Category) is nil or a mock object
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*Category), args.Error(1)
+}
+
 // --- TEST SUITE: CreateProduct ---
 
 func TestCreateProduct(t *testing.T) {

@@ -255,31 +255,42 @@ func (s *Service) GetProductStockLevel(ctx context.Context, productID string) (i
 
 // CreateCategory validates category data (name, parent existence) and saves it.
 func (s *Service) CreateCategory(ctx context.Context, c *Category) error {
-	// REAL CHECK 1: Input Validation
-	// NOTE: StoreId n'est plus obligatoire ici.
-	if c == nil || c.Name == "" {
-		return fmt.Errorf("%w: Category Name is mandatory", ErrValidation)
-	}
-	
-	// REAL CHECK 2: Parent Existence Check (SIMPLIFIÉ)
-	if c.ParentId != nil && *c.ParentId != "" {
-		// Parent must exist globally.
-		_, err := s.repo.GetCategoryByID(ctx, *c.ParentId)
-		if errors.Is(err, ErrNotFound) {
-			return fmt.Errorf("%w: Parent category does not exist", ErrValidation)
-		}
-		if err != nil {
-			return fmt.Errorf("failed to retrieve parent category: %w", err)
-		}
-        // Le check de c.Parent.StoreId != c.StoreId est retiré.
-	}
+    // REAL CHECK 1: Input Validation
+    // NOTE: StoreId n'est plus obligatoire ici.
+    if c == nil || c.Name == "" {
+        return fmt.Errorf("%w: Category Name is mandatory", ErrValidation)
+    }
     
-	// REAL CHECK 3: ID Generation (if not done upstream)
-	if c.CategoryId == "" {
-		c.CategoryId = uuid.New().String()
-	}
+    // NEW CHECK 2: Pre-check for duplicate name under the same parent
+    // NOTE: This assumes the Repository interface now includes FindCategoryByNameAndParentID
+    existing, err := s.repo.FindCategoryByNameAndParentID(ctx, c.Name, c.ParentId)
+    if err != nil && !errors.Is(err, ErrNotFound) {
+        // If it's a genuine DB error (not just "not found"), we stop
+        return fmt.Errorf("failed to check for existing category: %w", err)
+    }
+    if existing != nil {
+        return fmt.Errorf("%w: category named '%s' already exists under this parent", ErrConflict, c.Name)
+    }
 
-	return s.repo.CreateCategory(ctx, c)
+    // REAL CHECK 3: Parent Existence Check (SIMPLIFIÉ)
+    if c.ParentId != nil && *c.ParentId != "" {
+        // Parent must exist globally.
+        _, err := s.repo.GetCategoryByID(ctx, *c.ParentId)
+        if errors.Is(err, ErrNotFound) {
+            return fmt.Errorf("%w: Parent category does not exist", ErrValidation)
+        }
+        if err != nil {
+            return fmt.Errorf("failed to retrieve parent category: %w", err)
+        }
+        // Le check de c.Parent.StoreId != c.StoreId est retiré.
+    }
+    
+    // REAL CHECK 4: ID Generation (if not done upstream)
+    if c.CategoryId == "" {
+        c.CategoryId = uuid.New().String()
+    }
+
+    return s.repo.CreateCategory(ctx, c)
 }
 
 // DeleteCategory (reste inchangé car il n'utilisait pas explicitement category.StoreId)
