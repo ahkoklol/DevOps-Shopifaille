@@ -1,0 +1,158 @@
+syntax = "proto3";
+
+package core.ordermanagement.v1;
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  PENDING_PAYMENT = 1;
+  CONFIRMED = 2;
+  PREPARING = 3;
+  SHIPPED = 4;
+  DELIVERED = 5;
+  CANCELED = 6;
+  PARTIALLY_REFUNDED = 7;
+  REFUNDED = 8;
+  FAILED = 9;
+}
+
+message Empty {}
+
+message PlaceOrderItem {
+  string product_id = 1;
+  string variant_id = 2;
+  int32  quantity = 3;
+  double unit_price = 4;
+}
+
+message Totals {
+  double subtotal = 1;
+  double tax_amount = 2;
+  double shipping_cost = 3;
+  double total = 4;
+}
+
+message PlaceOrderRequest {
+  string idempotency_key = 1;
+  string store_id = 2;
+  string customer_id = 3;
+  string currency = 4;
+  repeated PlaceOrderItem items = 5;
+  Totals totals = 6;
+}
+
+message OrderItem {
+  string id = 1;
+  string order_id = 2;
+  string product_id = 3;
+  string variant_id = 4;
+  int32  quantity = 5;
+  double unit_price = 6;
+}
+
+message TimelineEvent {
+  string at = 1;
+  string type = 2;
+  string payload_json = 3;
+}
+
+message Order {
+  string id = 1;
+  string store_id = 2;
+  string customer_id = 3;
+  OrderStatus status = 4;
+  double total_amount = 5;
+  double tax_amount = 6;
+  double shipping_cost = 7;
+  string currency = 8;
+  repeated OrderItem items = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  repeated TimelineEvent timeline = 12;
+  string transaction_id = 13;
+}
+
+message OrderResponse { Order order = 1; }
+
+message GetOrderRequest { string id = 1; }
+
+message ListOrdersRequest {
+  string store_id = 1;
+  string status = 2;    // optional
+  string from = 3;      // ISO
+  string to = 4;        // ISO
+}
+message ListOrdersResponse { repeated Order orders = 1; }
+
+message UpdateStatusRequest {
+  string id = 1;
+  OrderStatus status = 2;
+}
+message MarkPaidRequest {
+  string id = 1;
+  string tx_id = 2;
+  double amount = 3;
+}
+
+message CreateReturnItem {
+  string variant_id = 1;
+  int32  quantity = 2;
+}
+message CreateReturnRequest {
+  string order_id = 1;
+  repeated CreateReturnItem items = 2;
+  string reason = 3;
+  double refund_amount = 4; // optional
+}
+message ReturnRecord {
+  string id = 1;
+  string order_id = 2;
+  string type = 3; // PARTIAL/TOTAL
+  double refund_amount = 4;
+  string reason = 5;
+  string created_at = 6;
+}
+message CreateReturnResponse {
+  ReturnRecord rec = 1;
+  OrderStatus new_status = 2;
+}
+message ListReturnsRequest { string order_id = 1; }
+message ListReturnsResponse { repeated ReturnRecord items = 1; }
+
+message AggregatesRequest {
+  string store_id = 1;
+  string from = 2; // ISO optional
+  string to = 3;   // ISO optional
+}
+message AggregatesResponse {
+  double total = 1;
+  int32  orders_count = 2;
+  double aov = 3;
+}
+
+// Optional: Validate discount
+message ValidateDiscountRequest {
+  string code = 1;
+  string store_id = 2;
+  string items_json = 3; // array JSON
+}
+message ValidateDiscountResponse {
+  bool valid = 1;
+  string type = 2;  // PERCENT|FIXED
+  double value = 3;
+  string reason = 4;
+}
+
+service OrderManagement {
+  rpc PlaceOrder(PlaceOrderRequest) returns (OrderResponse);
+  rpc GetOrder(GetOrderRequest) returns (OrderResponse);
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
+  rpc UpdateStatus(UpdateStatusRequest) returns (OrderResponse);
+  rpc MarkPaid(MarkPaidRequest) returns (OrderResponse);
+
+  rpc CreateReturn(CreateReturnRequest) returns (CreateReturnResponse);
+  rpc ListReturns(ListReturnsRequest) returns (ListReturnsResponse);
+
+  rpc GetAggregates(AggregatesRequest) returns (AggregatesResponse);
+
+  rpc ValidateDiscount(ValidateDiscountRequest) returns (ValidateDiscountResponse);
+}

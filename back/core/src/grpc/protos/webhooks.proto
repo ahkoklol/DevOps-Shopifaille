@@ -1,0 +1,179 @@
+syntax = "proto3";
+
+package core.eventwebhooks.v1;
+
+// ---------- ENUMS ----------
+enum DeliveryStatus {
+  DELIVERY_STATUS_UNSPECIFIED = 0;
+  PENDING   = 1;
+  SUCCEEDED = 2;
+  FAILED    = 3;
+  RETRIABLE = 4;
+  DLQ       = 5;
+}
+
+enum WebhookStatus {
+  WEBHOOK_STATUS_UNSPECIFIED = 0;
+  ACTIVE   = 1;
+  PAUSED   = 2;
+  DISABLED = 3;
+}
+
+// ---------- MESSAGES ----------
+message Empty {}
+
+message ByIdRequest {
+  string id = 1;
+}
+
+message ListByStoreRequest {
+  string store_id = 1;
+}
+
+message RotateSecretRequest {
+  string id = 1;
+  int32 grace_seconds = 2;
+}
+
+message ReplayRequest {
+  string endpoint_id = 1;
+  string event_id = 2;
+}
+
+message CreateWebhookRequest {
+  string store_id = 1;
+  string url = 2;
+  repeated string topics = 3;
+  string format = 4;      // "json" | "cloudevents+json"
+  string version = 5;     // "v1"
+  string secret = 6;
+  map<string,string> custom_headers = 7;
+  int32 rate_limit_qps = 8;
+  WebhookStatus status = 9;
+}
+
+message UpdateWebhookRequest {
+  string id = 1;
+  string url = 2;
+  repeated string topics = 3;
+  string format = 4;
+  string version = 5;
+  string secret = 6;
+  map<string,string> custom_headers = 7;
+  int32 rate_limit_qps = 8;
+  WebhookStatus status = 9;
+}
+
+message WebhookEndpoint {
+  string id = 1;
+  string store_id = 2;
+  string url = 3;
+  repeated string topics = 4;
+  string format = 5;
+  string version = 6;
+  string secret = 7;
+  string prev_secret = 8;
+  string secret_grace_until = 9;
+  map<string,string> custom_headers = 10;
+  int32 rate_limit_qps = 11;
+  WebhookStatus status = 12;
+  string created_at = 13;
+  string updated_at = 14;
+}
+
+message WebhookResponse {
+  WebhookEndpoint endpoint = 1;
+}
+
+message ListWebhooksResponse {
+  repeated WebhookEndpoint endpoints = 1;
+}
+
+message IngestEventRequest {
+  string id = 1;
+  string type = 2;       // e.g. "order.created@v1"
+  string store_id = 3;
+  string created_at = 4;
+  string data_json = 5;  // raw JSON string of the payload
+}
+
+message IngestEventItemResult {
+  string endpoint_id = 1;
+  string delivery_id = 2;
+  string status = 3;
+}
+
+message IngestEventResponse {
+  int32 fanout = 1;
+  repeated IngestEventItemResult results = 2;
+}
+
+message PingResult {
+  bool ok = 1;
+  int32 fanout = 2;
+}
+
+message DeliveryLog {
+  string id = 1;
+  string endpoint_id = 2;
+  string event_id = 3;
+  int32 attempt = 4;
+  DeliveryStatus status = 5;
+  int32 response_status = 6;
+  string response_body = 7;
+  string error_message = 8;
+  string signature_hash = 9;
+  int32 latency_ms = 10;
+  string created_at = 11;
+  string next_attempt_at = 12;
+  string last_tried_at = 13;
+}
+
+message ListDeliveriesResponse {
+  repeated DeliveryLog deliveries = 1;
+}
+
+message DlqRecord {
+  string id = 1;
+  string endpoint_id = 2;
+  string event_id = 3;
+  string last_error = 4;
+  string created_at = 5;
+}
+
+message ListDlqResponse {
+  repeated DlqRecord items = 1;
+}
+
+message DeleteResponse {
+  bool deleted = 1;
+}
+
+message SchedulerRunResponse {
+  int32 retried = 1;
+}
+
+// ---------- SERVICE ----------
+service EventWebhooks {
+  // CRUD
+  rpc CreateWebhook(CreateWebhookRequest) returns (WebhookResponse);
+  rpc GetWebhook(ByIdRequest) returns (WebhookResponse);
+  rpc ListWebhooks(ListByStoreRequest) returns (ListWebhooksResponse);
+  rpc UpdateWebhook(UpdateWebhookRequest) returns (WebhookResponse);
+  rpc DeleteWebhook(ByIdRequest) returns (DeleteResponse);
+  rpc RotateSecret(RotateSecretRequest) returns (WebhookResponse);
+
+  // Utilities
+  rpc PingWebhook(ByIdRequest) returns (PingResult);
+
+  // Event ingestion
+  rpc IngestEvent(IngestEventRequest) returns (IngestEventResponse);
+
+  // Observability
+  rpc ListDeliveries(ByIdRequest) returns (ListDeliveriesResponse);
+  rpc ListDlq(ByIdRequest) returns (ListDlqResponse);
+  rpc Replay(ReplayRequest) returns (DeliveryLog);
+
+  // Scheduler
+  rpc SchedulerRun(Empty) returns (SchedulerRunResponse);
+}

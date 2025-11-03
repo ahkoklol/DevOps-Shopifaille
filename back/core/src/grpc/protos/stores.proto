@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package core.storemanagement.v1;
+
+message Empty {}
+
+message Store {
+  string id = 1;
+  string admin_id = 2;
+  string domain = 3;
+  string subscription_level = 4;
+  string status = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message StoreCustomization {
+  string store_id = 1;
+  string theme_settings_json = 2;
+  string header_text = 3;
+  string image_urls_json = 4;
+}
+
+message CreateStoreRequest {
+  string admin_id = 1;
+  string store_name = 2;
+  string domain = 3;
+  string subscription_level = 4; // e.g. "basic"
+}
+
+message StoreResponse { Store store = 1; }
+
+message GetStoreRequest { string id = 1; }
+message GetByDomainRequest { string domain = 1; }
+
+message UpdateCustomizationRequest {
+  string store_id = 1;
+  string theme_settings_json = 2;
+  string header_text = 3;
+  string image_urls_json = 4;
+}
+
+message GetCustomizationRequest { string store_id = 1; }
+message CustomizationResponse { StoreCustomization customization = 1; }
+
+message AggregatesRequest {
+  string store_id = 1;
+  string from = 2;
+  string to = 3;
+}
+message AggregatesResponse {
+  double total = 1;
+  int32  orders_count = 2;
+  double aov = 3;
+}
+
+service StoreManagement {
+  rpc CreateStore(CreateStoreRequest) returns (StoreResponse);
+  rpc GetStore(GetStoreRequest) returns (StoreResponse);
+  rpc GetStoreByDomain(GetByDomainRequest) returns (StoreResponse);
+
+  rpc UpdateCustomization(UpdateCustomizationRequest) returns (CustomizationResponse);
+  rpc GetCustomization(GetCustomizationRequest) returns (CustomizationResponse);
+
+  rpc GetDashboardAggregates(AggregatesRequest) returns (AggregatesResponse);
+}
