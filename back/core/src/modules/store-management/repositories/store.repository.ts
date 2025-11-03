@@ -11,4 +11,10 @@ export class StoreRepository {
     this.db.set(id, next); return next;
   }
   async exists(id: string) { return this.db.has(id); }
+  async findByDomain(domain: string) {
+    for (const s of this.db.values()) {
+      if ((s as any).domain === domain) return s;
+    }
+    return null;
+  }
 }

@@ -53,14 +53,13 @@ message AggregatesResponse {
   int32  orders_count = 2;
   double aov = 3;
 }
+message GetByDomainRequest { string domain = 1; }
 
 service StoreManagement {
   rpc CreateStore(CreateStoreRequest) returns (StoreResponse);
   rpc GetStore(GetStoreRequest) returns (StoreResponse);
-  rpc GetStoreByDomain(GetByDomainRequest) returns (StoreResponse);
-
+  rpc GetStoreByDomain(GetByDomainRequest) returns (StoreResponse); 
   rpc UpdateCustomization(UpdateCustomizationRequest) returns (CustomizationResponse);
   rpc GetCustomization(GetCustomizationRequest) returns (CustomizationResponse);
-
   rpc GetDashboardAggregates(AggregatesRequest) returns (AggregatesResponse);
 }

@@ -27,3 +27,17 @@ export interface UpdateStoreDTO {
   timezone?: string;
   status?: "active" | "paused" | "closed";
 }
+
+export type StoreCustomization = {
+  storeId: string;
+  themeSettings?: Record<string, unknown>;
+  headerText?: string;
+  imageUrls?: string[];
+  updatedAt: string;
+};
+
+export type UpdateCustomizationDTO = {
+  themeSettings?: Record<string, unknown>;
+  headerText?: string;
+  imageUrls?: string[];
+};
