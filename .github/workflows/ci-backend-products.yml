@@ -10,13 +10,13 @@ on:
       - dev
     paths:
       # Only run if files in the products directory have changed
-      - 'back/products/**'
+      - "back/products/**"
   pull_request:
     branches:
       - main
       - dev
     paths:
-      - 'back/products/**'
+      - "back/products/**"
 
 # Define global settings for the job
 defaults:
@@ -28,7 +28,7 @@ jobs:
   build_and_test:
     name: Build Go Service
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
         # Uses the Go version specified in go.mod
         uses: actions/setup-go@v5
         with:
-          go-version: '1.25.3'
+          go-version: "1.25.3"
           cache: true
           # Cache dependencies using the go.sum (which is generated from go.mod)
           cache-dependency-path: back/products/go.mod
@@ -50,7 +50,7 @@ jobs:
         # Attempt to compile the Go application
         # This checks for compilation errors and confirms dependencies resolve.
         run: go build -v ./...
-        
+
       # === ADD THIS STEP WHEN YOU HAVE TESTS ===
       # - name: Run Unit Tests
       #   run: go test -v ./...
