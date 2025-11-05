@@ -5,55 +5,55 @@ on:
     branches:
       - main # CD runs only on merges to main
     paths:
-      - 'back/products/**'
-      - 'kubernetes/products-deployment.yaml' 
-      
+      - "back/products/**"
+      - "kubernetes/products-deployment.yaml"
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write # Necessary to push Docker image to GHCR
-      
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       # --- 1. CI/Build Preparation ---
-      
+
       - name: Set up Go 1.25.3
         uses: actions/setup-go@v5
         with:
-          go-version: '1.25.3'
+          go-version: "1.25.3"
           cache: true
           cache-dependency-path: back/products/go.mod
 
       - name: Generate Go Modules (FIXED STEP)
-        working-directory: back/products 
+        working-directory: back/products
         # This step downloads dependencies and creates the necessary go.sum file
         run: go mod tidy
-          
+
       - name: Build Go Binary (Optional but Recommended)
-        working-directory: back/products 
+        working-directory: back/products
         run: go build -v ./...
-          
+
       # --- 2. Docker Build and Push to GHCR ---
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
+
       - name: Log in to GitHub Container Registry (GHCR)
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }} 
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Go Docker image
         uses: docker/build-push-action@v6
         with:
           # Context must point to the directory containing the Dockerfile, go.mod, and go.sum
-          context: ./back/products 
+          context: ./back/products
           file: ./back/products/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/products-service:latest
