@@ -10,13 +10,13 @@ on:
       - dev
     paths:
       # Only run if files in the products directory have changed
-      - 'front/**'
+      - "front/**"
   pull_request:
     branches:
       - main
       - dev
     paths:
-      - 'front/**'
+      - "front/**"
 
 # Define global settings for the job
 defaults:
@@ -28,7 +28,7 @@ jobs:
   ci:
     name: Lint, Type Check, Build, and Test # split buil with type scheck for SWC
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -37,13 +37,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: front/package-lock.json
 
       - name: Install Dependencies
         # Use npm ci for clean and fast installation in CI environments
         run: npm install
-        
+
       - name: Run ESLint
         # Executes the "lint" script defined in front/package.json
         run: npm run lint
@@ -51,10 +51,10 @@ jobs:
       - name: Run Type Check
         # Executes a new "type-check" script (e.g., tsc --noEmit)
         run: npm run type-check
-        
+
       - name: Build Project
         # Executes the "build" script (tsc -b && vite build) defined in front/package.json
         run: npm run build
-        
+
       # You can add a dedicated step for unit tests here (e.g., npm run test) if you add a test script later.
       # For a basic CI, running the build step is often sufficient to verify project integrity.

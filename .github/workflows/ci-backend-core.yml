@@ -10,13 +10,13 @@ on:
       - dev
     paths:
       # Only run if files in the core directory have changed
-      - 'back/core/**'
+      - "back/core/**"
   pull_request:
     branches:
       - main
       - dev
     paths:
-      - 'back/core/**'
+      - "back/core/**"
 
 # Define global settings for the job
 defaults:
@@ -28,7 +28,7 @@ jobs:
   build_and_test:
     name: Test Deno Service
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -43,11 +43,11 @@ jobs:
       - name: Format Check (Linting)
         # Check if code is formatted correctly (good practice for Deno projects)
         run: deno fmt --check
-        
+
       - name: Lint Check
         # Check for linting errors
         run: deno lint
-        
+
       - name: Run Tests
         # Run tests defined in back/core/main_test.ts (which uses @std/assert)
         # The --lock-write=false flag ensures CI uses the existing lock file but doesn't modify it.

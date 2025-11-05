@@ -1,1 +1,2 @@
-Editing this file to test CD for the front directory (image build + push to dockerhub)
+Editing this file to test CD for the front directory (image build + push to
+dockerhub)
