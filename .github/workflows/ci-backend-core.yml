@@ -51,4 +51,4 @@ jobs:
       - name: Run Tests
         # Run tests defined in back/core/main_test.ts (which uses @std/assert)
         # The --lock-write=false flag ensures CI uses the existing lock file but doesn't modify it.
-        run: deno test --allow-read --no-check --lock=deno.lock main_test.ts
+        run: deno test --allow-read --no-check --lock=deno.lock src
