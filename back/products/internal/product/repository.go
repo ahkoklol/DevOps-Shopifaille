@@ -51,12 +51,27 @@ type Repository interface {
 	// DeleteMedia removes a media item by its ID.
 	DeleteMedia(ctx context.Context, mediaID string) error
 
+	// FindCategoryByNameAndParentID retrieves a category by its name and optional parent ID.
 	FindCategoryByNameAndParentID(ctx context.Context, name string, parentID *string) (*Category, error)
 
+	// CreateVariant inserts a new variant record.
 	CreateVariant(ctx context.Context, v *Variant) error
 
+	// UpdateProductModifiedDate updates the DateModified field of a product.
 	UpdateProductModifiedDate(ctx context.Context, productID string, modifiedDate time.Time) error
 
 
 	// gRPC methods
+
+	// CheckStock vérifie si une quantité est disponible.
+	CheckStock(ctx context.Context, productID string, quantity int) (bool, error)
+	
+	// DecrementStock réduit la quantité en stock de manière transactionnelle.
+	DecrementStock(ctx context.Context, productID string, quantity int) error
+	
+	// IncrementStock augmente la quantité en stock.
+	IncrementStock(ctx context.Context, productID string, quantity int) error
+	
+	// GetProductPrice récupère le prix du variant pour un produit donné (utilise le premier variant trouvé).
+	GetProductPrice(ctx context.Context, productID string) (float64, error)
 }

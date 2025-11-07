@@ -411,3 +411,51 @@ func (s *Service) CreateVariant(ctx context.Context, v *Variant) error {
     
     return nil // Return success for variant creation
 }
+
+// CheckStock vérifie si le niveau de stock requis est disponible.
+func (s *Service) CheckStock(ctx context.Context, productID string, quantity int) (bool, error) {
+	if err := validateID(productID); err != nil {
+		return false, err
+	}
+	if quantity <= 0 {
+		return false, fmt.Errorf("%w: quantity must be positive", ErrValidation)
+	}
+
+	return s.repo.CheckStock(ctx, productID, quantity)
+}
+
+// DecrementStock décrémente le stock de manière transactionnelle.
+func (s *Service) DecrementStock(ctx context.Context, productID string, quantity int) error {
+	if err := validateID(productID); err != nil {
+		return err
+	}
+	if quantity <= 0 {
+		return fmt.Errorf("%w: quantity must be positive", ErrValidation)
+	}
+	
+	// L'implémentation du Repository est critique (transactionnelle et vérifie stock >= quantité).
+	return s.repo.DecrementStock(ctx, productID, quantity)
+}
+
+// IncrementStock incrémente le stock.
+func (s *Service) IncrementStock(ctx context.Context, productID string, quantity int) error {
+	if err := validateID(productID); err != nil {
+		return err
+	}
+	if quantity <= 0 {
+		return fmt.Errorf("%w: quantity must be positive", ErrValidation)
+	}
+	
+	return s.repo.IncrementStock(ctx, productID, quantity)
+}
+
+// GetProductPrice récupère le prix du produit.
+func (s *Service) GetProductPrice(ctx context.Context, productID string) (float64, error) {
+	if err := validateID(productID); err != nil {
+		return 0, err
+	}
+	
+	// Dans un vrai système, vous vérifieriez l'existence du produit ici ou laisser le repo gérer le ErrNotFound.
+    
+	return s.repo.GetProductPrice(ctx, productID)
+}

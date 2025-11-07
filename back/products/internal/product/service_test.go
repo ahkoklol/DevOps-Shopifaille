@@ -118,6 +118,26 @@ func (m *MockRepository) UpdateProductModifiedDate(ctx context.Context, productI
 	return args.Error(0)
 }
 
+func (m *MockRepository) CheckStock(ctx context.Context, productID string, quantity int) (bool, error) {
+    args := m.Called(ctx, productID, quantity)
+	return args.Bool(0), args.Error(1)
+}
+
+func (m *MockRepository) DecrementStock(ctx context.Context, productID string, quantity int) error {
+    args := m.Called(ctx, productID, quantity)
+	return args.Error(0)
+}
+
+func (m *MockRepository) IncrementStock(ctx context.Context, productID string, quantity int) error {
+    args := m.Called(ctx, productID, quantity)
+	return args.Error(0)
+}
+
+func (m *MockRepository) GetProductPrice(ctx context.Context, productID string) (float64, error) {
+    args := m.Called(ctx, productID)
+	return args.Get(0).(float64), args.Error(1)
+}
+
 // --- TEST SUITE: CreateProduct ---
 
 func TestCreateProduct(t *testing.T) {
