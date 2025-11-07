@@ -98,18 +98,26 @@ func TestPostgresRepository_CreateAndFind(t *testing.T) {
     // CRITICAL: Create the category first
     validCategoryID := createTestCategory(t)
 
-	// 1. Setup Data with valid CategoryID
+	// Setup Data with valid CategoryID
 	newProduct := &product.Product{
-		ProductId: 	 uuid.New().String(),
-		Title: 	 	 "Test Product",
-		Description: "Repo Test Product",
-		Slug: 	 	 "test-product-unique", // Ensure unique slug for the test suite
-		StoreId: 	 "S1",
-		CategoryId:  validCategoryID, // Link to the created category
-		Variants: []product.Variant{
-			{VariantId: uuid.New().String(), Sku: "SKU1", Price: 10.0, Currency: "USD", Quantity: 5, Attributes: []byte(`{"color":"blue"}`)},
-		},
-	}
+    ProductId: 	 uuid.New().String(),
+    Title: 	 	 "Test Product",
+    Description: "Repo Test Product",
+    Slug: 	 	 "test-product-unique",
+    StoreId: 	 "S1",
+    CategoryId:  validCategoryID,
+    Variants: []product.Variant{
+        {
+            VariantId: uuid.New().String(), 
+            Sku: "SKU1", 
+            Price: 10.0, 
+            Currency: "USD", 
+            Quantity: 5, 
+            Value: "Default",
+            Options: []string{},
+        },
+    },
+}
 	
     // --- Test Cases ---
     

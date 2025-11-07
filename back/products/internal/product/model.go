@@ -1,7 +1,6 @@
 package product
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -23,7 +22,8 @@ type Variant struct {
 	VariantId string `json:"variant_id"`
 	ProductId string `json:"product_id"`
 	Sku string `json:"sku"`
-	Attributes json.RawMessage `json:"attributes"`
+	Value string `json:"value"`
+	Options []string `json:"options"`
 	Price float64 `json:"price"`
 	Currency string `json:"currency"`
 	Quantity int `json:"stock_quantity"`

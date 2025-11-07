@@ -38,8 +38,11 @@ CREATE TABLE variants (
     
     sku VARCHAR(100) NOT NULL,
     
-    -- Utilisation de JSONB pour les attributs dynamiques (taille, couleur, etc.) – plus rapide pour l'interrogation que JSON
-    attributes JSONB NOT NULL DEFAULT '{}'::jsonb,
+    -- NOUVEAU CHAMP : Remplace 'attributes' et stocke la valeur principale du variant (e.g., "Rouge")
+    variant_value VARCHAR(255) NOT NULL,
+    
+    -- NOUVEAU CHAMP : Stocke la liste des options (e.g., ["Rouge", "Bleu"]). Utiliser TEXT[] est idiomatique pour un tableau de strings.
+    product_options TEXT[],
     
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
     currency VARCHAR(10) NOT NULL,
@@ -49,7 +52,8 @@ CREATE TABLE variants (
 
     -- Contraintes d'unicité
     UNIQUE (sku),
-    UNIQUE (product_id, attributes) -- Un produit ne peut pas avoir deux variantes avec les mêmes attributs
+    -- Mise à jour de la contrainte pour utiliser le nouveau champ 'variant_value'
+    UNIQUE (product_id, variant_value) 
 );
 
 CREATE TABLE media (

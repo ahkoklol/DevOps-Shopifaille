@@ -96,7 +96,7 @@ func (r *PostgresRepository) FindByID(ctx context.Context, id string) (*product.
 
 func (r *PostgresRepository) getVariantsByProductID(ctx context.Context, productID string) ([]product.Variant, error) {
     query := `
-        SELECT variant_id, product_id, sku, attributes, price, currency, stock_quantity
+        SELECT variant_id, product_id, sku, variant_value, product_options, price, currency, stock_quantity
         FROM variants 
         WHERE product_id = $1
     `
@@ -110,7 +110,7 @@ func (r *PostgresRepository) getVariantsByProductID(ctx context.Context, product
     for rows.Next() {
         v := product.Variant{}
         err := rows.Scan(
-            &v.VariantId, &v.ProductId, &v.Sku, &v.Attributes, &v.Price, &v.Currency, &v.Quantity,
+            &v.VariantId, &v.ProductId, &v.Sku, &v.Value, &v.Options, &v.Price, &v.Currency, &v.Quantity,
         )
         if err != nil {
             return nil, mapPostgreError(err)
@@ -156,8 +156,8 @@ func (r *PostgresRepository) Create(ctx context.Context, p *product.Product) err
     // 3. Insert Variants (NOUVEAU)
     variantQuery := `
         INSERT INTO variants (
-            variant_id, product_id, sku, attributes, price, currency, stock_quantity
-        ) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+            variant_id, product_id, sku, variant_value, product_options, price, currency, stock_quantity
+        ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
     `
     for i := range p.Variants {
         v := &p.Variants[i]
@@ -169,7 +169,7 @@ func (r *PostgresRepository) Create(ctx context.Context, p *product.Product) err
         // (idéalement dans la couche Service si v.VariantId est vide)
         
         _, err = tx.Exec(ctx, variantQuery,
-            v.VariantId, v.ProductId, v.Sku, v.Attributes, v.Price, v.Currency, v.Quantity,
+            v.VariantId, v.ProductId, v.Sku, v.Value, v.Options, v.Price, v.Currency, v.Quantity,
         )
         if err != nil {
             commitErr = err
@@ -178,7 +178,7 @@ func (r *PostgresRepository) Create(ctx context.Context, p *product.Product) err
     }
 
     // 4. Commit or Rollback via defer
-    return mapPostgreError(commitErr) 
+    return mapPostgreError(commitErr)
 }
 
 // Update modifies an existing product record.
@@ -673,12 +673,12 @@ func (r *PostgresRepository) FindCategoryByNameAndParentID(ctx context.Context, 
 func (r *PostgresRepository) CreateVariant(ctx context.Context, v *product.Variant) error {
     query := `
         INSERT INTO variants (
-            variant_id, product_id, sku, attributes, price, currency, stock_quantity
-        ) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+            variant_id, product_id, sku, variant_value, product_options, price, currency, stock_quantity
+        ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
     `
     // No transaction needed as this is a single insert.
     _, err := r.db.Exec(ctx, query,
-        v.VariantId, v.ProductId, v.Sku, v.Attributes, v.Price, v.Currency, v.Quantity,
+        v.VariantId, v.ProductId, v.Sku, v.Value, v.Options, v.Price, v.Currency, v.Quantity,
     )
 
     return mapPostgreError(err)
