@@ -6,11 +6,17 @@ import AdminRegisterPage from "./admin/auth/AdminRegisterPage";
 import AdminForgotPasswordPage from "./admin/auth/AdminForgotPasswordPage";
 
 import SubscriptionChoice from "./admin/suscription/SuscriptionChoice";
+import CheckoutPage from "./admin/suscription/CheckoutPage";
 
 import AdminLayout from "./admin/AdminLayout";
 import HomePage from "./admin/HomePage";
 import AdminHomePage from "./admin/dashboard/AdminHomePage";
 import AdminDashboard from "./admin/dashboard/AdminDashboard";
+import { OrderManagement } from "./admin/dashboard/OrderManagement"; 
+import CustomerManagement from "./admin/dashboard/CustomerManagement";
+import { Customization } from "./admin/dashboard/Customization";
+import { Settings } from "./admin/dashboard/Settings";
+
 
 // Import direct
 import { ProductList } from "./admin/dashboard/ProductManagement";
@@ -30,6 +36,31 @@ function CategoriesRoute() {
   const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
   return <CategoryList shopId={shopId ?? saved ?? "1"} />;
 }
+function OrdersRoute() {
+  const { shopId } = useParams();
+  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  return <OrderManagement shopId={shopId ?? saved ?? "1"} />;
+}
+
+// ⬇️ Internal wrapper to inject shopId param (add this near the other wrappers)
+function CustomersRoute() {
+  const { shopId } = useParams();
+  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  return <CustomerManagement shopId={shopId ?? saved ?? "1"} />;
+}
+
+function CustomizationRoute() {
+  const { shopId } = useParams();
+  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  return <Customization shopId={shopId ?? saved ?? "1"} />;
+}
+
+function SettingsRoute() {
+  const { shopId } = useParams();
+  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  return <Settings shopId={shopId ?? saved ?? "1"} />;
+}
+
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/homepage" replace /> },
@@ -44,6 +75,7 @@ export const router = createBrowserRouter([
 
   // Souscription
   { path: "/subscribe", element: <SubscriptionChoice /> },
+  { path: "/checkout", element: <CheckoutPage /> },
 
   // ⬇️ AdminHomePage SANS sidebar (hors layout)
   { path: "/admin/home", element: <AdminHomePage /> },
@@ -57,7 +89,10 @@ export const router = createBrowserRouter([
       { path: "dashboard", element: <AdminDashboard /> },
       { path: "products", element: <ProductsRoute /> },
       { path: "categories", element: <CategoriesRoute /> },
-      // tu pourras ajouter ici orders/customers/etc. sur le même modèle
+      { path: "orders", element: <OrdersRoute /> },
+      { path: "customers", element: <CustomersRoute /> },
+      { path: "customization", element: <CustomizationRoute /> },
+      { path: "settings", element: <SettingsRoute /> },
     ],
   },
 

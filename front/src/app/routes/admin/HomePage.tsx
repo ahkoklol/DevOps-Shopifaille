@@ -52,7 +52,7 @@ function HomePage() {
         {/* Hero Image */}
         <div className="mt-16 rounded-xl overflow-hidden shadow-2xl border">
           <img
-            src="https://images.unsplash.com/photo-1759297044036-19a0256fade2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+            src="https://www.developperlestalents.fr/wp-content/uploads/2023/09/Ronron-1-864x467.png"
             alt="Shopifaille Dashboard"
             className="w-full h-auto"
           />

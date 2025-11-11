@@ -24,7 +24,6 @@ export function AdminSidebar({ activeSection, onNavigate, shopId }: AdminSidebar
     { id: 'orders', label: 'Commandes', icon: ShoppingCart, badge: '3' },
     { id: 'customers', label: 'Clients', icon: Users },
     { id: 'customization', label: 'Apparence', icon: Palette },
-    { id: 'analytics', label: 'Statistiques', icon: BarChart3 },
     { id: 'settings', label: 'Paramètres', icon: Settings }
   ];
 
