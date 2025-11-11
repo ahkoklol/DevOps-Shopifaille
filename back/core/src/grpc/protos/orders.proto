@@ -1,0 +1,47 @@
+syntax = "proto3";
+package core.orders.v1;
+
+message OrderId { string id = 1; }
+
+message OrderItem {
+  string id = 1;
+  string order_id = 2;
+  string product_id = 3;
+  string variant_id = 4;
+  string title_snapshot = 5;
+  string sku_snapshot = 6;
+  string attributes_snapshot_json = 7;
+  double unit_price = 8;
+  int32 qty = 9;
+  double line_total = 10;
+}
+
+message Order {
+  string id = 1;
+  string customer_id = 2;
+  string contact_email = 3;
+  double subtotal = 4;
+  double discount_total = 5;
+  double tax_total = 6;
+  double shipping_total = 7;
+  double grand_total = 8;
+  string currency = 9;
+  string status = 10;
+  string created_at = 11;
+  repeated OrderItem items = 12;
+}
+
+message StatusEvent {
+  string id = 1;
+  string order_id = 2;
+  string from_status = 3;
+  string to_status = 4;
+  string reason = 5;
+  string occurred_at = 6;
+}
+
+message ListEventsResponse { repeated StatusEvent items = 1; }
+
+service OrdersService {
+  rpc GetOrder (OrderId) returns (Order);
+}
