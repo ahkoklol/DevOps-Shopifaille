@@ -16,10 +16,8 @@ export function Navbar({
   shopLogo,
   primaryColor,
 }: NavbarProps) {
-  // Fallback navigation using React Router if onNavigate is not provided
   const navigate = useNavigate();
 
-  // === SHOP VARIANT ===
   if (variant === 'shop') {
     return (
       <nav className="border-b bg-white sticky top-0 z-50">
