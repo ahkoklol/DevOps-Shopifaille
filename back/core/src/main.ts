@@ -1,8 +1,21 @@
-export function add(a: number, b: number): number {
-  return a + b;
-}
+// back/core/src/main.ts
+import { Application } from "@oak/oak";
+import customerRouter from "./modules/customer-accounts/controllers/customer.controller.ts";
+import addressRouter from "./modules/customer-accounts/controllers/address.controller.ts";
+import orderRefRouter from "./modules/customer-accounts/controllers/order-ref.controller.ts";
 
-// Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
-if (import.meta.main) {
-  console.log("Add 2 + 3 =", add(2, 3));
-}
+const app = new Application();
+
+// Routes modules
+app.use(customerRouter.routes());
+app.use(customerRouter.allowedMethods());
+
+app.use(addressRouter.routes());
+app.use(addressRouter.allowedMethods());
+
+app.use(orderRefRouter.routes());
+app.use(orderRefRouter.allowedMethods());
+
+// Start server
+console.log("🚀 Server running on http://localhost:8000");
+await app.listen({ port: 8000 });
