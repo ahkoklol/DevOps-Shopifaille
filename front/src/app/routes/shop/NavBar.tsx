@@ -29,7 +29,7 @@ export function Navbar({
         <div className="flex justify-between items-center h-16">
 
           <button
-            onClick={() => navigate(`./shop/${shopId.shopId}`)}
+            onClick={() => navigate(`/shop/${shopId.shopId}`)}
             className="flex items-center gap-3"
           >
             <div
@@ -55,7 +55,8 @@ export function Navbar({
               Catalogue
             </button>
 
-            <button className="text-gray-600 hover:text-gray-900">
+            <button className="text-gray-600 hover:text-gray-900"
+              onClick={() => navigate(`/shop/${shopId.shopId}/apropos`)}>
               À propos
             </button>
             <button
@@ -67,14 +68,15 @@ export function Navbar({
           </div>
 
           <button
-            onClick={() => navigate(`/homepage`)}
+            onClick={() => navigate(`/shop/${shopId.shopId}/panier`)}
+
             className="relative"
           >
             <div
               className="px-4 py-2 rounded-lg text-white"
               style={{ backgroundColor: foundShop?.codeColor || '#3B82F6' }}
             >
-              Panier (0)
+              Panier (2)
             </div>
           </button>
         </div>

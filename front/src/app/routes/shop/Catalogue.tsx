@@ -20,8 +20,31 @@ const ICONS = {
 function Catalogue() {
   const navigate = useNavigate();
   const { shopId: paramShopId } = useParams();
-
   const foundShop = datas.shops.find((shop) => shop.id === paramShopId);
+
+  const products = foundShop?.featuredProducts ?? [];
+  const categories = foundShop?.categories ?? []; // si ton data.json contient categories
+
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+  
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+ const filteredProducts =
+  selectedCategory !== null || selectedPrice !== null
+    ? products
+        .filter((p: any) =>
+          selectedCategory !== null ? p.categoryId === selectedCategory : true
+        )
+        .filter((p: any) => {
+          if (selectedPrice === "100") return p.price > 100;
+          if (selectedPrice === "50-100") return p.price >= 50 && p.price <= 100;
+          if (selectedPrice === "50") return p.price === 50;
+          return true; // si aucun filtre prix sélectionné
+        })
+    : products;
+
+
   if (!foundShop) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -40,20 +63,11 @@ function Catalogue() {
   }
 
   // Sécurise les données
-  const products = foundShop.featuredProducts ?? [];
-  const categories = foundShop.categories ?? []; // si ton data.json contient categories
 
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
-  const filteredProducts =
-    selectedCategory !== null
-      ? products.filter((p: any) => p.categoryId === selectedCategory)
-      : products;
 
   return (
     <div className="min-h-screen bg-gray-50">
-          <Navbar variant="platform" onNavigate={() => { }} />
+      <Navbar variant="platform" onNavigate={() => { }} />
       {/* Page Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -81,11 +95,10 @@ function Catalogue() {
                 <div className="space-y-2">
                   <button
                     onClick={() => setSelectedCategory(null)}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                      selectedCategory === null
+                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedCategory === null
                         ? "bg-blue-50 text-blue-700"
                         : "text-gray-700 hover:bg-gray-100"
-                    }`}
+                      }`}
                   >
                     Tous les produits
                   </button>
@@ -98,11 +111,10 @@ function Catalogue() {
                       <button
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center justify-between ${
-                          selectedCategory === category.id
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center justify-between ${selectedCategory === category.id
                             ? "bg-blue-50 text-blue-700"
                             : "text-gray-700 hover:bg-gray-100"
-                        }`}
+                          }`}
                       >
                         <span>{category.name}</span>
                         <Badge variant="secondary" className="ml-2">
@@ -118,18 +130,23 @@ function Catalogue() {
                 <h4 className="text-sm text-gray-900 mb-3">Prix</h4>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded" />
+                    <input type="checkbox" className="rounded"
+                     onChange={(e) => setSelectedPrice(e.target.checked ? "50" : null)} />
                     Moins de 50€
                   </label>
                   <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded" />
+                    <input type="checkbox" className="rounded"
+                      onChange={(e) => setSelectedPrice(e.target.checked ? "50-100" : null)} />
                     50€ - 100€
                   </label>
                   <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded" />
+                    <input type="checkbox" className="rounded" 
+                      onChange={(e) => setSelectedPrice(e.target.checked ? "100" : null)}/>
                     Plus de 100€
                   </label>
                 </div>
+
+                
               </div>
             </Card>
           </aside>
@@ -151,7 +168,7 @@ function Catalogue() {
                   size="sm"
                   onClick={() => setViewMode("list")}
                 >
-                    <List className="w-4 h-4" />
+                  <List className="w-4 h-4" />
                 </Button>
               </div>
 
@@ -179,18 +196,16 @@ function Catalogue() {
                 {filteredProducts.map((product: any) => (
                   <Card
                     key={product.id}
-                    className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group ${
-                      viewMode === "list" ? "flex" : ""
-                    }`}
+                    className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group ${viewMode === "list" ? "flex" : ""
+                      }`}
                     onClick={() =>
                       navigate(`/shop/${paramShopId}/product/${product.id}`)
                     }
                   >
                     {/* Image */}
                     <div
-                      className={`${
-                        viewMode === "list" ? "w-48" : "aspect-square"
-                      } overflow-hidden bg-gray-100`}
+                      className={`${viewMode === "list" ? "w-48" : "aspect-square"
+                        } overflow-hidden bg-gray-100`}
                     >
                       <img
                         src={product.image}

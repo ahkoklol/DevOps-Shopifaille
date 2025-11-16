@@ -73,7 +73,7 @@ function HomePageShop() {
 
           <div className="flex justify-center">
             <button
-              onClick={() => navigate('/cart')}
+                 onClick={() => navigate(`/shop/${foundShop.id}/catalogue`)}
               className="flex items-center gap-2 text-white px-6 py-3 rounded-2xl font-medium text-lg"
               style={{ backgroundColor: foundShop?.codeColor || '#3B82F6' }}
             >
@@ -95,25 +95,33 @@ function HomePageShop() {
           {featuredProducts.map((p) => {
             const price = typeof p.price === 'number' ? p.price : Number(p.price ?? 0);
             return (
+
               <div key={p.id} className="rounded-2xl border border-gray-200 overflow-hidden bg-white shadow-sm">
-                <div className="flex justify-center items-center">
-                  <img src={p.image}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold">{p.name}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{p.description}</p>
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="text-lg font-semibold">{price.toFixed(2)} €</div>
-                    <button
-                      onClick={() => navigate(`/shop/${foundShop.id}/product/${p.id}`)}
-                      className="px-3 py-1.5 text-sm rounded-xl bg-purple-500 text-white hover:bg-purple-600"
-                    >
-                      Voir
-                    </button>
+                <Card
+                className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group `}
+                onClick={() =>
+                      navigate(`/shop/${paramShopId}/product/${p.id}`)
+                    }>
+                  <div className="flex justify-center items-center">
+                    <img src={p.image}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                   </div>
-                </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold">{p.name}</h3>
+                    <p className="text-sm text-gray-600 mt-1">{p.description}</p>
+                    <div className="mt-4 flex items-center justify-between">
+                      <div className="text-lg font-semibold">{price.toFixed(2)} €</div>
+                      <button
+                        onClick={() => navigate(`/shop/${foundShop.id}/product/${p.id}`)}
+                        className="px-3 py-1.5 text-sm rounded-xl bg-purple-500 text-white hover:bg-purple-600"
+                      >
+                        Voir
+                      </button>
+                    </div>
+                  </div>
+                </Card>
               </div>
+
             );
           })}
         </div>
@@ -132,12 +140,13 @@ function HomePageShop() {
             ))}
           </div>
         </div>
-      </div>
+      </div >
 
       {/* CTA / Footer avec couleur du shop */}
-      <div
+      < div
         className="text-white py-16"
-        style={{ backgroundColor: foundShop.codeColor ?? '#000' }}
+        style={{ backgroundColor: foundShop.codeColor ?? '#000' }
+        }
       >
         <div className="max-w-4xl mx-auto text-center px-4">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -147,11 +156,11 @@ function HomePageShop() {
             © 2025 {foundShop.name}. Tous droits réservés.
           </p>
         </div>
-      </div>
+      </div >
 
       {/* Si tu utilises des routes enfant (ex: /shop/:shopId/contact), garde l'Outlet */}
-      <Outlet />
-    </div>
+      < Outlet />
+    </div >
   );
 }
 

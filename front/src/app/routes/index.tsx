@@ -18,6 +18,9 @@ import { CategoryList } from "./admin/dashboard/CategoryManagement";
 import HomePageShop from "./shop/HomePageShop";
 import Contact from "./shop/Contact";
 import Catalogue from "./shop/Catalogue";
+import ItemPage from "./shop/ItemPage";
+import APropos from "./shop/aPropos";
+import Cart from "./shop/Cart";
 
 // ⬇️ Petits wrappers internes (déclarés dans CE fichier) pour injecter le shopId param
 function ProductsRoute() {
@@ -61,11 +64,14 @@ export const router = createBrowserRouter([
     ],
   },
 
-
   { path: "/shop/:shopId", element: <HomePageShop /> },
 
   { path: "/shop/:shopId/contact", element: <Contact /> },
+  { path: "/shop/:shopId/apropos", element: <APropos /> },
   { path: "/shop/:shopId/catalogue", element: <Catalogue /> },
+  { path: "/shop/:shopId/product/:productId", element: <ItemPage /> },
+  { path: "/shop/:shopId/panier", element: <Cart /> },
+
 
 
 
