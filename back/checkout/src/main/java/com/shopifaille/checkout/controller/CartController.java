@@ -1,0 +1,56 @@
+package com.shopifaille.checkout.controller;
+
+import com.shopifaille.checkout.entity.Cart;
+import com.shopifaille.checkout.entity.CartItem;
+import com.shopifaille.checkout.service.CartService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/carts")
+public class CartController {
+
+    private static final Logger log = LoggerFactory.getLogger(CartController.class);
+
+    private final CartService cartService;
+
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
+    }
+
+    @PostMapping("/{storeId}")
+    public ResponseEntity<String> createCart(@PathVariable String storeId) {
+        String cartId = cartService.createCart(storeId); // create empty cart
+        return new ResponseEntity<>(cartId, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{cartId}")
+    public ResponseEntity<Cart> getCart(@PathVariable String cartId) {
+        log.info("Fetching cart with id {}", cartId);
+        return cartService.getCartById(cartId)
+                .map(ResponseEntity::ok) // 200 OK with body
+                .orElseGet(() -> ResponseEntity.notFound().build()); // 404 Not Found
+    }
+
+    @PostMapping("/{cartId}/items")
+    public ResponseEntity<String> addItemToCart(@PathVariable String cartId, @RequestBody CartItem item) {
+        cartService.addItemToCart(cartId, item);
+        return new ResponseEntity<>(cartId, HttpStatus.OK);
+    }
+
+    @PutMapping("/{cartId}/items/{itemId}")
+    public ResponseEntity<String> modifyItemQuantity(@PathVariable String cartId, @RequestBody int quantity, @PathVariable String itemId) {
+        cartService.modifyCartItemQuantity(cartId, itemId, quantity);
+        return new ResponseEntity<>(cartId, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{cartId}/items/{itemId}")
+    public ResponseEntity<String> removeItemFromCart(@PathVariable String cartId, @PathVariable String itemId) {
+        cartService.removeItemFromCart(cartId, itemId);
+        return new ResponseEntity<>(cartId, HttpStatus.OK);
+    }
+
+}

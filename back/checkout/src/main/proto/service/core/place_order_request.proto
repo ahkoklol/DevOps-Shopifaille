@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package core.order_management;
+
+import "google/protobuf/timestamp.proto";
+
+option java_package = "com.shopifaille.core.grpc";
+option java_multiple_files = true;
+
+message PlaceOrderRequest {
+  string storeId = 1;
+  string shippingAddress = 2;
+  string billingAddress = 3;
+  double total = 4;
+  double taxes = 5;
+  double shipping = 6;
+  string status = 7;
+  string transactionId = 8;
+  google.protobuf.Timestamp date = 9;
+}

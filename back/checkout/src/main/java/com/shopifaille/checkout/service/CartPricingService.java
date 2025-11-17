@@ -1,0 +1,272 @@
+package com.shopifaille.checkout.service;
+
+import com.google.protobuf.Timestamp;
+import com.shopifaille.checkout.client.CoreGateway;
+import com.shopifaille.checkout.entity.*;
+import com.shopifaille.checkout.repository.CartRepository;
+import com.shopifaille.core.grpc.CheckDiscountRequest;
+import com.shopifaille.core.grpc.CheckDiscountResponse;
+import com.shopifaille.core.grpc.PlaceOrderRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class CartPricingService {
+
+    private static final Logger log = LoggerFactory.getLogger(CartPricingService.class);
+
+    private final CartRepository cartRepository;
+    private final CartService cartService;
+    private final CoreGateway coreGateway;
+
+    public CartPricingService(CartRepository cartRepository, CartService cartService, CoreGateway coreGateway) {
+        this.cartRepository = cartRepository;
+        this.cartService = cartService;
+        this.coreGateway = coreGateway;
+    }
+
+    /**
+     * Applies discount to a cart
+     * @param cartId the id of the cart
+     * @param discountCode the discount code
+     * @return true if the discount was applied, false otherwise
+     */
+    public boolean applyDiscount(String cartId, String discountCode) {
+        Cart cart = cartService.getCartById(cartId)
+                .orElseThrow(() -> {
+                    log.error("Cart with id {} not found for discount application", cartId);
+                    return new IllegalStateException("Cart not found.");
+                });
+
+        // check the discount code validity with the core client stub
+        CheckDiscountRequest checkDiscountRequest = CheckDiscountRequest.newBuilder()
+                .setCode(discountCode)
+                .build();
+
+        CheckDiscountResponse checkDiscountResponse = coreGateway.validateDiscountCode(checkDiscountRequest);
+        if (!checkDiscountResponse.getIsValid()) {
+            log.warn("Discount code {} is invalid according to Core.", discountCode);
+            return false;
+        }
+
+        Discount discount = createDiscount(cart, discountCode, checkDiscountResponse);
+        cart.getDiscounts().add(discount);
+        cart.setDateModified(new Date());
+        cartRepository.save(cart);
+
+        log.info("Successfully applied discount {} to cart {}. Value: {} {}", discountCode, cartId, checkDiscountResponse.getValue(), checkDiscountResponse.getType());
+        return true;
+    }
+
+    /**
+     * Saves the shipping detail
+     * @param cartId the id of the cart
+     * @param shippingDetail the shipping detail
+     * @return a ShippingDetail object with the shipping information
+     */
+    public ShippingDetail saveShippingDetail(String cartId, ShippingDetail shippingDetail) {
+        Cart cart = cartService.getCartById(cartId)
+                .orElseThrow(() -> {
+                    log.error("Cart with id {} not found for discount application", cartId);
+                    return new IllegalStateException("Cart not found.");
+                });
+
+        ShippingDetail detail = cart.getShippingDetail() != null ? cart.getShippingDetail() : new ShippingDetail();
+        detail.setCart(cart);
+        detail.setBuyerFirstName(shippingDetail.getBuyerFirstName());
+        detail.setBuyerLastName(shippingDetail.getBuyerLastName());
+        detail.setBuyerEmail(shippingDetail.getBuyerEmail());
+        detail.setAddress(shippingDetail.getAddress());
+        detail.setCost(5.00);
+        detail.setDate(new Date());
+
+        // check for shipping cost discount
+        boolean isFreeShippingApplied = cart.getDiscounts().stream()
+                .anyMatch(discount -> calculateShipping(discount.getCode()));
+        if (isFreeShippingApplied) {
+            detail.setCost(0.0);
+            log.info("Free shipping applied for cart {}", cartId);
+        }
+
+        cart.setShippingDetail(detail);
+        cart.setDateModified(new Date());
+        cartRepository.save(cart);
+
+        return detail;
+    }
+
+    /**
+     * Checks if the discount code for shipping cost is valid
+     * @param discountCode the discount code
+     * @return true if the code is valid, false otherwise
+     */
+    private boolean calculateShipping(String discountCode) {
+        return discountCode.equalsIgnoreCase("SHIPPING25");
+    }
+
+    /**
+     * Fetches all information relative to the order summary
+     * @param cartId the id of the cart
+     * @return the Summary object of the transaction
+     */
+    public Summary getSummary(String cartId) {
+        Cart cart = cartService.getCartById(cartId)
+                .orElseThrow(() -> {
+                    log.error("Cart with id {} not found summary", cartId);
+                    return new IllegalStateException("Cart not found.");
+                });
+
+        if (cart.getCartItems().isEmpty()) {
+            log.warn("No items in cart with id {}", cartId);
+            throw new IllegalStateException("No items in cart with id " + cartId);
+        }
+
+        if (cart.getShippingDetail() == null) {
+            log.error("Shipping details are required for summary calculation in cart {}", cartId);
+            throw new IllegalStateException("Shipping details must be set before calculating summary.");
+        }
+
+        // 1. CALCULATE GROSS SUBTOTAL
+        // 2. CALCULATE TOTAL DISCOUNT AMOUNT
+        // 3. CALCULATE NET TAXABLE BASE
+        // 4. CALCULATE TAXES (Standard 20% on the net taxable base)
+        // 5. CALCULATE FINAL TOTAL (TTC)
+        int totalItems = calculateTotalItems(cart.getCartItems());
+        double subtotalGross = calculateGrossSubtotal(cart.getCartItems()); // subtotal before any discounts
+        double itemDiscountAmount = calculateItemsTotalDiscount(cart); // discount from items
+        double generalCouponDiscountAmount = calculateGeneralCouponDiscount(cart.getDiscounts()); // discount from coupons
+        double totalDiscountAmount = itemDiscountAmount + generalCouponDiscountAmount; // total discount
+        double shippingCost = cart.getShippingDetail().getCost(); // shipping cost
+        double netTaxableBase = subtotalGross - totalDiscountAmount + shippingCost;
+        double totalTaxAmount = netTaxableBase * 0.20;
+        double finalTotal = netTaxableBase + totalTaxAmount;
+
+        Summary summary = new Summary();
+        summary.setSummaryId(UUID.randomUUID().toString());
+        summary.setCartId(cartId);
+        summary.setCartItems(cart.getCartItems());
+        summary.setTotalItemCount(totalItems);
+        summary.setShippingAddress(cart.getShippingDetail().getAddress());
+        summary.setSubtotalItems(subtotalGross); // Total before discounts
+        summary.setTotalDiscountAmount(totalDiscountAmount); // Total amount deducted
+        summary.setShippingCost(shippingCost);
+        summary.setTotalTaxAmount(totalTaxAmount);
+        summary.setTotal(finalTotal); // Final price TTC
+        summary.setDate(cart.getShippingDetail().getDate());
+
+        // place the order
+        PlaceOrderRequest placeOrderRequest = PlaceOrderRequest.newBuilder()
+                .setStoreId(cart.getStoreId())
+                .setShippingAddress(cart.getShippingDetail().getAddress())
+                .setBillingAddress(cart.getShippingDetail().getAddress())
+                .setTotal(finalTotal)
+                .setTaxes(totalTaxAmount)
+                .setShipping(shippingCost)
+                .setStatus("Out for delivery")
+                .setTransactionId(summary.getSummaryId())
+                .setDate(convertDateToTimestamp(cart.getShippingDetail().getDate()))
+                .build();
+
+        coreGateway.placeOrder(placeOrderRequest);
+
+        return summary;
+    }
+
+    /**
+     * Helper to calculate total number of cart items
+     * @param cartItems the cart
+     * @return the total number of CartItem in the cart
+     */
+    private int calculateTotalItems(List<CartItem> cartItems) {
+        return cartItems.stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum();
+    }
+
+    /**
+     * Helper to calculate the gross subtotal = total without discount or shipping
+     * @param cartItems a list of CartItem
+     * @return the gross subtotal
+     */
+    private double calculateGrossSubtotal(List<CartItem> cartItems) {
+        return cartItems.stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
+
+    /**
+     * Helper to calculate the total discount from items
+     * @param cart the cart
+     * @return the total discount from items
+     */
+    private double calculateItemsTotalDiscount(Cart cart) {
+        return cart.getCartItems().stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity() * (item.getDiscount() / 100.0))
+                .sum();
+    }
+
+    /**
+     * Helper to calculate the discount from coupons (on the cart total after discount from items discount)
+     * @param discounts coupon discount codes
+     * @return the discount from coupons
+     */
+    private double calculateGeneralCouponDiscount(List<Discount> discounts) {
+        return discounts.stream()
+                .mapToDouble(Discount::getValue)
+                .sum();
+    }
+
+    /**
+     * Creates a Discount
+     * @param cart the Cart where the discount has to be applied
+     * @param code the discount code
+     * @param response the response from the gRPC core stub
+     * @return a Discount object
+     */
+    private Discount createDiscount(Cart cart, String code, CheckDiscountResponse response) {
+        Discount discount = new Discount();
+        discount.setDiscountId(UUID.randomUUID().toString());
+        discount.setCart(cart);
+        discount.setCode(code);
+        discount.setType(response.getType());
+        discount.setValue(response.getValue());
+        discount.setActive(response.getIsActive());
+        discount.setStartDate(convertTimestampToDate(response.getStartDate()));
+        discount.setEndDate(convertTimestampToDate(response.getEndDate()));
+        return discount;
+    }
+
+    /**
+     * Converts a Protobuf Timestamp object to a java.util.Date object.
+     * @param timestamp a google.protobuf.Timestamp
+     * @return a java.util.Date
+     */
+    private Date convertTimestampToDate(Timestamp timestamp) {
+        if (timestamp == null || (timestamp.getSeconds() == 0 && timestamp.getNanos() == 0)) {
+            return null;
+        }
+        return Date.from(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()));
+    }
+
+    /**
+     * Converts a java.util.Date object to a Protobuf Timestamp object.
+     * @param date a java.util.Date
+     * @return a google.protobuf.Timestamp
+     */
+    private Timestamp convertDateToTimestamp(Date date) {
+        if (date == null) {
+            return null;
+        }
+        Instant instant = date.toInstant();
+        return Timestamp.newBuilder()
+                .setSeconds(instant.getEpochSecond())
+                .setNanos(instant.getNano())
+                .build();
+    }
+}

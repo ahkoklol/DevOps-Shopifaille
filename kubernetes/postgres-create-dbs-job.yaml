@@ -1,0 +1,31 @@
+# postgres-create-dbs-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-custom-databases
+spec:
+  # The job will retry up to 4 times if it fails
+  backoffLimit: 4
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: db-creator
+        image: postgres:15
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            # 1. Set the password environment variable
+            export PGPASSWORD=dbpassword
+            
+            # 2. Wait until postgres-service is reachable
+            until psql -h postgres-service -U dbuser -d postgres -c '\q'; do
+              >&2 echo "Postgres is unavailable - sleeping"
+              sleep 2
+            done
+            
+            # 3. Once connected, execute CREATE DATABASE commands individually
+            >&2 echo "Postgres is up - executing database creation"
+            psql -h postgres-service -U dbuser -d postgres -c "CREATE DATABASE products;"
+            psql -h postgres-service -U dbuser -d postgres -c "CREATE DATABASE checkout;"
+            psql -h postgres-service -U dbuser -d postgres -c "CREATE DATABASE core;"
