@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package product;
+
+option go_package = "github.com/ahkoklol/DevOps-Shopify/back/products/pkg/proto/product";
+
+message GetProductPriceResponse {
+  double price = 1; // The retrieved price
+  string currency = 2; // Currency of the price
+}
