@@ -16,7 +16,7 @@ import { OrderManagement } from "./admin/dashboard/OrderManagement";
 import CustomerManagement from "./admin/dashboard/CustomerManagement";
 import { Customization } from "./admin/dashboard/Customization";
 import { Settings } from "./admin/dashboard/Settings";
-
+import {CreateShopPage,ShopCreatedPage} from "./admin/platfom/CreateShopPage"
 
 // Import direct
 import { ProductList } from "./admin/dashboard/ProductManagement";
@@ -82,6 +82,8 @@ export const router = createBrowserRouter([
 
   // ⬇️ AdminHomePage SANS sidebar (hors layout)
   { path: "/admin/home", element: <AdminHomePage /> },
+  { path: "/admin/platform/create-shop", element: <CreateShopPage /> },
+   { path: "/admin/platform/shop-created", element: <ShopCreatedPage /> },
 
   // ⬇️ Espace admin AVEC sidebar par boutique
   {

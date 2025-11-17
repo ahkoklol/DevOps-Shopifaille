@@ -21,7 +21,7 @@ export default function AdminHomePage() {
             <h1 className="text-3xl text-gray-900 mb-2">Mes boutiques</h1>
             <p className="text-gray-600">Gérez et créez vos boutiques e-commerce</p>
           </div>
-          <Button size="lg" onClick={() => navigate("/platform/create-shop")}>
+          <Button size="lg" onClick={() => navigate("/admin/platform/create-shop")}>
             <Plus className="w-5 h-5 mr-2" />
             Créer une boutique
           </Button>
@@ -37,7 +37,7 @@ export default function AdminHomePage() {
             <p className="text-gray-600 mb-6">
               Créez votre première boutique pour commencer à vendre en ligne
             </p>
-            <Button onClick={() => navigate("/platform/create-shop")}>
+            <Button onClick={() => navigate("/admin/platform/create-shop")}>
               <Plus className="w-4 h-4 mr-2" />
               Créer ma première boutique
             </Button>
