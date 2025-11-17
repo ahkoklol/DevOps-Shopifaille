@@ -1,0 +1,65 @@
+services:
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: main_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  core-service:
+    image: ghcr.io/ahkoklol/core-service:latest
+    restart: on-failure
+    environment:
+      # PG_URL overrides the Deno default
+      PG_URL: postgres://user:password@postgres:5432/core_db
+    depends_on:
+      - postgres 
+
+  products-service:
+    image: ghcr.io/ahkoklol/products-service:latest
+    restart: on-failure
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: products_db
+    depends_on:
+      - postgres
+
+  checkout-service:
+    image: ghcr.io/ahkoklol/checkout-service:latest
+    restart: on-failure
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/checkout_db 
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - postgres
+
+  store-gateway:
+    image: ghcr.io/ahkoklol/store-gateway-service:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      products.service.url: http://products-service:8080
+      checkout.service.url: http://checkout-service:8080
+    depends_on:
+      - products-service
+      - checkout-service
+
+  frontend:
+    image: ghcr.io/ahkoklol/shopifaille-frontend:latest
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - store-gateway
+
+volumes:
+  postgres_data:
