@@ -6,7 +6,7 @@ on:
       - main # Trigger CD only on merges to main
     paths:
       - "back/checkout/**"
-      - "kubernetes/checkout-deployment.yaml" # Also run if deployment config changes
+      - "kubernetes/checkout-deployment.yaml"
 
 jobs:
   build-and-deploy:
@@ -53,3 +53,15 @@ jobs:
           file: ./back/checkout/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/checkout-service:latest
+
+      # --- 3. Kubernetes Deployment 🚀 ---
+
+      - name: Setup Kubeconfig
+        # This action automatically configures kubectl using the KUBE_CONFIG_DATA secret
+        uses: D630/setup-kubeconfig-action@v1.1
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
+
+      - name: Deploy to Kubernetes
+        # Applies the manifest, which either creates the service or performs a rolling update
+        run: kubectl apply -f kubernetes/checkout-deployment.yaml

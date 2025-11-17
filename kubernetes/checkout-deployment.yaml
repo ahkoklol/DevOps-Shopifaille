@@ -1,0 +1,38 @@
+# 1. Deployment: Manages the application container
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-service
+  labels:
+    app: checkout
+spec:
+  replicas: 1 # Start with a single replica
+  selector:
+    matchLabels:
+      app: checkout
+  template:
+    metadata:
+      labels:
+        app: checkout
+    spec:
+      containers:
+      - name: checkout
+        # This tag is produced and pushed by your CD pipeline
+        image: ghcr.io/${{ github.repository_owner }}/checkout-service:latest
+        ports:
+        - containerPort: 8080 # Based on your Dockerfile/Spring Boot default
+        # No database environment variables needed here, add later when database is created
+---
+# 2. Service: Provides a stable, internal network address
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkout-service
+spec:
+  # ClusterIP: Only accessible internally by other services (like Store Gateway)
+  type: ClusterIP
+  selector:
+    app: checkout
+  ports:
+    - port: 8080
+      targetPort: 8080
