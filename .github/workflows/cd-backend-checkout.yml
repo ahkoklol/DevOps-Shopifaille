@@ -75,5 +75,10 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
 
+      - name: Resolve Image Tag in Manifest
+        run: |
+          IMAGE_TAG="ghcr.io/${{ github.repository_owner }}/checkout-service:latest"
+          sed -i "s@ghcr.io/\${{ github.repository_owner }}/checkout-service:latest@$IMAGE_TAG@g" kubernetes/checkout-deployment.yaml
+
       - name: Deploy to Kubernetes
-        run: kubectl apply -f kubernetes/checkout-deployment.yaml
+        run: kubectl apply -f kubernetes/checkout-deployment.yam
