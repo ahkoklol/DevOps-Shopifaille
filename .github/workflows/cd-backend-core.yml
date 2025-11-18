@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main # Trigger CD only on merges to main
+      - wayne-kubernetes # Temporary branch for Kubernetes testing
     paths:
       - "back/core/**"
       # Keep the deployment path trigger, even though deployment is skipped for now

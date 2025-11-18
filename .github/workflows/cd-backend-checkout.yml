@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main # Trigger CD only on merges to main
+      - wayne-kubernetes # Temporary branch for Kubernetes testing
     paths:
       - "back/checkout/**"
       - "kubernetes/checkout-deployment.yaml"
@@ -67,9 +68,10 @@ jobs:
 
       # --- 4. Kubernetes Deployment ---
 
-      - name: Setup Kubeconfig
-        uses: D630/setup-kubeconfig-action@v1.1
+      - name: Configure Kubernetes Context (Kubeconfig)
+        uses: azure/k8s-set-context@v4
         with:
+          method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
 
       - name: Deploy to Kubernetes

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main # Trigger CD only on merges to main
+      - wayne-kubernetes # Temporary branch for Kubernetes testing
     paths:
       - "back/store-gateway/**"
       # Path to the deployment file, to be used later
