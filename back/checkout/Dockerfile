@@ -5,6 +5,12 @@ FROM maven:3.9-eclipse-temurin-21-alpine AS build
 # Set the working directory inside the container
 WORKDIR /app
 
+# --- FIX: Install protoc for Alpine Linux ---
+# The Maven plugin's downloaded protoc is glibc-based and fails on Alpine (musl libc).
+# This command installs the musl-compatible protoc from the Alpine repositories.
+RUN apk update && apk add protobuf
+# --------------------------------------------
+
 # Copy the Maven project files
 COPY pom.xml .
 COPY src ./src
