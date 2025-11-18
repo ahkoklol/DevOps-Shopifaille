@@ -81,4 +81,4 @@ jobs:
           sed -i "s@ghcr.io/\${{ github.repository_owner }}/checkout-service:latest@$IMAGE_TAG@g" kubernetes/checkout-deployment.yaml
 
       - name: Deploy to Kubernetes
-        run: kubectl apply -f kubernetes/checkout-deployment.yam
+        run: kubectl apply -f kubernetes/checkout-deployment.yaml
