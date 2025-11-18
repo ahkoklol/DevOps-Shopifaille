@@ -22,7 +22,6 @@ router.post("/", async (ctx) => {
   }
 });
 
-
 // 🔍 Obtenir un client par ID
 router.get("/:id", async (ctx) => {
   const id = ctx.params.id!;

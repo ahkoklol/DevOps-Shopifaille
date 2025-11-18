@@ -5,10 +5,10 @@ export class AddressService {
   private repo = new AddressRepository();
 
   async listAddresses(customer_id: string): Promise<CustomerAddress[]> {
-    return this.repo.findByCustomer(customer_id);
+    return await this.repo.listByCustomer(customer_id);
   }
 
   async addAddress(data: Partial<CustomerAddress>): Promise<CustomerAddress> {
-    return this.repo.create(data);
+    return await this.repo.create(data);
   }
 }
