@@ -77,3 +77,6 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: kubectl apply -f kubernetes/checkout-deployment.yaml
+
+      - name: Force Rollout Restart for new Image
+        run: kubectl rollout restart deployment/checkout-service # Force restart to pick up the new image, can be changed later with SHA tags
