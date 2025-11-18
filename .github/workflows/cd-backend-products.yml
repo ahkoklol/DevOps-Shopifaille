@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main # CD runs only on merges to main
+      - wayne-kubernetes # Temporary branch for Kubernetes testing
     paths:
       - "back/products/**"
       - "kubernetes/products-deployment.yaml"
