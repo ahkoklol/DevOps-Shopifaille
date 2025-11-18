@@ -5,11 +5,13 @@ FROM maven:3.9-eclipse-temurin-21-alpine AS build
 # Set the working directory inside the container
 WORKDIR /app
 
-# --- FIX: Install protoc for Alpine Linux ---
-# The Maven plugin's downloaded protoc is glibc-based and fails on Alpine (musl libc).
-# This command installs the musl-compatible protoc from the Alpine repositories.
-RUN apk update && apk add protobuf
-# --------------------------------------------
+# --- FIX: Install protoc compiler and glibc compatibility for gRPC plugin ---
+# 1. 'protobuf': Provides the musl-compatible Protobuf compiler (protoc).
+# 2. 'libc6-compat': Provides glibc libraries needed to run the gRPC plugin binary (protoc-gen-grpc-java) 
+#    which Maven downloads but is compiled for glibc environments.
+RUN apk update && \
+    apk add protobuf libc6-compat
+# --------------------------------------------------------------------------
 
 # Copy the Maven project files
 COPY pom.xml .
