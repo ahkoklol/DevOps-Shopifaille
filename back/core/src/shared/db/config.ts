@@ -16,7 +16,9 @@ export function getDbConfig(moduleName: string) {
   };
 
   const database = dbMap[moduleName];
-  if (!database) throw new Error(`Database not configured for module: ${moduleName}`);
+  if (!database) {
+    throw new Error(`Database not configured for module: ${moduleName}`);
+  }
 
   return { host, user, password, port, database };
 }

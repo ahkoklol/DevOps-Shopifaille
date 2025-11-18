@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package product;
+
+option go_package = "github.com/ahkoklol/DevOps-Shopify/back/products/pkg/proto/product";
+
+message StockCheckRequest {
+  string product_id = 1;
+  int32 quantity = 2; // Quantity to check availability for
+}

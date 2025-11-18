@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package products;
+
+// Go code will be generated into internal/api/grpc
+option go_package = "github.com/ahkoklol/DevOps-Shopify/back/products/pkg/proto/product";
+
+service ProductService {
+  
+  rpc DecrementStock (StockUpdateRequest) returns (StockUpdateResponse);
+  rpc IncrementStock (StockUpdateRequest) returns (StockUpdateResponse);
+  rpc CheckStock (StockCheckRequest) returns (StockCheckResponse);
+  rpc GetProductPrice (GetProductPriceRequest) returns (GetProductPriceResponse);
+}

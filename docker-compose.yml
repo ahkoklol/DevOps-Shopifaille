@@ -17,7 +17,7 @@ services:
       # PG_URL overrides the Deno default
       PG_URL: postgres://user:password@postgres:5432/core_db
     depends_on:
-      - postgres 
+      - postgres
 
   products-service:
     image: ghcr.io/ahkoklol/products-service:latest
@@ -35,7 +35,7 @@ services:
     image: ghcr.io/ahkoklol/checkout-service:latest
     restart: on-failure
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/checkout_db 
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/checkout_db
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
     depends_on:

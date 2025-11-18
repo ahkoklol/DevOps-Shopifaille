@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package product;
+
+option go_package = "github.com/ahkoklol/DevOps-Shopify/back/products/pkg/proto/product";
+
+message StockUpdateResponse {
+  bool success = 1;
+  string error_message = 2; // Only set if success is false
+}
