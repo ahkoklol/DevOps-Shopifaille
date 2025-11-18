@@ -5,7 +5,7 @@ export class AddressService {
   private repo = new AddressRepository();
 
   async listAddresses(customer_id: string): Promise<CustomerAddress[]> {
-    return this.repo.findByCustomer(customer_id);
+    return this.repo.listByCustomer(customer_id);
   }
 
   async addAddress(data: Partial<CustomerAddress>): Promise<CustomerAddress> {

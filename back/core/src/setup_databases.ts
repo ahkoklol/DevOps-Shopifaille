@@ -2,7 +2,6 @@ import { Client } from "postgres";
 import { load } from "@std/dotenv";
 import { walk } from "@std/fs";
 
-
 await load({ export: true, envPath: "./back/core/.env" });
 
 const rootClient = new Client({
@@ -23,7 +22,9 @@ const databases = [
 ];
 
 for (const dbName of databases) {
-  await rootClient.queryArray(`CREATE DATABASE ${dbName} WITH OWNER ${Deno.env.get("PG_USER")}`);
+  await rootClient.queryArray(
+    `CREATE DATABASE ${dbName} WITH OWNER ${Deno.env.get("PG_USER")}`,
+  );
   console.log(`✅ Created database ${dbName}`);
 }
 
