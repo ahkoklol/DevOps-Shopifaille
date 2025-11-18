@@ -1,4 +1,4 @@
-name: Products Microservice CD - Build & Push to GHCR
+name: Products Microservice CD - Build & Push to GHCR & Docker Hub (Go)
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # --- 1. CI/Build Preparation ---
+      # --- 1. CI/Build Preparation (Go) ---
 
       - name: Set up Go 1.25.3
         uses: actions/setup-go@v5
@@ -30,18 +30,18 @@ jobs:
 
       - name: Generate Go Modules (FIXED STEP)
         working-directory: back/products
-        # This step downloads dependencies and creates the necessary go.sum file
         run: go mod tidy
 
       - name: Build Go Binary (Optional but Recommended)
         working-directory: back/products
         run: go build -v ./...
 
-      # --- 2. Docker Build and Push to GHCR ---
+      # --- 2. Docker Logins ---
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # Log in to GitHub Container Registry (GHCR)
       - name: Log in to GitHub Container Registry (GHCR)
         uses: docker/login-action@v3
         with:
@@ -49,11 +49,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          # Uses ${{ github.repository_owner }} as the confirmed Docker Hub username
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }} # Uses the previously set Docker Hub token
+
+      # --- 3. Build and Push to Both Registries ---
+
       - name: Build and Push Go Docker image
         uses: docker/build-push-action@v6
         with:
-          # Context must point to the directory containing the Dockerfile, go.mod, and go.sum
           context: ./back/products
           file: ./back/products/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/products-service:latest
+          # Tags for both GHCR and Docker Hub
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/products-service:latest
+            ${{ github.repository_owner }}/products-service:latest

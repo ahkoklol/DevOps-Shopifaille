@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package core.order_management;
+
+import "google/protobuf/timestamp.proto";
+
+option java_package = "com.shopifaille.core.grpc";
+option java_multiple_files = true;
+
+message CheckDiscountResponse {
+  bool isValid = 1;
+  string type = 2;
+  double value = 3;
+  bool isActive = 4;
+  google.protobuf.Timestamp startDate = 5;
+  google.protobuf.Timestamp endDate = 6;
+}
