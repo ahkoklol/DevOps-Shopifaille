@@ -5,6 +5,6 @@ export class OrderRefService {
   private repo = new OrderRefRepository();
 
   async getCustomerOrders(customer_id: string): Promise<CustomerOrderRef[]> {
-    return this.repo.listOrders(customer_id);
+    return await this.repo.listOrders(customer_id);
   }
 }

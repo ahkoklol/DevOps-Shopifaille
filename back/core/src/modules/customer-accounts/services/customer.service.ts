@@ -11,6 +11,6 @@ export class CustomerService {
   }
 
   async getCustomerProfile(id: string): Promise<Customer | null> {
-    return this.repo.findById(id);
+    return await this.repo.findById(id);
   }
 }
