@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - main # Trigger CD only on merges to main
-      - wayne-kubernetes # Temporary branch for Kubernetes testinga
+      - wayne-kubernetes # Temporary branch for Kubernetes testing
     paths:
       - "back/checkout/**"
       - "kubernetes/checkout-deployment.yaml"
+      - ".github/workflows/**"
 
 jobs:
   build-and-deploy:
