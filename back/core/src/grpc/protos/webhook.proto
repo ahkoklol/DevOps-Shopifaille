@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+package webhook;
+
+// ---------------------------------------------
+// Enums
+// ---------------------------------------------
+
+enum WebhookDeliveryStatus {
+  WEBHOOK_DELIVERY_STATUS_UNSPECIFIED = 0;
+  WEBHOOK_DELIVERY_STATUS_PENDING = 1;
+  WEBHOOK_DELIVERY_STATUS_SENT = 2;
+  WEBHOOK_DELIVERY_STATUS_FAILED = 3;
+}
+
+// ---------------------------------------------
+// Webhook Subscription
+// ---------------------------------------------
+
+message WebhookSubscription {
+  string id = 1;
+  string store_id = 2;
+  string target_url = 3;
+  string secret = 4;
+  // This is the logical representation; server will map to event_types_csv internally
+  repeated string event_types = 5;
+  bool active = 6;
+  string created_at = 7;
+}
+
+message CreateSubscriptionRequest {
+  string store_id = 1;
+  string target_url = 2;
+  string secret = 3;
+  repeated string event_types = 4;
+  bool active = 5; // optional, default true
+}
+
+message CreateSubscriptionResponse {
+  WebhookSubscription subscription = 1;
+}
+
+message GetSubscriptionRequest {
+  string id = 1;
+}
+
+message GetSubscriptionResponse {
+  WebhookSubscription subscription = 1;
+}
+
+message ListSubscriptionsByStoreRequest {
+  string store_id = 1;
+}
+
+message ListSubscriptionsByStoreResponse {
+  repeated WebhookSubscription subscriptions = 1;
+}
+
+message SetSubscriptionActiveRequest {
+  string id = 1;
+  bool active = 2;
+}
+
+message SetSubscriptionActiveResponse {
+  WebhookSubscription subscription = 1;
+}
+
+message GetActiveSubscriptionsForEventRequest {
+  string store_id = 1;
+  string event_type = 2;
+}
+
+message GetActiveSubscriptionsForEventResponse {
+  repeated WebhookSubscription subscriptions = 1;
+}
+
+// ---------------------------------------------
+// Webhook Delivery
+// ---------------------------------------------
+
+message WebhookDelivery {
+  string id = 1;
+  string subscription_id = 2;
+  string event_type = 3;
+  string payload_json = 4;   // JSON as string
+  WebhookDeliveryStatus status = 5;
+  int32 attempts = 6;
+  string last_attempt_at = 7; // optional (can be empty)
+}
+
+message EnqueueDeliveryRequest {
+  string subscription_id = 1;
+  string event_type = 2;
+  string payload_json = 3; // JSON as string
+}
+
+message EnqueueDeliveryResponse {
+  WebhookDelivery delivery = 1;
+}
+
+message UpdateDeliveryStatusRequest {
+  string id = 1;
+  WebhookDeliveryStatus status = 2;
+  int32 attempts = 3;
+}
+
+message UpdateDeliveryStatusResponse {
+  WebhookDelivery delivery = 1;
+}
+
+message GetDeliveryRequest {
+  string id = 1;
+}
+
+message GetDeliveryResponse {
+  WebhookDelivery delivery = 1;
+}
+
+message ListDeliveriesForSubscriptionRequest {
+  string subscription_id = 1;
+}
+
+message ListDeliveriesForSubscriptionResponse {
+  repeated WebhookDelivery deliveries = 1;
+}
+
+// ---------------------------------------------
+// gRPC Services
+// ---------------------------------------------
+
+service WebhookSubscriptionService {
+  rpc CreateSubscription(CreateSubscriptionRequest) returns (CreateSubscriptionResponse);
+  rpc GetSubscription(GetSubscriptionRequest) returns (GetSubscriptionResponse);
+  rpc ListSubscriptionsByStore(ListSubscriptionsByStoreRequest) returns (ListSubscriptionsByStoreResponse);
+  rpc SetSubscriptionActive(SetSubscriptionActiveRequest) returns (SetSubscriptionActiveResponse);
+  rpc GetActiveSubscriptionsForEvent(GetActiveSubscriptionsForEventRequest) returns (GetActiveSubscriptionsForEventResponse);
+}
+
+service WebhookDeliveryService {
+  rpc EnqueueDelivery(EnqueueDeliveryRequest) returns (EnqueueDeliveryResponse);
+  rpc UpdateDeliveryStatus(UpdateDeliveryStatusRequest) returns (UpdateDeliveryStatusResponse);
+  rpc GetDelivery(GetDeliveryRequest) returns (GetDeliveryResponse);
+  rpc ListDeliveriesForSubscription(ListDeliveriesForSubscriptionRequest) returns (ListDeliveriesForSubscriptionResponse);
+}
