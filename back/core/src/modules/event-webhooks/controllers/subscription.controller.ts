@@ -1,9 +1,9 @@
 import { Router } from "@oak/oak";
 import { SubscriptionService } from "../services/subscription.service.ts";
 
-const router = new Router({ 
+const router = new Router({
   prefix: "/stores/:storeId/webhooks/subscriptions",
- });
+});
 const service = new SubscriptionService();
 
 router.post("/", async (ctx) => {

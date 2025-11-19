@@ -5,7 +5,7 @@ const db = await connectToModuleDB("store-management");
 
 export class BrandingRepository {
   async upsert(
-    storeId: string, 
+    storeId: string,
     data: UpsertBrandingDto,
   ): Promise<StoreBranding> {
     const result = await db.queryObject<StoreBranding>(

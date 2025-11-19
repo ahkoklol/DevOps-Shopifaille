@@ -5,7 +5,7 @@ const db = await connectToModuleDB("store-management");
 
 export class CategoryRepository {
   async create(
-    storeId: string, 
+    storeId: string,
     data: CreateCategoryDto,
   ): Promise<StoreCategory> {
     const result = await db.queryObject<StoreCategory>(

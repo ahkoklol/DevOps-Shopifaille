@@ -1,11 +1,11 @@
 export type UUID = string;
 
 export type OrderStatus = "CREATED" | "PAID" | "FULFILLED" | "CANCELLED";
-export type TxStatus = 
-| "PENDING" 
-| "AUTHORIZED" 
-| "CAPTURED" 
-| "REFUNDED" 
+export type TxStatus =
+| "PENDING"
+| "AUTHORIZED"
+| "CAPTURED"
+| "REFUNDED"
 | "FAILED";
 
 export interface Order {

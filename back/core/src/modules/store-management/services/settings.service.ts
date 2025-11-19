@@ -5,7 +5,7 @@ export class SettingsService {
   private repo = new SettingsRepository();
 
   async upsertSettings(
-    storeId: string, 
+    storeId: string,
     dto: UpsertSettingsDto,
   ): Promise<StoreSettings> {
     return await this.repo.upsert(storeId, dto);

@@ -46,7 +46,7 @@ export class SubscriptionRepository {
   }
 
   async updateActiveStatus(
-    id: string, 
+    id: string,
     active: boolean,
   ): Promise<WebhookSubscription> {
     const result = await db.queryObject<WebhookSubscription>(

@@ -36,16 +36,16 @@ export interface CreateStoreDto {
   custom_domain?: string | null;
   plan?: string;
 }
-export interface UpsertBrandingDto { 
+export interface UpsertBrandingDto {
   theme_preset?: string;
   logo_url?: string | null;
   colors_json?: unknown;
 }
-export interface UpsertSettingsDto { 
+export interface UpsertSettingsDto {
   currency?: string;
   checkout_rules_json?: unknown;
 }
-export interface CreateCategoryDto { 
+export interface CreateCategoryDto {
   name: string;
   slug: string;
   parent_category_id?: UUID | null;

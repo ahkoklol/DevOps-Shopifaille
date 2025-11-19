@@ -10,7 +10,7 @@ export class OrderLifecycleService {
   }
 
   async setStatus(
-    orderId: string, 
+    orderId: string,
     status: OrderStatus,
   ): Promise<OrderLifecycle> {
     return await this.repo.upsertLifecycle(orderId, status);

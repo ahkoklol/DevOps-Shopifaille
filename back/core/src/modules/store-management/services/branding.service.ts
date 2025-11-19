@@ -6,7 +6,7 @@ export class BrandingService {
 
   async upsertBranding(
     storeId: string,
-     dto: UpsertBrandingDto
+    dto: UpsertBrandingDto,
     ): Promise<StoreBranding> {
     return await this.repo.upsert(storeId, dto);
   }
