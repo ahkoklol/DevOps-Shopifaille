@@ -1,5 +1,5 @@
 import { SubscriptionRepository } from "../repositories/subscription.repository.ts";
-import { WebhookSubscription, SubscribeDto } from "../webhook.type.ts";
+import { SubscribeDto, WebhookSubscription } from "../webhook.type.ts";
 
 export class SubscriptionService {
   private repo = new SubscriptionRepository();
@@ -20,7 +20,9 @@ export class SubscriptionService {
     return await this.repo.findById(id);
   }
 
-  async listSubscriptionsByStore(storeId: string): Promise<WebhookSubscription[]> {
+  async listSubscriptionsByStore(
+    storeId: string
+  ): Promise<WebhookSubscription[]> {
     return await this.repo.listByStore(storeId);
   }
 

@@ -45,7 +45,9 @@ export class SubscriptionRepository {
     return result.rows;
   }
 
-  async updateActiveStatus(id: string, active: boolean): Promise<WebhookSubscription> {
+  async updateActiveStatus(id: string, 
+    active: boolean,
+  ): Promise<WebhookSubscription> {
     const result = await db.queryObject<WebhookSubscription>(
       `UPDATE webhook_subscription
          SET active = $2
@@ -56,7 +58,9 @@ export class SubscriptionRepository {
     return result.rows[0];
   }
 
-  async findActiveForEvent(storeId: string, eventType: string): Promise<WebhookSubscription[]> {
+  async findActiveForEvent(storeId: string, 
+    eventType: string,
+  ): Promise<WebhookSubscription[]> {
     const pattern = `%${eventType}%`;
 
     const result = await db.queryObject<WebhookSubscription>(

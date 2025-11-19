@@ -1,10 +1,12 @@
 import { connectToModuleDB } from "../../../shared/db/index.ts";
-import { StoreCategory, CreateCategoryDto } from "../store.type.ts";
+import { CreateCategoryDto, StoreCategory } from "../store.type.ts";
 
 const db = await connectToModuleDB("store-management");
 
 export class CategoryRepository {
-  async create(storeId: string, data: CreateCategoryDto): Promise<StoreCategory> {
+  async create(storeId: string, 
+    data: CreateCategoryDto,
+  ): Promise<StoreCategory> {
     const result = await db.queryObject<StoreCategory>(
       `INSERT INTO store_category (store_id, parent_category_id, name, slug, sort_order)
        VALUES ($1,$2,$3,$4,$5)

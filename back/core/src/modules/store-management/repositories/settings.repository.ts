@@ -4,7 +4,9 @@ import { StoreSettings, UpsertSettingsDto } from "../store.type.ts";
 const db = await connectToModuleDB("store-management");
 
 export class SettingsRepository {
-  async upsert(storeId: string, data: UpsertSettingsDto): Promise<StoreSettings> {
+  async upsert(storeId: string, 
+    data: UpsertSettingsDto,
+  ): Promise<StoreSettings> {
     const result = await db.queryObject<StoreSettings>(
       `INSERT INTO store_settings (store_id, currency, checkout_rules_json)
        VALUES ($1,$2,$3)
@@ -16,7 +18,9 @@ export class SettingsRepository {
       [
         storeId,
         data.currency ?? null,
-        data.checkout_rules_json ? JSON.stringify(data.checkout_rules_json) : null,
+        data.checkout_rules_json 
+        ? JSON.stringify(data.checkout_rules_json) 
+        : null,
       ],
     );
 

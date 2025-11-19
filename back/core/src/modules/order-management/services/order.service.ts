@@ -2,8 +2,8 @@
 import {
   CreateOrderDto,
   Order,
-  OrderStatus,
   OrderItem,
+  OrderStatus,
 } from "../order.type.ts";
 import { OrderRepository } from "../repositories/order.repository.ts";
 import { OrderItemRepository } from "../repositories/order-item.repository.ts";

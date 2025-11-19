@@ -4,7 +4,9 @@ import { StoreBranding, UpsertBrandingDto } from "../store.type.ts";
 const db = await connectToModuleDB("store-management");
 
 export class BrandingRepository {
-  async upsert(storeId: string, data: UpsertBrandingDto): Promise<StoreBranding> {
+  async upsert(storeId: string, 
+    data: UpsertBrandingDto,
+  ): Promise<StoreBranding> {
     const result = await db.queryObject<StoreBranding>(
       `INSERT INTO store_branding (store_id, theme_preset, logo_url, colors_json)
        VALUES ($1,$2,$3,$4)
@@ -18,7 +20,9 @@ export class BrandingRepository {
         storeId,
         data.theme_preset ?? null,
         data.logo_url ?? null,
-        data.colors_json ? JSON.stringify(data.colors_json) : null,
+        data.colors_json 
+        ? JSON.stringify(data.colors_json) 
+        : null,
       ],
     );
 

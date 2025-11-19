@@ -1,6 +1,11 @@
 // back/core/src/modules/order-management/repositories/order.repository.ts
 import { connectToModuleDB } from "../../../shared/db/index.ts";
-import { Order, OrderStatus, CreateOrderDto, OrderItem } from "../order.type.ts";
+import { 
+  CreateOrderDto,
+  Order,
+  OrderItem, 
+  OrderStatus 
+} from "../order.type.ts";
 
 const db = await connectToModuleDB("order-management");
 
@@ -67,7 +72,9 @@ export class OrderRepository {
         data.currency,
         data.status,
         JSON.stringify(data.shipping_address_json),
-        data.billing_address_json ? JSON.stringify(data.billing_address_json) : null,
+        data.billing_address_json 
+        ? JSON.stringify(data.billing_address_json) 
+        : null,
       ],
     );
 

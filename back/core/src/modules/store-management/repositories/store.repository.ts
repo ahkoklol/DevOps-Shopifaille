@@ -1,5 +1,5 @@
 import { connectToModuleDB } from "../../../shared/db/index.ts";
-import { MerchantStore, CreateStoreDto } from "../store.type.ts";
+import { CreateStoreDto, MerchantStore } from "../store.type.ts";
 
 const db = await connectToModuleDB("store-management");
 

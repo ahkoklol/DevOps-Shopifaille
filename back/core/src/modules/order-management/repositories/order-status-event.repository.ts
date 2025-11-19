@@ -1,6 +1,6 @@
 // back/core/src/modules/order-management/repositories/order-status-event.repository.ts
 import { connectToModuleDB } from "../../../shared/db/index.ts";
-import { OrderStatusEvent, OrderStatus } from "../order.type.ts";
+import { OrderStatus, OrderStatusEvent } from "../order.type.ts";
 
 const db = await connectToModuleDB("order-management");
 

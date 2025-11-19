@@ -4,7 +4,9 @@ import { CategoryRepository } from "../repositories/category.repository.ts";
 export class CategoryService {
   private repo = new CategoryRepository();
 
-  async createCategory(storeId: string, dto: CreateCategoryDto): Promise<StoreCategory> {
+  async createCategory(storeId: string, 
+    dto: CreateCategoryDto,
+  ): Promise<StoreCategory> {
     return await this.repo.create(storeId, dto);
   }
 
