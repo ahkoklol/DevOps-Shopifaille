@@ -4,7 +4,8 @@ import { CreateCategoryDto, StoreCategory } from "../store.type.ts";
 const db = await connectToModuleDB("store-management");
 
 export class CategoryRepository {
-  async create(storeId: string, 
+  async create(
+    storeId: string, 
     data: CreateCategoryDto,
   ): Promise<StoreCategory> {
     const result = await db.queryObject<StoreCategory>(

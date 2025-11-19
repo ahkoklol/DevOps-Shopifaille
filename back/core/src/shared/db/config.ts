@@ -13,7 +13,7 @@ export function getDbConfig(moduleName: string) {
     "customer-accounts": Deno.env.get("DB_CUSTOMER_ACCOUNTS")!,
     "order-management": Deno.env.get("DB_ORDER_MANAGEMENT")!,
     "store-management": Deno.env.get("DB_STORE_MANAGEMENT")!,
-    "event-webhooks": Deno.env.get("DB_EVENT_WEBHOOKS")!, 
+    "event-webhooks": Deno.env.get("DB_EVENT_WEBHOOKS")!,
     "products": Deno.env.get("DB_PRODUCTS")!,
   };
 

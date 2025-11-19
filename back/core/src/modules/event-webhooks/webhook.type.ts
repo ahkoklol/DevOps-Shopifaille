@@ -24,6 +24,6 @@ export interface SubscribeDto {
   store_id: UUID;
   target_url: string;
   secret: string;
-  event_types: string[]; 
+  event_types: string[];
   active?: boolean;
 }

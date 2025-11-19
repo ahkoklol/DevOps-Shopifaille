@@ -21,7 +21,7 @@ export class SubscriptionService {
   }
 
   async listSubscriptionsByStore(
-    storeId: string
+    storeId: string,
   ): Promise<WebhookSubscription[]> {
     return await this.repo.listByStore(storeId);
   }

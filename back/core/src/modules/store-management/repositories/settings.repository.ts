@@ -4,7 +4,8 @@ import { StoreSettings, UpsertSettingsDto } from "../store.type.ts";
 const db = await connectToModuleDB("store-management");
 
 export class SettingsRepository {
-  async upsert(storeId: string, 
+  async upsert(
+    storeId: string, 
     data: UpsertSettingsDto,
   ): Promise<StoreSettings> {
     const result = await db.queryObject<StoreSettings>(

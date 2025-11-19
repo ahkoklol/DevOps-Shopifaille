@@ -9,7 +9,10 @@ export class OrderLifecycleService {
     return await this.repo.findByOrder(orderId);
   }
 
-  async setStatus(orderId: string, status: OrderStatus): Promise<OrderLifecycle> {
+  async setStatus(
+    orderId: string, 
+    status: OrderStatus,
+  ): Promise<OrderLifecycle> {
     return await this.repo.upsertLifecycle(orderId, status);
   }
 }
