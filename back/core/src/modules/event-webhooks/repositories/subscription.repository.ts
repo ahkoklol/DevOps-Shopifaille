@@ -60,7 +60,7 @@ export class SubscriptionRepository {
   }
 
   async findActiveForEvent(
-    storeId: string, 
+    storeId: string,
     eventType: string,
   ): Promise<WebhookSubscription[]> {
     const pattern = `%${eventType}%`;

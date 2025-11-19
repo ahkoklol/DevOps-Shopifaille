@@ -4,7 +4,7 @@ import {
   CreateOrderDto,
   Order,
   OrderItem,
-  OrderStatus, 
+  OrderStatus,
 } from "../order.type.ts";
 
 const db = await connectToModuleDB("order-management");
@@ -73,8 +73,8 @@ export class OrderRepository {
         data.status,
         JSON.stringify(data.shipping_address_json),
         data.billing_address_json
-        ? JSON.stringify(data.billing_address_json)
-        : null,
+          ? JSON.stringify(data.billing_address_json)
+          : null,
       ],
     );
 

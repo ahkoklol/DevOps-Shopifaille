@@ -5,7 +5,7 @@ export class CategoryService {
   private repo = new CategoryRepository();
 
   async createCategory(
-    storeId: string, 
+    storeId: string,
     dto: CreateCategoryDto,
   ): Promise<StoreCategory> {
     return await this.repo.create(storeId, dto);

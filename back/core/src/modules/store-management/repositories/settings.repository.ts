@@ -5,7 +5,7 @@ const db = await connectToModuleDB("store-management");
 
 export class SettingsRepository {
   async upsert(
-    storeId: string, 
+    storeId: string,
     data: UpsertSettingsDto,
   ): Promise<StoreSettings> {
     const result = await db.queryObject<StoreSettings>(
@@ -20,8 +20,8 @@ export class SettingsRepository {
         storeId,
         data.currency ?? null,
         data.checkout_rules_json
-        ? JSON.stringify(data.checkout_rules_json)
-        : null,
+          ? JSON.stringify(data.checkout_rules_json)
+          : null,
       ],
     );
 
