@@ -1,3 +1,3 @@
-import { Hono } from "hono/mod.ts";
+import { Hono } from "@hono/hono";
 
 export const ordersRoutes = new Hono();

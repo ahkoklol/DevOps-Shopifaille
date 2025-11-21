@@ -1,7 +1,7 @@
 // back/core/src/shared/db/config.ts
 import { load } from "@std/dotenv";
 
-await load({ export: true, envPath: "./back/core/.env" });
+await load({ export: true, envPath: "./back/.env" });
 
 export function getDbConfig(moduleName: string) {
   const host = Deno.env.get("PG_HOST")!;
@@ -10,10 +10,11 @@ export function getDbConfig(moduleName: string) {
   const port = Number(Deno.env.get("PG_PORT") ?? 5432);
 
   const dbMap: Record<string, string> = {
-    "customer-accounts": Deno.env.get("DB_CUSTOMER_ACCOUNTS")!,
-    "orders": Deno.env.get("DB_ORDERS")!,
-    "products": Deno.env.get("DB_PRODUCTS")!,
-  };
+  "customer-accounts": Deno.env.get("DB_CUSTOMER_ACCOUNTS")!,
+  "orders": Deno.env.get("DB_ORDERS")!,
+  "store-management": Deno.env.get("DB_STORE_MANAGEMENT")!,
+  "event-webhooks": Deno.env.get("DB_EVENT_WEBHOOKS")!,
+};
 
   const database = dbMap[moduleName];
   if (!database) {

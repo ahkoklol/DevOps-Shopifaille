@@ -1,3 +1,3 @@
-import { Hono } from "hono/mod.ts";
+import { Hono } from "@hono/hono";
 
-export const webhookRoutes = new Hono();
+export const webhooksRoutes = new Hono();
