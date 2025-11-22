@@ -19,21 +19,21 @@ spec:
         - name: checkout
           image: ahkoklol/checkout-service:latest
           ports:
-            - containerPort: 8080 
-          
+            - containerPort: 8080
+
           # --- ADD THIS ENVIRONMENT BLOCK ---
           env:
             # 1. DB_URL: Use the internal service name and checkout DB
             - name: DB_URL
               value: jdbc:postgresql://postgres-service:5432/checkout
-            
+
             # 2. DB_USERNAME: Reference the username from the existing secret
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_USER
-            
+
             # 3. DB_PASSWORD: Reference the password from the existing secret
             - name: DB_PASSWORD
               valueFrom:
