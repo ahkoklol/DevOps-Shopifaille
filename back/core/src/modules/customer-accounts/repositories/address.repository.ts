@@ -38,7 +38,10 @@ export class AddressRepository {
     return result.rows[0];
   }
 
-  async setDefaultAddress(customerId: string, addressId: string): Promise<void> {
+  async setDefaultAddress(
+    customerId: string,
+    addressId: string,
+  ): Promise<void> {
     const db = await this.dbPromise;
     await db.queryArray(
       `UPDATE customer_address SET is_default = FALSE WHERE customer_id = $1`,

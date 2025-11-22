@@ -18,7 +18,9 @@ export class OrderRefRepository {
     return result.rows;
   }
 
-  async addOrderRef(data: Partial<CustomerOrderRef>): Promise<CustomerOrderRef> {
+  async addOrderRef(
+    data: Partial<CustomerOrderRef>,
+  ): Promise<CustomerOrderRef> {
     const db = await this.dbPromise;
     const result = await db.queryObject<CustomerOrderRef>(
       `INSERT INTO customer_order_ref (customer_id, order_id, placed_at, status, grand_total)
@@ -35,7 +37,10 @@ export class OrderRefRepository {
     return result.rows[0];
   }
 
-  async updateStatus(orderId: string, status: string): Promise<CustomerOrderRef> {
+  async updateStatus(
+    orderId: string,
+    status: string,
+  ): Promise<CustomerOrderRef> {
     const db = await this.dbPromise;
     const result = await db.queryObject<CustomerOrderRef>(
       `UPDATE customer_order_ref

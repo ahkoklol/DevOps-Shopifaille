@@ -1,6 +1,6 @@
 // back/core/src/modules/customer-accounts/repositories/address.repository.test.ts
 import { assertEquals } from "jsr:@std/assert";
-import { stub, assertSpyCalls } from "jsr:@std/testing/mock";
+import { assertSpyCalls, stub } from "jsr:@std/testing/mock";
 import { AddressRepository } from "../repositories/address.repository.ts";
 import * as DBModule from "../../../shared/db/index.ts";
 
@@ -27,7 +27,7 @@ Deno.test("AddressRepository.listByCustomer - returns rows", async () => {
   const dbStub = stub(
     DBModule,
     "connectToModuleDB",
-    () => Promise.resolve(fakeDB as any)
+    () => Promise.resolve(fakeDB as any),
   );
 
   const repo = new AddressRepository();
@@ -58,12 +58,12 @@ Deno.test("AddressRepository.create - inserts & returns row", async () => {
           },
         ],
       }),
-  } as unknown; 
+  } as unknown;
 
   const dbStub = stub(
     DBModule,
     "connectToModuleDB",
-    () => Promise.resolve(fakeDB as any) 
+    () => Promise.resolve(fakeDB as any),
   );
 
   const repo = new AddressRepository();

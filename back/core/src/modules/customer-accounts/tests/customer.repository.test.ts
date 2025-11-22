@@ -1,11 +1,22 @@
 // back/core/src/modules/customer-accounts/tests/customer.repository.test.ts
 import { CustomerRepository } from "../repositories/customer.repository.ts";
-import { assertEquals, assert } from "jsr:@std/assert";
+import { assert, assertEquals } from "jsr:@std/assert";
 
 Deno.test("CustomerRepository.findById returns object", async () => {
   const fakeDb = {
     queryObject: async () => ({
-      rows: [{ id: "1", email: "a@test.com" }],
+      rows: [
+        {
+          id: "1",
+          store_id: "s1",
+          email: "a@test.com",
+          first_name: "John",
+          last_name: "Doe",
+          phone: null,
+          is_guest: false,
+          created_at: new Date(),
+        },
+      ],
     }),
   };
 

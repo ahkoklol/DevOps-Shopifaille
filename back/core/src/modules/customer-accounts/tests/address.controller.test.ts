@@ -8,9 +8,7 @@ const mockService = {
   addAddress: async (data: any) => ({ id: "a2", ...data }),
 };
 
-
 const routes = [...(router.routes() as unknown as IterableIterator<any>)];
-
 
 // Injection du mock dans les handlers
 for (const r of routes) {

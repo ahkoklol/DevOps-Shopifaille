@@ -1,6 +1,6 @@
 // back/core/src/modules/customer-accounts/controllers/address.controller.test.ts
 import { assertEquals } from "jsr:@std/assert";
-import { stub, assertSpyCalls } from "jsr:@std/testing/mock";
+import { assertSpyCalls, stub } from "jsr:@std/testing/mock";
 import router from "../controllers/address.controller.ts";
 
 // Prépare l'accès aux handlers du router Oak
@@ -22,7 +22,7 @@ Deno.test("GET /customers/:customerId/addresses → returns list", async () => {
     () =>
       Promise.resolve([
         { id: "1", customer_id: "123", line1: "Rue A", city: "Paris" },
-      ])
+      ]),
   );
 
   // @ts-ignore override
@@ -31,7 +31,6 @@ Deno.test("GET /customers/:customerId/addresses → returns list", async () => {
   const ctx = {
     params: { customerId: "123" },
     response: { body: undefined as any },
-
   };
 
   await handler(ctx);
@@ -53,7 +52,7 @@ Deno.test("POST /customers/:customerId/addresses → creates address", async () 
         customer_id: "123",
         line1: "Rue X",
         city: "Lyon",
-      })
+      }),
   );
 
   // @ts-ignore override
