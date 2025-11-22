@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - wayne-kubernetes # Temporary branch for Kubernetes testing
     paths:
       - "front/**"
 

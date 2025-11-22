@@ -1,7 +1,7 @@
 // back/core/src/shared/db/config.ts
 import { load } from "@std/dotenv";
 
-await load({ export: true, envPath: "./back/core/.env" });
+await load({ export: true, envPath: "./back/.env" });
 
 export function getDbConfig(moduleName: string) {
   const host = Deno.env.get("PG_HOST")!;

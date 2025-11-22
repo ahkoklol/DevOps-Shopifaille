@@ -7,10 +7,10 @@
     "dev": "deno run --watch main.ts"
   },
   "imports": {
+    "@hono/hono": "jsr:@hono/hono@^4.10.6",
     "@oak/oak": "jsr:@oak/oak@^17.1.6",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
     "@std/fs": "jsr:@std/fs@^1.0.19",
-    "hono/": "https://deno.land/x/hono@v4.6.9/",
     "postgres": "https://deno.land/x/postgres@v0.17.0/mod.ts",
     "@connectrpc/connect": "https://esm.sh/@connectrpc/connect@1.5.0",
     "@connectrpc/connect-node": "https://esm.sh/@connectrpc/connect-node@1.5.0"
