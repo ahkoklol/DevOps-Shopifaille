@@ -10,7 +10,9 @@ Deno.test("OrderRefRepository.listOrders", async () => {
     }),
   };
 
-  const repo = new OrderRefRepository(Promise.resolve(fakeDb as unknown as Client));
+  const repo = new OrderRefRepository(
+    Promise.resolve(fakeDb as unknown as Client),
+  );
   const rows = await repo.listOrders("c1");
 
   assertEquals(rows.length, 1);
@@ -24,7 +26,9 @@ Deno.test("OrderRefRepository.updateStatus", async () => {
     }),
   };
 
-  const repo = new OrderRefRepository(Promise.resolve(fakeDb as unknown as Client));
+  const repo = new OrderRefRepository(
+    Promise.resolve(fakeDb as unknown as Client),
+  );
   const updated = await repo.updateStatus("1", "shipped");
 
   assertEquals(updated.status, "shipped");

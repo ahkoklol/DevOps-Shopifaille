@@ -31,26 +31,26 @@ const mockService: {
     }),
 
   getCustomerProfile: (id) =>
-    id === "x"
-      ? Promise.resolve(null)
-      : Promise.resolve({
-          id,
-          store_id: "s1",
-          email: "test@test.com",
-          first_name: "John",
-          last_name: "Doe",
-          is_guest: false,
-          created_at: new Date(),
-        }),
+    id === "x" ? Promise.resolve(null) : Promise.resolve({
+      id,
+      store_id: "s1",
+      email: "test@test.com",
+      first_name: "John",
+      last_name: "Doe",
+      is_guest: false,
+      created_at: new Date(),
+    }),
 };
 
 // === Récupération des routes ===
 // @ts-ignore: Oak retourne un type interne non-exporté → cast manuel nécessaire pour les tests
-const routes = [...(router.routes() as IterableIterator<{
-  methods: string[];
-  path: string;
-  middleware: unknown[];
-}>)];
+const routes = [
+  ...(router.routes() as IterableIterator<{
+    methods: string[];
+    path: string;
+    middleware: unknown[];
+  }>),
+];
 
 // === Injection du mock dans les handlers ===
 for (const r of routes) {

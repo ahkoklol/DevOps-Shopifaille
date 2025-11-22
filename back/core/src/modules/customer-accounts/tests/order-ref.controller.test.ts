@@ -31,10 +31,12 @@ const mockService: {
 // Oak ne fournit pas de type public pour routes().
 // On utilise un cast manuel avec justification.
 // @ts-ignore: Oak retourne un type interne non-exporté → cast manuel nécessaire pour les tests
-const routes = [...(router.routes() as IterableIterator<{
-  methods: string[];
-  middleware: unknown[];
-}>)];
+const routes = [
+  ...(router.routes() as IterableIterator<{
+    methods: string[];
+    middleware: unknown[];
+  }>),
+];
 
 // Injection du mock dans les handlers
 for (const r of routes) {

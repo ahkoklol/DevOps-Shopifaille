@@ -5,7 +5,9 @@ export class CustomerService {
   private repo = new CustomerRepository();
 
   // Setter propre pour injecter un mock dans les tests
-  setRepo(r: Partial<Pick<CustomerRepository, "findByEmail" | "create" | "findById">>) {
+  setRepo(
+    r: Partial<Pick<CustomerRepository, "findByEmail" | "create" | "findById">>,
+  ) {
     // @ts-ignore : CustomerRepository peut avoir plus de méthodes
     this.repo = r;
   }

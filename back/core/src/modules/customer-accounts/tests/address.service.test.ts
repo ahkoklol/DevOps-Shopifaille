@@ -25,7 +25,7 @@ interface OakRoute {
 
 // Fonction utilitaire typée
 function getRoute(method: string, path: string): OakRoute["handler"] {
-  const routes = (router.routes() as unknown as Iterable<OakRoute>);
+  const routes = router.routes() as unknown as Iterable<OakRoute>;
   for (const r of routes) {
     if (r.method === method && r.path === path) {
       return r.handler;

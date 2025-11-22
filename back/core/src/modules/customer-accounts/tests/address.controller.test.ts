@@ -14,18 +14,23 @@ interface AddAddressInput {
 // --- Mock du service ---
 const mockService: {
   listAddresses: (id: string) => Promise<Address[]>;
-  addAddress: (data: AddAddressInput & { customer_id: string }) => Promise<Address>;
+  addAddress: (
+    data: AddAddressInput & { customer_id: string },
+  ) => Promise<Address>;
 } = {
   listAddresses: (id: string) =>
     Promise.resolve([{ id: "a1", customer_id: id }]),
 
-  addAddress: (data) =>
-    Promise.resolve({ id: "a2", ...data }),
+  addAddress: (data) => Promise.resolve({ id: "a2", ...data }),
 };
 
 // On doit forcer le type car Oak ne donne pas un type public pour routes().
 // @ts-ignore: Oak retourne un type interne non-exporté → cast manuel nécessaires pour tests
-const routes = [...(router.routes() as IterableIterator<{ methods: string[]; middleware: unknown[] }>)];
+const routes = [
+  ...(router.routes() as IterableIterator<
+    { methods: string[]; middleware: unknown[] }
+  >),
+];
 
 // Injection du mock dans les handlers
 for (const r of routes) {

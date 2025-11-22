@@ -21,7 +21,9 @@ Deno.test("CustomerRepository.findById returns object", async () => {
     }),
   };
 
-  const repo = new CustomerRepository(Promise.resolve(fakeDb as unknown as Client));
+  const repo = new CustomerRepository(
+    Promise.resolve(fakeDb as unknown as Client),
+  );
   const res = await repo.findById("1");
 
   assert(res);
@@ -33,7 +35,9 @@ Deno.test("CustomerRepository.findByEmail returns null when not found", async ()
     queryObject: () => ({ rows: [] }),
   };
 
-  const repo = new CustomerRepository(Promise.resolve(fakeDb as unknown as Client));
+  const repo = new CustomerRepository(
+    Promise.resolve(fakeDb as unknown as Client),
+  );
   const res = await repo.findByEmail("x@test.com");
 
   assertEquals(res, null);
