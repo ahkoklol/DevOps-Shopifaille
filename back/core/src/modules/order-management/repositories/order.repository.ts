@@ -1,9 +1,6 @@
 // back/core/src/modules/order-management/repositories/order.repository.ts
 import { connectToModuleDB } from "../../../shared/db/index.ts";
-import {
-  Order,
-  OrderStatus,
-} from "../order.type.ts";
+import { Order, OrderStatus } from "../order.type.ts";
 
 const db = await connectToModuleDB("order-management");
 
