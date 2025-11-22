@@ -11,9 +11,10 @@ export function getDbConfig(moduleName: string) {
 
   const dbMap: Record<string, string> = {
     "customer-accounts": Deno.env.get("DB_CUSTOMER_ACCOUNTS")!,
-    "orders": Deno.env.get("DB_ORDERS")!,
+    "order-management": Deno.env.get("DB_ORDER_MANAGEMENT")!,
     "store-management": Deno.env.get("DB_STORE_MANAGEMENT")!,
     "event-webhooks": Deno.env.get("DB_EVENT_WEBHOOKS")!,
+    "products": Deno.env.get("DB_PRODUCTS")!,
   };
 
   const database = dbMap[moduleName];
