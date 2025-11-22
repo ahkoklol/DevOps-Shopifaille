@@ -10,11 +10,11 @@ export function getDbConfig(moduleName: string) {
   const port = Number(Deno.env.get("PG_PORT") ?? 5432);
 
   const dbMap: Record<string, string> = {
-  "customer-accounts": Deno.env.get("DB_CUSTOMER_ACCOUNTS")!,
-  "orders": Deno.env.get("DB_ORDERS")!,
-  "store-management": Deno.env.get("DB_STORE_MANAGEMENT")!,
-  "event-webhooks": Deno.env.get("DB_EVENT_WEBHOOKS")!,
-};
+    "customer-accounts": Deno.env.get("DB_CUSTOMER_ACCOUNTS")!,
+    "orders": Deno.env.get("DB_ORDERS")!,
+    "store-management": Deno.env.get("DB_STORE_MANAGEMENT")!,
+    "event-webhooks": Deno.env.get("DB_EVENT_WEBHOOKS")!,
+  };
 
   const database = dbMap[moduleName];
   if (!database) {
