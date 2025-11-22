@@ -1,9 +1,7 @@
 // back/core/src/modules/order-management/repositories/order.repository.ts
 import { connectToModuleDB } from "../../../shared/db/index.ts";
 import {
-  CreateOrderDto,
   Order,
-  OrderItem,
   OrderStatus,
 } from "../order.type.ts";
 
