@@ -1,74 +1,115 @@
 // back/core/src/modules/customer-accounts/tests/customer.controller.test.ts
+
 import router from "../controllers/customer.controller.ts";
-import { assertEquals } from "jsr:@std/assert";
+import { assertEquals } from "@std/assert";
 
-// --- Mock du service conforme au type Customer ---
-const mockService = {
-  registerCustomer: async (data: any) => ({
-    id: "c1",
-    store_id: "s1",
-    email: data.email,
-    first_name: "John",
-    last_name: "Doe",
-    is_guest: false,
-    created_at: new Date(),
-  }),
+// === Types utiles ===
+interface Customer {
+  id: string;
+  store_id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  is_guest: boolean;
+  created_at: Date;
+}
 
-  getCustomerProfile: async (id: string) =>
-    id === "x" ? null : {
-      id,
+// === Mock du service ===
+const mockService: {
+  registerCustomer: (data: { email: string }) => Promise<Customer>;
+  getCustomerProfile: (id: string) => Promise<Customer | null>;
+} = {
+  registerCustomer: (data) =>
+    Promise.resolve({
+      id: "c1",
       store_id: "s1",
-      email: "test@test.com",
+      email: data.email,
       first_name: "John",
       last_name: "Doe",
       is_guest: false,
       created_at: new Date(),
-    },
+    }),
+
+  getCustomerProfile: (id) =>
+    id === "x"
+      ? Promise.resolve(null)
+      : Promise.resolve({
+          id,
+          store_id: "s1",
+          email: "test@test.com",
+          first_name: "John",
+          last_name: "Doe",
+          is_guest: false,
+          created_at: new Date(),
+        }),
 };
 
-// Récupération des routes comme Oak Iterable
-const routes = [...(router.routes() as unknown as IterableIterator<any>)];
+// === Récupération des routes ===
+// @ts-ignore: Oak retourne un type interne non-exporté → cast manuel nécessaire pour les tests
+const routes = [...(router.routes() as IterableIterator<{
+  methods: string[];
+  path: string;
+  middleware: unknown[];
+}>)];
 
-// Injection mock dans middleware[1]
+// === Injection du mock dans les handlers ===
 for (const r of routes) {
   const handler = r.middleware[1];
-  if (handler) {
-    // @ts-ignore
+  if (typeof handler === "function") {
+    // @ts-ignore: injection volontaire d’un mock dans handler pour test unitaire
     handler.service = mockService;
   }
 }
 
-// Fake ctx
-function createCtx(method: string, params: any = {}, body: any = null) {
+// === Contexte mock Oak ===
+interface TestCtx {
+  params: Record<string, string>;
+  request: {
+    body: {
+      json: () => Promise<unknown>;
+    };
+  };
+  response: Record<string, unknown>;
+  state: Record<string, unknown>;
+  method: string;
+}
+
+function createCtx(
+  method: string,
+  params: Record<string, string> = {},
+  body: unknown = null,
+): TestCtx {
   return {
     params,
     request: {
       body: {
-        json: async () => body,
+        json: () => Promise.resolve(body),
       },
     },
     response: {},
     state: {},
     method,
-  } as any;
+  };
 }
 
-// TESTS ======================================================
+// ======================= TESTS =======================
 
 Deno.test("POST /customers → crée un client", async () => {
   const route = routes.find((r) => r.methods.includes("POST"))!;
-  const handler = route.middleware[1];
+  const handler = route.middleware[1] as (ctx: TestCtx) => Promise<void>;
 
   const ctx = createCtx("POST", {}, { email: "a@test.com" });
   await handler(ctx);
 
+  const body = ctx.response.body as Customer;
+
   assertEquals(ctx.response.status, 201);
-  assertEquals(ctx.response.body.id, "c1");
+  assertEquals(body.id, "c1");
 });
 
 Deno.test("GET /customers/:id → 404 si non trouvé", async () => {
   const route = routes.find((r) => r.path.includes("/:id"))!;
-  const handler = route.middleware[1];
+  const handler = route.middleware[1] as (ctx: TestCtx) => Promise<void>;
 
   const ctx = createCtx("GET", { id: "x" });
   await handler(ctx);
@@ -78,10 +119,12 @@ Deno.test("GET /customers/:id → 404 si non trouvé", async () => {
 
 Deno.test("GET /customers/:id → retourne client", async () => {
   const route = routes.find((r) => r.path.includes("/:id"))!;
-  const handler = route.middleware[1];
+  const handler = route.middleware[1] as (ctx: TestCtx) => Promise<void>;
 
   const ctx = createCtx("GET", { id: "42" });
   await handler(ctx);
 
-  assertEquals(ctx.response.body.id, "42");
+  const customer = ctx.response.body as Customer;
+
+  assertEquals(customer.id, "42");
 });

@@ -1,11 +1,16 @@
-// back/core/src/modules/customer-accounts/repositories/address.repository.test.ts
-import { assertEquals } from "jsr:@std/assert";
-import { assertSpyCalls, stub } from "jsr:@std/testing/mock";
+import { assertEquals } from "@std/assert";
+import { assertSpyCalls, stub } from "@std/testing/mock";
 import { AddressRepository } from "../repositories/address.repository.ts";
 import * as DBModule from "../../../shared/db/index.ts";
+import type { Client } from "postgres";
+
+// Type minimal pour le fake
+interface FakeDB {
+  queryObject: () => Promise<{ rows: unknown[] }>;
+}
 
 Deno.test("AddressRepository.listByCustomer - returns rows", async () => {
-  const fakeDB = {
+  const fakeDB: FakeDB = {
     queryObject: () =>
       Promise.resolve({
         rows: [
@@ -22,12 +27,12 @@ Deno.test("AddressRepository.listByCustomer - returns rows", async () => {
           },
         ],
       }),
-  } as unknown;
+  };
 
   const dbStub = stub(
     DBModule,
     "connectToModuleDB",
-    () => Promise.resolve(fakeDB as any),
+    () => Promise.resolve(fakeDB as unknown as Client),
   );
 
   const repo = new AddressRepository();
@@ -41,7 +46,7 @@ Deno.test("AddressRepository.listByCustomer - returns rows", async () => {
 });
 
 Deno.test("AddressRepository.create - inserts & returns row", async () => {
-  const fakeDB = {
+  const fakeDB: FakeDB = {
     queryObject: () =>
       Promise.resolve({
         rows: [
@@ -58,12 +63,12 @@ Deno.test("AddressRepository.create - inserts & returns row", async () => {
           },
         ],
       }),
-  } as unknown;
+  };
 
   const dbStub = stub(
     DBModule,
     "connectToModuleDB",
-    () => Promise.resolve(fakeDB as any),
+    () => Promise.resolve(fakeDB as unknown as Client),
   );
 
   const repo = new AddressRepository();

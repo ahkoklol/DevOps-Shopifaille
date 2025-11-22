@@ -1,13 +1,35 @@
-// back/core/src/modules/customer-accounts/controllers/address.controller.test.ts
-import { assertEquals } from "jsr:@std/assert";
-import { assertSpyCalls, stub } from "jsr:@std/testing/mock";
+import { assertEquals } from "@std/assert";
+import { assertSpyCalls, stub } from "@std/testing/mock";
 import router from "../controllers/address.controller.ts";
 
-// Prépare l'accès aux handlers du router Oak
-function getRoute(method: string, path: string) {
-  const routes = (router as any).routes();
+// Types minimaux pour éviter any
+interface TestContext {
+  params: Record<string, string>;
+  request?: {
+    body?: {
+      json: () => unknown;
+    };
+  };
+  response: {
+    status?: number;
+    body?: unknown;
+  };
+}
+
+// Typage minimal du router Oak
+interface OakRoute {
+  method: string;
+  path: string;
+  handler: (ctx: TestContext) => Promise<void> | void;
+}
+
+// Fonction utilitaire typée
+function getRoute(method: string, path: string): OakRoute["handler"] {
+  const routes = (router.routes() as unknown as Iterable<OakRoute>);
   for (const r of routes) {
-    if (r.method === method && r.path === path) return r;
+    if (r.method === method && r.path === path) {
+      return r.handler;
+    }
   }
   throw new Error("Route not found");
 }
@@ -15,62 +37,60 @@ function getRoute(method: string, path: string) {
 Deno.test("GET /customers/:customerId/addresses → returns list", async () => {
   const handler = getRoute("GET", "/customers/:customerId/addresses/");
 
-  const mockService = { listAddresses: () => {} };
-  const listStub = stub(
-    mockService,
-    "listAddresses",
-    () =>
+  const mockService = {
+    listAddresses: () =>
       Promise.resolve([
         { id: "1", customer_id: "123", line1: "Rue A", city: "Paris" },
       ]),
-  );
-
-  // @ts-ignore override
-  router.__service = mockService;
-
-  const ctx = {
-    params: { customerId: "123" },
-    response: { body: undefined as any },
   };
+
+  // Remplace le service interne du router pour le test
+  (router as unknown as { __service: unknown }).__service = mockService;
+
+  const ctx: TestContext = {
+    params: { customerId: "123" },
+    response: {},
+  };
+
+  const listStub = stub(mockService, "listAddresses");
 
   await handler(ctx);
 
-  assertEquals(ctx.response.body[0].city, "Paris");
+  assertEquals((ctx.response.body as { city: string }[])[0].city, "Paris");
   assertSpyCalls(listStub, 1);
 });
 
 Deno.test("POST /customers/:customerId/addresses → creates address", async () => {
   const handler = getRoute("POST", "/customers/:customerId/addresses/");
 
-  const mockService = { addAddress: () => {} };
-  const createStub = stub(
-    mockService,
-    "addAddress",
-    () =>
+  const mockService = {
+    addAddress: () =>
       Promise.resolve({
         id: "1",
         customer_id: "123",
         line1: "Rue X",
         city: "Lyon",
       }),
-  );
+  };
 
-  // @ts-ignore override
-  router.__service = mockService;
+  // Remplace le service interne du router
+  (router as unknown as { __service: unknown }).__service = mockService;
 
-  const ctx = {
+  const ctx: TestContext = {
     params: { customerId: "123" },
     request: {
       body: {
         json: () => ({ line1: "Rue X" }),
       },
     },
-    response: { status: 0, body: undefined as any },
+    response: {},
   };
+
+  const createStub = stub(mockService, "addAddress");
 
   await handler(ctx);
 
   assertEquals(ctx.response.status, 201);
-  assertEquals(ctx.response.body.city, "Lyon");
+  assertEquals((ctx.response.body as { city: string }).city, "Lyon");
   assertSpyCalls(createStub, 1);
 });

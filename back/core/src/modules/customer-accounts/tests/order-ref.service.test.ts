@@ -1,5 +1,5 @@
-import { assertEquals } from "jsr:@std/assert";
-import { assertSpyCalls, stub } from "jsr:@std/testing/mock";
+import { assertEquals } from "@std/assert";
+import { assertSpyCalls, stub } from "@std/testing/mock";
 
 import { OrderRefService } from "../services/order-ref.service.ts";
 
