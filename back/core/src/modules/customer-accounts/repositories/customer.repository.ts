@@ -1,7 +1,7 @@
 // back/core/src/modules/customer-accounts/repositories/customer.repository.ts
 
 import type { Client } from "postgres";
-import { Customer } from "../account.type.ts";
+import { Customer, CustomerDb } from "../account.type.ts";
 
 export class CustomerRepository {
   constructor(
@@ -62,5 +62,25 @@ export class CustomerRepository {
       [storeId],
     );
     return result.rows;
+  }
+
+  async findDbByEmail(email: string): Promise<CustomerDb | null> {
+    const result = await this.db.queryObject<CustomerDb>`
+    SELECT *
+    FROM customer
+    WHERE email = ${email}
+    LIMIT 1
+  `;
+
+    return result.rows[0] ?? null;
+  }
+
+  async createDb(data: Partial<CustomerDb>): Promise<CustomerDb> {
+    const row = await this.db.queryObject<CustomerDb>`
+    INSERT INTO customer (store_id, email, first_name, last_name, password_hash, is_guest)
+    VALUES (${data.store_id}, ${data.email}, ${data.first_name}, ${data.last_name}, ${data.password_hash}, ${data.is_guest})
+    RETURNING *
+  `;
+    return row.rows[0];
   }
 }

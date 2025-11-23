@@ -29,3 +29,16 @@ export interface CustomerOrderRef {
   status: string;
   grand_total: number;
 }
+
+// type pour l'authentification
+export interface CustomerDb {
+  id: string;
+  store_id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone?: string;
+  is_guest: boolean;
+  created_at: Date;
+  password_hash: string | null;
+}
