@@ -1,12 +1,20 @@
-import { CustomerRepository } from "../repositories/customer.repository.ts";
-import { Customer } from "../account.type.ts";
+// back/core/src/modules/customer-accounts/services/customer.service.ts
+
+import type { Customer } from "../account.type.ts";
+import type { CustomerRepository } from "../repositories/customer.repository.ts";
 
 export class CustomerService {
-  private repo = new CustomerRepository();
+  constructor(
+    private repo: CustomerRepository, // injection obligatoire
+  ) {}
 
   async registerCustomer(data: Partial<Customer>): Promise<Customer> {
     const existing = await this.repo.findByEmail(data.email!);
-    if (existing) throw new Error("Customer already exists");
+
+    if (existing) {
+      throw new Error("Customer already exists");
+    }
+
     return this.repo.create(data);
   }
 

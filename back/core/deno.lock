@@ -1,111 +1,124 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@hono/hono@^4.10.6": "4.10.6",
-    "jsr:@oak/commons@1": "1.0.1",
-    "jsr:@oak/oak@^17.1.6": "17.1.6",
-    "jsr:@std/assert@1": "1.0.15",
-    "jsr:@std/bytes@1": "1.0.6",
-    "jsr:@std/crypto@1": "1.0.5",
+    "jsr:@oak/commons@0.4": "0.4.0",
+    "jsr:@oak/oak@12": "12.6.3",
+    "jsr:@std/assert@0.210": "0.210.0",
+    "jsr:@std/assert@1.0.5": "1.0.5",
+    "jsr:@std/assert@^1.0.15": "1.0.16",
+    "jsr:@std/bytes@0.210": "0.210.0",
+    "jsr:@std/crypto@0.210": "0.210.0",
     "jsr:@std/dotenv@~0.225.5": "0.225.5",
-    "jsr:@std/encoding@1": "1.0.10",
-    "jsr:@std/encoding@^1.0.10": "1.0.10",
-    "jsr:@std/fs@^1.0.19": "1.0.19",
-    "jsr:@std/http@1": "1.0.21",
-    "jsr:@std/internal@^1.0.10": "1.0.12",
-    "jsr:@std/internal@^1.0.9": "1.0.12",
-    "jsr:@std/media-types@1": "1.1.0",
-    "jsr:@std/path@1": "1.1.2",
-    "jsr:@std/path@^1.1.1": "1.1.2",
-    "npm:@types/node@*": "24.2.0",
-    "npm:path-to-regexp@^6.3.0": "6.3.0"
+    "jsr:@std/encoding@0.210": "0.210.0",
+    "jsr:@std/http@0.210": "0.210.0",
+    "jsr:@std/internal@^1.0.12": "1.0.12",
+    "jsr:@std/internal@^1.0.3": "1.0.12",
+    "jsr:@std/io@0.210": "0.210.0",
+    "jsr:@std/media-types@0.210": "0.210.0",
+    "jsr:@std/path@0.210": "0.210.0",
+    "jsr:@std/streams@0.210": "0.210.0",
+    "jsr:@std/testing@^1.0.16": "1.0.16",
+    "npm:path-to-regexp@6.2.1": "6.2.1"
   },
   "jsr": {
-    "@hono/hono@4.10.6": {
-      "integrity": "bcbbf9753a3570f2fa4609484bae0cead85a3feb110ee9ceb7ffc37d845d9a4d"
-    },
-    "@oak/commons@1.0.1": {
-      "integrity": "889ff210f0b4292591721be07244ecb1b5c118742f5273c70cf30d7cd4184d0c",
+    "@oak/commons@0.4.0": {
+      "integrity": "f549bc09bbc213479b4400617d546803a3babb3021d93d1f8a1743e6423b76e8",
       "dependencies": [
-        "jsr:@std/assert",
-        "jsr:@std/bytes",
-        "jsr:@std/crypto",
-        "jsr:@std/encoding@1",
-        "jsr:@std/http",
-        "jsr:@std/media-types"
+        "jsr:@std/assert@0.210",
+        "jsr:@std/encoding"
       ]
     },
-    "@oak/oak@17.1.6": {
-      "integrity": "c7eef2eec733fba8e72b679bba3b8cf2fceccf5ef489a8b8fb43571908c0335d",
+    "@oak/oak@12.6.3": {
+      "integrity": "19eeb2b6a71a2b99a024f471fbe036afa9bbac0711003230d4415a2f583fd993",
       "dependencies": [
         "jsr:@oak/commons",
-        "jsr:@std/assert",
         "jsr:@std/bytes",
+        "jsr:@std/crypto",
+        "jsr:@std/encoding",
         "jsr:@std/http",
+        "jsr:@std/io",
         "jsr:@std/media-types",
-        "jsr:@std/path@1",
+        "jsr:@std/path",
+        "jsr:@std/streams",
         "npm:path-to-regexp"
       ]
     },
-    "@std/assert@1.0.15": {
-      "integrity": "d64018e951dbdfab9777335ecdb000c0b4e3df036984083be219ce5941e4703b"
+    "@std/assert@0.210.0": {
+      "integrity": "2c1fa547f49be7db2687f98a89fe8fbb1aab9619848cebd21541a8f4f3f4f67f"
     },
-    "@std/bytes@1.0.6": {
-      "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
+    "@std/assert@1.0.5": {
+      "integrity": "e37da8e4033490ce613eec4ac1d78dba1faf5b02a3f6c573a28f15365b9b440f",
+      "dependencies": [
+        "jsr:@std/internal@^1.0.3"
+      ]
     },
-    "@std/crypto@1.0.5": {
-      "integrity": "0dcfbb319fe0bba1bd3af904ceb4f948cde1b92979ec1614528380ed308a3b40"
+    "@std/assert@1.0.16": {
+      "integrity": "6a7272ed1eaa77defe76e5ff63ca705d9c495077e2d5fd0126d2b53fc5bd6532",
+      "dependencies": [
+        "jsr:@std/internal@^1.0.12"
+      ]
+    },
+    "@std/bytes@0.210.0": {
+      "integrity": "5b2522c94106296a6880d7d3e0c0bedb1006bde21d5421f96d85bc1213505d67"
+    },
+    "@std/crypto@0.210.0": {
+      "integrity": "14a7f91ed0f944710a80080574017bbd587e748dc1be96116f6db22abfd7f9c9",
+      "dependencies": [
+        "jsr:@std/assert@0.210",
+        "jsr:@std/encoding"
+      ]
     },
     "@std/dotenv@0.225.5": {
       "integrity": "9ce6f9d0ec3311f74a32535aa1b8c62ed88b1ab91b7f0815797d77a6f60c922f"
     },
-    "@std/encoding@1.0.10": {
-      "integrity": "8783c6384a2d13abd5e9e87a7ae0520a30e9f56aeeaa3bdf910a3eaaf5c811a1"
+    "@std/encoding@0.210.0": {
+      "integrity": "3a53a69620886baa8ca885496362849577fcf6f8e6a792aeaf7da407d02799c8"
     },
-    "@std/fs@1.0.19": {
-      "integrity": "051968c2b1eae4d2ea9f79a08a3845740ef6af10356aff43d3e2ef11ed09fb06",
+    "@std/http@0.210.0": {
+      "integrity": "7630e526d6978ce231f5aa3b4073428b235781c260032ff95877aa2f5d70cad0",
       "dependencies": [
-        "jsr:@std/internal@^1.0.9",
-        "jsr:@std/path@^1.1.1"
-      ]
-    },
-    "@std/http@1.0.21": {
-      "integrity": "abb5c747651ee6e3ea6139858fd9b1810d2c97f53a5e6722f3b6d27a6d263edc",
-      "dependencies": [
-        "jsr:@std/encoding@^1.0.10"
+        "jsr:@std/assert@0.210",
+        "jsr:@std/encoding"
       ]
     },
     "@std/internal@1.0.12": {
       "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
     },
-    "@std/media-types@1.1.0": {
-      "integrity": "c9d093f0c05c3512932b330e3cc1fe1d627b301db33a4c2c2185c02471d6eaa4"
-    },
-    "@std/path@1.1.2": {
-      "integrity": "c0b13b97dfe06546d5e16bf3966b1cadf92e1cc83e56ba5476ad8b498d9e3038",
+    "@std/io@0.210.0": {
+      "integrity": "7361cd143e061b46c55d421e7bcddd642e37742845cb4c12ccda4e89c88cd348",
       "dependencies": [
-        "jsr:@std/internal@^1.0.10"
+        "jsr:@std/assert@0.210",
+        "jsr:@std/bytes"
+      ]
+    },
+    "@std/media-types@0.210.0": {
+      "integrity": "d8168a3595c312c0c732c41b3b83cced21ea19e7630ab4d218b7e393a028e804"
+    },
+    "@std/path@0.210.0": {
+      "integrity": "5eb96b9104c84bbc6ce03c9aa23656abfb489dc2a4af8111384508523e91d4e2",
+      "dependencies": [
+        "jsr:@std/assert@0.210"
+      ]
+    },
+    "@std/streams@0.210.0": {
+      "integrity": "10c7b252ebadae1fac4fc4eb36064e021911185a611ff3d1b278f18a6cbd72d0",
+      "dependencies": [
+        "jsr:@std/assert@0.210",
+        "jsr:@std/bytes",
+        "jsr:@std/io"
+      ]
+    },
+    "@std/testing@1.0.16": {
+      "integrity": "a917ffdeb5924c9be436dc78bc32e511760e14d3a96e49c607fc5ecca86d0092",
+      "dependencies": [
+        "jsr:@std/assert@^1.0.15"
       ]
     }
   },
   "npm": {
-    "@types/node@24.2.0": {
-      "integrity": "sha512-3xyG3pMCq3oYCNg7/ZP+E1ooTaGB4cG8JWRsqqOYQdbWNY4zbaV0Ennrd7stjiJEFZCaybcIgpTjJWHRfBSIDw==",
-      "dependencies": [
-        "undici-types"
-      ]
-    },
-    "path-to-regexp@6.3.0": {
-      "integrity": "sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ=="
-    },
-    "undici-types@7.10.0": {
-      "integrity": "sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag=="
+    "path-to-regexp@6.2.1": {
+      "integrity": "sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw=="
     }
-  },
-  "redirects": {
-    "https://esm.sh/@bufbuild/protobuf@^1.10.0?target=denonext": "https://esm.sh/@bufbuild/protobuf@1.10.1?target=denonext",
-    "https://esm.sh/@fastify/busboy@^2.0.0?target=denonext": "https://esm.sh/@fastify/busboy@2.1.1?target=denonext",
-    "https://esm.sh/undici@^5.28.4?target=denonext": "https://esm.sh/undici@5.29.0?target=denonext"
   },
   "remote": {
     "https://deno.land/std@0.160.0/_util/assert.ts": "e94f2eb37cebd7f199952e242c77654e43333c1ac4c5c700e929ea3aa5489f74",
@@ -172,77 +185,16 @@
     "https://deno.land/x/postgres@v0.17.0/query/transaction.ts": "8e75c3ce0aca97da7fe126e68f8e6c08d640e5c8d2016e62cee5c254bebe7fe8",
     "https://deno.land/x/postgres@v0.17.0/query/types.ts": "a6dc8024867fe7ccb0ba4b4fa403ee5d474c7742174128c8e689c3b5e5eaa933",
     "https://deno.land/x/postgres@v0.17.0/utils/deferred.ts": "dd94f2a57355355c47812b061a51b55263f72d24e9cb3fdb474c7519f4d61083",
-    "https://deno.land/x/postgres@v0.17.0/utils/utils.ts": "19c3527ddd5c6c4c49ae36397120274c7f41f9d3cbf479cb36065d23329e9f90",
-    "https://esm.sh/@bufbuild/protobuf@1.10.1/denonext/protobuf.mjs": "17dcd34a18ecc47ee5660f138d991471638c541b558466caa5850999fec2bb41",
-    "https://esm.sh/@bufbuild/protobuf@1.10.1?target=denonext": "839ad5e4d7c099488d25d268348f0e3c45e32757f3f512fb8037a80d472ebb24",
-    "https://esm.sh/@connectrpc/connect-node@1.5.0": "93f80c3eecbd008249156123a06e3091901f4a6eeb414f79d87067da2b5263c1",
-    "https://esm.sh/@connectrpc/connect-node@1.5.0/denonext/connect-node.mjs": "5a1a869e0f79c193e3c38ff36eff7170a7de14b956e38a304b81f5b6c5dcd71c",
-    "https://esm.sh/@connectrpc/connect@1.5.0": "5d18a4f00269a18f6a4b03f72bc72aa476a9b53a3c1786bc9e13b379054b4aba",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/connect.mjs": "077d95cbe6132454dd8179e4be684539a460f86f6da19ebac4d99f4f294e1d8a",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/code.mjs": "6bf392819c2f377a9c770d8a39aa098ae36a79731f77e6e330f36f8a7f7233d6",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/connect-error.mjs": "f61e8adc0aee6f05efb0ae8714398d0bf1dd4bf27971e7ef04a8cbc1eca2bd6d",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/context-values.mjs": "6d5dcaf99a9e9466b8572fe24ee57118e8ceafcf4faa76ba5d2f46ce830dbe2a",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/http-headers.mjs": "282b565f44d49b765500b956a2364da4de62242a0396f6167ec4451f10b9a65d",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/implementation.mjs": "a56c5e751c08f068f05ca9282ce0873899e438d1a13a693796b3385051264203",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/interceptor.mjs": "c5845910c8646ee7e8de1ce9e8b39c26c1a0d71203d8c4f116964b0f4740f818",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/code-string.mjs": "e9ceb5b8bb84dad515730b4a84b57fe76646a5e283bdf0f721a3a94673275340",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/content-type.mjs": "1ec95d0eb3a7f895a5a2d7ddac5162ad7c8f8eb087fdc4c30faf8fc570df447e",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/end-stream.mjs": "4643aef2d87409608c8f8a96c39a30b2ba0752576be1cd74923f8189a31b3346",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/error-json.mjs": "79666f21f20861acf38a303f5f145fe9246b133811ebd2ca6fcedb8a1bd7d805",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/get-request.mjs": "1c655db2bd215bdecc61ede647e84eecb7fc7c887c00a0ba3b636841b90ac7ca",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/handler-factory.mjs": "424d97cf7ca022e791370b1345d9432a35ad7e74450febd7855f95be10d6c381",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/headers.mjs": "8ecc5c4a27fe0102cb4e6f290e68ecef65a9140aaf0978fd4f3bd017ed48c8ca",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/http-status.mjs": "d1f236755c2df5124017767fb51607fcfd77ba8a194cbb98daf5197fcc0fcae4",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/parse-timeout.mjs": "a3af3bc3ef5bc574dc16f8958d45df9e72349a507b8d234d13f32b61f7024be4",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/query-params.mjs": "0b43b9ea0f7f54cbb2c7dace634c056e3e7e3cef71ae937bdbbc9211d695e7c8",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/request-header.mjs": "10dcb77feb65c0b809d78f95c61bc879267d3497a7b3e83410c0516f690b9255",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/trailer-mux.mjs": "909d8382539ef54cc33da19e35760c74bf2d910a44e348bfe5e50ef497c5ebf6",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/transport.mjs": "e291ffe4caa931beb81a1066c59b2f16e6755846060b7b1bd84c369de1c2d22a",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/validate-response.mjs": "995e7ea154ce8c2e6e493749f845b136ee995055a46e48436b077b81e6d7489a",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-connect/version.mjs": "0e5309e9fa10c8754b7bb3bf29024fbe982f2fc7ea5480af0b33679bd7dcd22c",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc-web/content-type.mjs": "90b43d792a74a655e3247c997e9a2abdeb07f075904973671641cc67f344eef7",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc-web/handler-factory.mjs": "735adf7105c5f3c0e555fb119126dd8ba58e493eb525c9eb5e0c81f9d86930e1",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc-web/headers.mjs": "f4747b36647c8eadcede0e43eb855e5dd43ae4df0369f2fd158f19d8d13bf45e",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc-web/trailer.mjs": "38866c3a5f83cf4fd6185f8b2fd2a92bd517bae2fd92afc1bb160c4cde348856",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc/content-type.mjs": "e0558774e1c10edb5181d728c4be3c007ff375ccd48cc1fdc29c11eb6bf648d1",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc/handler-factory.mjs": "3cd4a0ee5577cff2642996b3c0afa4b46eb369bb53cf1c23cc82f014b568862d",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc/headers.mjs": "d7b2825b5777a5ec912fede602a4575384858880a3c881a6cb66a383cdbe4c92",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc/http-status.mjs": "c47dbd0d2dae79ca1a02573047aae87945812dbdf6bfccca00450acdd9b4b933",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc/parse-timeout.mjs": "9ecffc9fa0bff3bb153bb138debe6a302474e387237876afe8355733c8e6a781",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc/trailer-status.mjs": "fdc4139b1b53539622496caedfb11ee3ec7e546e7e6781211f4050590ac167ad",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol-grpc/validate-trailer.mjs": "8ef3b3250990fac53560a186de4ce7dadc94206499aad5e18a19fd1ecb9f5144",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/async-iterable.mjs": "bf0406ce23a1d3f24d2877608e3958a2d6697ae224ed47c30e0f55314095fe77",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/compression.mjs": "89cbc8ca6546c0a517935c2193fc2756a1da71175103c5730cf210678fff45c0",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/content-type-matcher.mjs": "2f06e22180c2e4eb8ecf54aa6b59e2f657b6c05d96c39df7b413b808cc26ee8e",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/create-method-url.mjs": "b85677cf84f9b771b8063a0b8b334a9998ff35cb2513d86e3e767da215ce0d46",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/envelope.mjs": "15177a3d898ce11eb5f7f06c0a13e97ea9be997c27244f28f74fb6fcc94b790b",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/invoke-implementation.mjs": "0490c82b87a7dd56e12ae314813a9ef8b04efc5431a03fd70021798507ceb7b1",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/limit-io.mjs": "14095d2bfc395302f4ff47a5fcf754803b796776911c45a1dad1ebe145a3d800",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/normalize.mjs": "68a0c51e8e3bd9e79e587ecc6e0df516cb9512dec68939b006a40a51e0787c64",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/run-call.mjs": "2f18e16fc17b4691a7866788dee01a12e0954724b621aa868466c2aab9869385",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/serialization.mjs": "0209188445caf3688a2c46d34568d3a2ab3f76999c38e1e6859f0a3aa4a442c7",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/signals.mjs": "6894173695ae083103dee55190dc84518a64fa5f98b82216fcbdabc437bf9218",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/universal-handler-client.mjs": "2acab974cf133dd03978a2a3403db072fe3e14e5cf7278680970cce9496d86b2",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/universal-handler.mjs": "4821fe38d659ea68a09c8f196e69b15b817e503c0cff74814bbddd1e4322adec",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/dist/esm/protocol/universal.mjs": "76a9490e767775e22dd4d78fcb8ea5139cda41c673a6c3743cefc75100eb061e",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/protocol-connect.mjs": "13299cff31ad3c1539cab9824e85a57655f215a520c83bc5fed5b33cee7f2f77",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/protocol-grpc-web.mjs": "c5511414b075ad5ae9033bf4f43be5830ce2ab87fd0f7eb7196a97dda21bb255",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/protocol-grpc.mjs": "e3bb83d748c66f57143fbe7f9ec32028e1bbcfb9eec441275c48ec0224300031",
-    "https://esm.sh/@connectrpc/connect@1.5.0/denonext/protocol.mjs": "94b5ac2f89f3911f143d25a7a801eb5cbb809ab526849fb0b2a1701a3d0edef5",
-    "https://esm.sh/@fastify/busboy@2.1.1/denonext/busboy.mjs": "a3d4404c80263e1be97b3c2c7c424491b4e3ac25cf6fed1f2ac0118805bf6776",
-    "https://esm.sh/@fastify/busboy@2.1.1?target=denonext": "0b481850575e5e49ba12888b1b8414d31e703e1e0718fa1d1d63e7ed1baa3ed4",
-    "https://esm.sh/undici@5.29.0/denonext/undici.mjs": "c54e4436d1abf786678c75993903e25cf63d0cfb6ce8ae4ad2490b4512126ee2",
-    "https://esm.sh/undici@5.29.0/types/handlers": "fabf6997a3adf11e45d11e3c4d58d0634ab98f9d72f3116f3694123818ccd457",
-    "https://esm.sh/undici@5.29.0/types/interceptors": "fabf6997a3adf11e45d11e3c4d58d0634ab98f9d72f3116f3694123818ccd457",
-    "https://esm.sh/undici@5.29.0/types/retry-handler": "fabf6997a3adf11e45d11e3c4d58d0634ab98f9d72f3116f3694123818ccd457",
-    "https://esm.sh/undici@5.29.0?target=denonext": "1c78ff5c922a99852d5047ed6876941c826dcfaaaceb83848c81d6f036ca5614"
+    "https://deno.land/x/postgres@v0.17.0/utils/utils.ts": "19c3527ddd5c6c4c49ae36397120274c7f41f9d3cbf479cb36065d23329e9f90"
   },
   "workspace": {
     "dependencies": [
       "jsr:@hono/hono@^4.10.6",
-      "jsr:@oak/oak@^17.1.6",
+      "jsr:@oak/oak@12",
+      "jsr:@std/assert@1.0.5",
       "jsr:@std/dotenv@~0.225.5",
-      "jsr:@std/fs@^1.0.19"
+      "jsr:@std/fs@^1.0.19",
+      "jsr:@std/testing@^1.0.16"
     ]
   }
 }
