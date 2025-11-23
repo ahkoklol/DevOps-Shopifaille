@@ -18,7 +18,7 @@ public class GatewayController {
 
     public GatewayController(
             @Value("${products.service.url}") String productsServiceUrl,
-            @Value("${checkout.service.url}") String checkoutServiceUrl
+            @Value("${checkout.service.url}") String checkoutServiceUrl,
             @Value("${core.service.url}") String coreServiceUrl
     ) {
         this.webClient = WebClient.create();
