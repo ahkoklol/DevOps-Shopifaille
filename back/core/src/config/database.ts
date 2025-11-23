@@ -1,4 +1,4 @@
-import { Pool } from "postgres/mod.ts";
+import { Pool } from "postgres";
 import { env } from "./env.ts";
 
 export const db = new Pool(env.PG_URL, 5, true);
