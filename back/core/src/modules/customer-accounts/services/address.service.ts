@@ -1,14 +1,26 @@
+// back/core/src/modules/customer-accounts/services/address.service.ts
+
 import { AddressRepository } from "../repositories/address.repository.ts";
 import { CustomerAddress } from "../account.type.ts";
 
 export class AddressService {
-  private repo = new AddressRepository();
+  constructor(
+    private repo: AddressRepository, // injection obligatoire
+  ) {}
 
-  async listAddresses(customer_id: string): Promise<CustomerAddress[]> {
-    return await this.repo.listByCustomer(customer_id);
+  listAddresses(customerId: string): Promise<CustomerAddress[]> {
+    return this.repo.listByCustomer(customerId);
   }
 
-  async addAddress(data: Partial<CustomerAddress>): Promise<CustomerAddress> {
-    return await this.repo.create(data);
+  addAddress(data: Partial<CustomerAddress>) {
+    return this.repo.create(data);
+  }
+
+  setDefault(customerId: string, addressId: string) {
+    return this.repo.setDefaultAddress(customerId, addressId);
+  }
+
+  removeAddress(id: string) {
+    return this.repo.delete(id);
   }
 }

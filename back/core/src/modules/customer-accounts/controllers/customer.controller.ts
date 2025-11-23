@@ -1,37 +1,73 @@
+// back/core/src/modules/customer-accounts/controllers/customer.controller.ts
+
 import { Router } from "@oak/oak";
-import { CustomerService } from "../services/customer.service.ts";
+import type { CustomerService } from "../services/customer.service.ts";
 
-const router = new Router({ prefix: "/customers" });
-const service = new CustomerService();
+/** Vérifie qu'un paramètre de route est présent */
+function requireParam<T extends string>(value: T | undefined, name: string): T {
+  if (!value) throw new Error(`Missing route param: ${name}`);
+  return value;
+}
 
-// ➕ Créer un client
-router.post("/", async (ctx) => {
-  try {
-    // ✅ Nouvelle syntaxe Oak
-    const body = await ctx.request.body.json();
+export function createCustomerRouter(service: CustomerService) {
+  const router = new Router({ prefix: "/customers" });
 
-    const customer = await service.registerCustomer(body);
+  //
+  // POST /customers  → créer un client
+  //
+  router.post("/", async (ctx) => {
+    console.log("→ POST /customers triggered");
 
-    ctx.response.status = 201;
-    ctx.response.body = customer;
-  } catch (err) {
-    // ✅ Gestion du type unknown
-    const message = err instanceof Error ? err.message : String(err);
-    ctx.response.status = 400;
-    ctx.response.body = { error: message };
-  }
-});
+    try {
+      const body = await ctx.request.body({ type: "json" }).value;
+      console.log("→ received body:", body);
 
-// 🔍 Obtenir un client par ID
-router.get("/:id", async (ctx) => {
-  const id = ctx.params.id!;
-  const customer = await service.getCustomerProfile(id);
-  if (!customer) {
-    ctx.response.status = 404;
-    ctx.response.body = { error: "Customer not found" };
-    return;
-  }
-  ctx.response.body = customer;
-});
+      const customer = await service.registerCustomer(body);
+      console.log("→ service.registerCustomer returned:", customer);
 
-export default router;
+      ctx.response.status = 201;
+      ctx.response.headers.set("Content-Type", "application/json");
+      ctx.response.body = customer;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.log("→ ERROR in POST /customers:", message);
+
+      ctx.response.status = 400;
+      ctx.response.headers.set("Content-Type", "application/json");
+      ctx.response.body = { error: message };
+    }
+  });
+
+  //
+  // GET /customers/:id → récupérer un client
+  //
+  router.get("/:id", async (ctx) => {
+    console.log("→ GET handler triggered", ctx.request.url.toString());
+
+    try {
+      const id = requireParam(ctx.params.id, "id");
+      console.log("→ customer id:", id);
+
+      ctx.response.headers.set("Content-Type", "application/json");
+
+      const customer = await service.getCustomerProfile(id);
+      console.log("→ service.getCustomerProfile returned:", customer);
+
+      if (!customer) {
+        ctx.response.status = 404;
+        ctx.response.body = { error: "Customer not found" };
+        return;
+      }
+
+      ctx.response.body = customer;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.log("→ ERROR in GET /customers/:id:", message);
+
+      ctx.response.status = 400;
+      ctx.response.body = { error: message };
+    }
+  });
+
+  return router;
+}

@@ -1,45 +1,37 @@
 import { assertEquals, assertRejects } from "@std/assert";
-import { assertSpyCalls, stub } from "@std/testing/mock";
 import { CustomerService } from "../services/customer.service.ts";
+import { CustomerRepository } from "../repositories/customer.repository.ts";
 import { Customer } from "../account.type.ts";
 
-// Interface minimaliste pour éviter les warnings
-interface MockCustomerRepo {
-  findByEmail?: (email: string) => Promise<Customer | null>;
-  create?: (data: Partial<Customer>) => Promise<Customer>;
-  findById?: (id: string) => Promise<Customer | null>;
-}
-
-Deno.test("CustomerService.registerCustomer - creates new customer", async () => {
-  const mockRepo: MockCustomerRepo = {
+Deno.test("CustomerService.registerCustomer crée un client", async () => {
+  const fakeRepo = {
     findByEmail: () => Promise.resolve(null),
-    create: () =>
+    create: (data: Customer) =>
       Promise.resolve({
         id: "1",
-        store_id: "s1",
-        email: "test@test.com",
-        first_name: "John",
-        last_name: "Doe",
+        store_id: data.store_id ?? "s1",
+        email: data.email,
+        first_name: data.first_name ?? null,
+        last_name: data.last_name ?? null,
+        phone: null,
         is_guest: false,
         created_at: new Date(),
       }),
   };
 
-  const findStub = stub(mockRepo, "findByEmail");
-  const createStub = stub(mockRepo, "create");
+  const service = new CustomerService(
+    fakeRepo as unknown as CustomerRepository,
+  );
 
-  const service = new CustomerService();
-  service.setRepo(mockRepo);
+  const res = await service.registerCustomer({
+    email: "test@test.com",
+  });
 
-  const result = await service.registerCustomer({ email: "test@test.com" });
-
-  assertEquals(result.email, "test@test.com");
-  assertSpyCalls(findStub, 1);
-  assertSpyCalls(createStub, 1);
+  assertEquals(res.email, "test@test.com");
 });
 
-Deno.test("CustomerService.registerCustomer - throws when email exists", async () => {
-  const mockRepo: MockCustomerRepo = {
+Deno.test("CustomerService.registerCustomer → erreur si email existe", async () => {
+  const fakeRepo = {
     findByEmail: () =>
       Promise.resolve({
         id: "1",
@@ -52,25 +44,22 @@ Deno.test("CustomerService.registerCustomer - throws when email exists", async (
       }),
   };
 
-  const findStub = stub(mockRepo, "findByEmail");
-
-  const service = new CustomerService();
-  service.setRepo(mockRepo);
+  const service = new CustomerService(
+    fakeRepo as unknown as CustomerRepository,
+  );
 
   await assertRejects(
     () => service.registerCustomer({ email: "test@test.com" }),
     Error,
     "Customer already exists",
   );
-
-  assertSpyCalls(findStub, 1);
 });
 
-Deno.test("CustomerService.getCustomerProfile - returns customer", async () => {
-  const mockRepo: MockCustomerRepo = {
-    findById: () =>
+Deno.test("CustomerService.getCustomerProfile retourne un client", async () => {
+  const fakeRepo = {
+    findById: (id: string) =>
       Promise.resolve({
-        id: "1",
+        id,
         store_id: "s1",
         email: "test@test.com",
         first_name: "John",
@@ -80,13 +69,11 @@ Deno.test("CustomerService.getCustomerProfile - returns customer", async () => {
       }),
   };
 
-  const findStub = stub(mockRepo, "findById");
+  const service = new CustomerService(
+    fakeRepo as unknown as CustomerRepository,
+  );
 
-  const service = new CustomerService();
-  service.setRepo(mockRepo);
+  const res = await service.getCustomerProfile("1");
 
-  const result = await service.getCustomerProfile("1");
-
-  assertEquals(result?.email, "test@test.com");
-  assertSpyCalls(findStub, 1);
+  assertEquals(res?.email, "test@test.com");
 });

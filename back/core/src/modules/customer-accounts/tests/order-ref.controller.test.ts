@@ -1,83 +1,108 @@
 // back/core/src/modules/customer-accounts/tests/order-ref.controller.test.ts
 
-import router from "../controllers/order-ref.controller.ts";
 import { assertEquals } from "@std/assert";
+import { assertSpyCalls, stub } from "@std/testing/mock";
+import { createOrderRefRouter } from "../controllers/order-ref.controller.ts";
+import { Application } from "@oak/oak";
+import type { OrderRefService } from "../services/order-ref.service.ts";
+import type { CustomerOrderRef } from "../account.type.ts";
 
-// === Types utiles ===
-interface OrderRef {
-  order_id: string;
-  customer_id: string;
-  placed_at: Date;
-  status: string;
-  grand_total: number;
+// --------------------------------------------------------
+// Helper identique à address.controller.test.ts
+// --------------------------------------------------------
+function buildTestApp(router: ReturnType<typeof createOrderRefRouter>) {
+  console.log("→ buildTestApp: mounting router");
+
+  const app = new Application();
+
+  // middleware debug
+  app.use((ctx, next) => {
+    console.log(
+      "→ middleware BEFORE router:",
+      ctx.request.method,
+      ctx.request.url.toString(),
+    );
+    return next().then(() => {
+      console.log(
+        "→ middleware AFTER router, response status:",
+        ctx.response.status,
+      );
+    });
+  });
+
+  app.use(router.routes());
+  console.log("→ router.routes() mounted");
+
+  app.use(router.allowedMethods());
+  console.log("→ router.allowedMethods() mounted");
+
+  return app;
 }
 
-// === Mock du service ===
-const mockService: {
-  getCustomerOrders: (customerId: string) => Promise<OrderRef[]>;
-} = {
-  getCustomerOrders: (id: string) =>
-    Promise.resolve([
-      {
-        order_id: "o1",
-        customer_id: id,
-        placed_at: new Date(),
-        status: "paid",
-        grand_total: 50,
-      },
-    ]),
-};
+// --------------------------------------------------------
+// TEST GET /customers/:customerId/orders
+// --------------------------------------------------------
+Deno.test("GET /customers/:customerId/orders returns list", async () => {
+  console.log("\n\n=== TEST ORDER GET START ===");
 
-// Oak ne fournit pas de type public pour routes().
-// On utilise un cast manuel avec justification.
-// @ts-ignore: Oak retourne un type interne non-exporté → cast manuel nécessaire pour les tests
-const routes = [
-  ...(router.routes() as IterableIterator<{
-    methods: string[];
-    middleware: unknown[];
-  }>),
-];
-
-// Injection du mock dans les handlers
-for (const r of routes) {
-  const handler = r.middleware[1];
-  if (typeof handler === "function") {
-    // @ts-ignore: injection volontaire d’un mock pour test unitaire
-    handler.service = mockService;
-  }
-}
-
-// === Contexte mock Oak ===
-interface TestCtx {
-  params: Record<string, string>;
-  response: Record<string, unknown>;
-  state: Record<string, unknown>;
-  method: string;
-}
-
-function createCtx(
-  method: string,
-  params: Record<string, string> = {},
-): TestCtx {
-  return {
-    params,
-    response: {},
-    state: {},
-    method,
+  const mockService = {
+    getCustomerOrders: (customerId: string) => {
+      console.log("→ mockService.getCustomerOrders CALLED");
+      return Promise.resolve([
+        {
+          order_id: "o1",
+          customer_id: customerId,
+          placed_at: new Date(),
+          status: "paid",
+          grand_total: 90,
+        },
+      ]);
+    },
   };
-}
 
-// === TEST ===
+  const spy = stub(
+    mockService,
+    "getCustomerOrders",
+    mockService.getCustomerOrders,
+  );
 
-Deno.test("GET /customers/:id/orders → retourne commandes", async () => {
-  const route = routes.find((r) => r.methods.includes("GET"))!;
-  const handler = route.middleware[1] as (ctx: TestCtx) => Promise<void>;
+  const router = createOrderRefRouter(
+    mockService as unknown as OrderRefService,
+  );
 
-  const ctx = createCtx("GET", { customerId: "c55" });
-  await handler(ctx);
+  const app = buildTestApp(router);
 
-  const body = ctx.response.body as OrderRef[];
+  const url = "http://test/customers/abc/orders/";
+  console.log("→ sending GET request to:", url);
 
-  assertEquals(body.length, 1);
-  assertEquals(body[0].customer_id, "c55");
+  const req = new Request(url, { method: "GET" });
+
+  const res = await app.handle(req);
+
+  console.log("→ RAW RESPONSE:", res);
+  if (!res) throw new Error("No response returned by Oak app");
+
+  const text = await res.text();
+  console.log("→ response TEXT:", text);
+
+  let body: CustomerOrderRef[] | null = null;
+  if (text.length > 0) {
+    try {
+      body = JSON.parse(text);
+      console.log("→ parsed JSON:", body);
+    } catch (e) {
+      console.log("→ JSON parse error:", e);
+    }
+  } else {
+    console.log("→ EMPTY JSON BODY");
+  }
+
+  if (body) {
+    assertEquals(body[0].customer_id, "abc");
+    assertEquals(body[0].order_id, "o1");
+  }
+
+  assertSpyCalls(spy, 1);
+
+  console.log("=== TEST ORDER GET END ===\n\n");
 });

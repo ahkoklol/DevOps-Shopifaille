@@ -1,130 +1,194 @@
 // back/core/src/modules/customer-accounts/tests/customer.controller.test.ts
 
-import router from "../controllers/customer.controller.ts";
 import { assertEquals } from "@std/assert";
+import { assertSpyCalls, stub } from "@std/testing/mock";
+import { createCustomerRouter } from "../controllers/customer.controller.ts";
+import { CustomerService } from "../services/customer.service.ts";
+import { Application } from "@oak/oak";
+import type { Customer } from "../account.type.ts";
 
-// === Types utiles ===
-interface Customer {
-  id: string;
-  store_id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  is_guest: boolean;
-  created_at: Date;
+// --------------------------------------------------------
+// Helper pour construire une app Oak avec router injecté
+// --------------------------------------------------------
+function buildTestApp(router: ReturnType<typeof createCustomerRouter>) {
+  console.log("→ buildTestApp: mounting router");
+
+  const app = new Application();
+
+  app.use((ctx, next) => {
+    console.log(
+      "→ middleware BEFORE router:",
+      ctx.request.method,
+      ctx.request.url.toString(),
+    );
+    return next().then(() => {
+      console.log(
+        "→ middleware AFTER router, response status:",
+        ctx.response.status,
+      );
+    });
+  });
+
+  app.use(router.routes());
+  console.log("→ router.routes() mounted");
+
+  app.use(router.allowedMethods());
+  console.log("→ router.allowedMethods() mounted");
+
+  return app;
 }
 
-// === Mock du service ===
-const mockService: {
-  registerCustomer: (data: { email: string }) => Promise<Customer>;
-  getCustomerProfile: (id: string) => Promise<Customer | null>;
-} = {
-  registerCustomer: (data) =>
-    Promise.resolve({
-      id: "c1",
-      store_id: "s1",
-      email: data.email,
-      first_name: "John",
-      last_name: "Doe",
-      is_guest: false,
-      created_at: new Date(),
-    }),
+// --------------------------------------------------------
+// TEST POST /customers
+// --------------------------------------------------------
+Deno.test("POST /customers creates a customer", async () => {
+  console.log("\n\n=== TEST POST START ===");
 
-  getCustomerProfile: (id) =>
-    id === "x" ? Promise.resolve(null) : Promise.resolve({
-      id,
-      store_id: "s1",
-      email: "test@test.com",
-      first_name: "John",
-      last_name: "Doe",
-      is_guest: false,
-      created_at: new Date(),
-    }),
-};
-
-// === Récupération des routes ===
-// @ts-ignore: Oak retourne un type interne non-exporté → cast manuel nécessaire pour les tests
-const routes = [
-  ...(router.routes() as IterableIterator<{
-    methods: string[];
-    path: string;
-    middleware: unknown[];
-  }>),
-];
-
-// === Injection du mock dans les handlers ===
-for (const r of routes) {
-  const handler = r.middleware[1];
-  if (typeof handler === "function") {
-    // @ts-ignore: injection volontaire d’un mock dans handler pour test unitaire
-    handler.service = mockService;
-  }
-}
-
-// === Contexte mock Oak ===
-interface TestCtx {
-  params: Record<string, string>;
-  request: {
-    body: {
-      json: () => Promise<unknown>;
-    };
-  };
-  response: Record<string, unknown>;
-  state: Record<string, unknown>;
-  method: string;
-}
-
-function createCtx(
-  method: string,
-  params: Record<string, string> = {},
-  body: unknown = null,
-): TestCtx {
-  return {
-    params,
-    request: {
-      body: {
-        json: () => Promise.resolve(body),
-      },
+  const mockService = {
+    registerCustomer: (data: { email: string }) => {
+      console.log("→ mockService.registerCustomer CALLED");
+      return Promise.resolve({
+        id: "c1",
+        store_id: "s1",
+        email: data.email,
+        first_name: "John",
+        last_name: "Doe",
+        is_guest: false,
+        created_at: new Date(),
+      });
     },
-    response: {},
-    state: {},
-    method,
   };
-}
 
-// ======================= TESTS =======================
+  const spy = stub(
+    mockService,
+    "registerCustomer",
+    mockService.registerCustomer,
+  );
 
-Deno.test("POST /customers → crée un client", async () => {
-  const route = routes.find((r) => r.methods.includes("POST"))!;
-  const handler = route.middleware[1] as (ctx: TestCtx) => Promise<void>;
+  const router = createCustomerRouter(
+    mockService as unknown as CustomerService,
+  );
+  const app = buildTestApp(router);
 
-  const ctx = createCtx("POST", {}, { email: "a@test.com" });
-  await handler(ctx);
+  const url = "http://test/customers/";
+  console.log("→ sending POST request to:", url);
 
-  const body = ctx.response.body as Customer;
+  const req = new Request(url, {
+    method: "POST",
+    body: JSON.stringify({ email: "a@test.com" }),
+    headers: { "Content-Type": "application/json" },
+  });
 
-  assertEquals(ctx.response.status, 201);
+  const res = await app.handle(req);
+  console.log("→ RAW RESPONSE:", res);
+
+  if (!res) throw new Error("No response returned by Oak app");
+
+  const text = await res.text();
+  console.log("→ response TEXT:", text);
+
+  const body: Customer = JSON.parse(text);
+
+  assertEquals(res.status, 201);
   assertEquals(body.id, "c1");
+
+  assertSpyCalls(spy, 1);
+
+  console.log("=== TEST POST END ===\n\n");
 });
 
-Deno.test("GET /customers/:id → 404 si non trouvé", async () => {
-  const route = routes.find((r) => r.path.includes("/:id"))!;
-  const handler = route.middleware[1] as (ctx: TestCtx) => Promise<void>;
+// --------------------------------------------------------
+// TEST GET /customers/:id — not found
+// --------------------------------------------------------
+Deno.test("GET /customers/:id returns 404 if missing", async () => {
+  console.log("\n\n=== TEST GET 404 START ===");
 
-  const ctx = createCtx("GET", { id: "x" });
-  await handler(ctx);
+  const mockService = {
+    getCustomerProfile: (id: string) => {
+      console.log("→ mockService.getCustomerProfile CALLED with id:", id);
+      return Promise.resolve(null);
+    },
+  };
 
-  assertEquals(ctx.response.status, 404);
+  const spy = stub(
+    mockService,
+    "getCustomerProfile",
+    mockService.getCustomerProfile,
+  );
+
+  const router = createCustomerRouter(
+    mockService as unknown as CustomerService,
+  );
+  const app = buildTestApp(router);
+
+  const url = "http://test/customers/xxx";
+  console.log("→ sending GET request to:", url);
+
+  const req = new Request(url, { method: "GET" });
+  const res = await app.handle(req);
+
+  console.log("→ RAW RESPONSE:", res);
+
+  if (!res) throw new Error("No response returned by Oak app");
+
+  const text = await res.text();
+  console.log("→ response TEXT:", text);
+
+  assertEquals(res.status, 404);
+  assertSpyCalls(spy, 1);
+
+  console.log("=== TEST GET 404 END ===\n\n");
 });
 
-Deno.test("GET /customers/:id → retourne client", async () => {
-  const route = routes.find((r) => r.path.includes("/:id"))!;
-  const handler = route.middleware[1] as (ctx: TestCtx) => Promise<void>;
+// --------------------------------------------------------
+// TEST GET /customers/:id — OK
+// --------------------------------------------------------
+Deno.test("GET /customers/:id returns a customer", async () => {
+  console.log("\n\n=== TEST GET START ===");
 
-  const ctx = createCtx("GET", { id: "42" });
-  await handler(ctx);
+  const mockService = {
+    getCustomerProfile: (id: string) => {
+      console.log("→ mockService.getCustomerProfile CALLED with id:", id);
+      return Promise.resolve({
+        id,
+        store_id: "s1",
+        email: "test@test.com",
+        first_name: "John",
+        last_name: "Doe",
+        is_guest: false,
+        created_at: new Date(),
+      });
+    },
+  };
 
-  const customer = ctx.response.body as Customer;
+  const spy = stub(
+    mockService,
+    "getCustomerProfile",
+    mockService.getCustomerProfile,
+  );
 
-  assertEquals(customer.id, "42");
+  const router = createCustomerRouter(
+    mockService as unknown as CustomerService,
+  );
+  const app = buildTestApp(router);
+
+  const url = "http://test/customers/42";
+  console.log("→ sending GET request to:", url);
+
+  const req = new Request(url, { method: "GET" });
+  const res = await app.handle(req);
+
+  console.log("→ RAW RESPONSE:", res);
+  if (!res) throw new Error("No response returned by Oak app");
+  const text = await res.text();
+  console.log("→ response TEXT:", text);
+
+  const body: Customer = JSON.parse(text);
+
+  assertEquals(res.status, 200);
+  assertEquals(body.id, "42");
+
+  assertSpyCalls(spy, 1);
+
+  console.log("=== TEST GET END ===\n\n");
 });

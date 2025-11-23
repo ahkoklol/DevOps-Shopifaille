@@ -1,37 +1,29 @@
+// back/core/src/modules/customer-accounts/tests/order-ref.service.test.ts
 import { assertEquals } from "@std/assert";
-import { assertSpyCalls, stub } from "@std/testing/mock";
-
 import { OrderRefService } from "../services/order-ref.service.ts";
+import type { OrderRefRepository } from "../repositories/order-ref.repository.ts";
 
-Deno.test("OrderRefService.getCustomerOrders - returns order list", async () => {
-  const mockRepo = {
-    listOrders() {},
-  };
-
-  const listStub = stub(
-    mockRepo,
-    "listOrders",
-    () =>
+Deno.test("OrderRefService.getCustomerOrders returns repo data", async () => {
+  const fakeRepo = {
+    listOrders: (customer_id: string) =>
       Promise.resolve([
         {
-          customer_id: "123",
-          order_id: "o1",
+          customer_id,
+          order_id: "o55",
           placed_at: new Date(),
           status: "paid",
-          grand_total: 50,
+          grand_total: 120,
         },
       ]),
+  };
+
+  const service = new OrderRefService(
+    fakeRepo as unknown as OrderRefRepository,
   );
 
-  const service = new OrderRefService();
-  // @ts-ignore override repo
-  service.repo = mockRepo;
+  const rows = await service.getCustomerOrders("100");
 
-  const result = await service.getCustomerOrders("123");
-
-  assertEquals(result.length, 1);
-  assertEquals(result[0].grand_total, 50);
-  assertSpyCalls(listStub, 1);
-
-  listStub.restore();
+  assertEquals(rows.length, 1);
+  assertEquals(rows[0].order_id, "o55");
+  assertEquals(rows[0].customer_id, "100");
 });

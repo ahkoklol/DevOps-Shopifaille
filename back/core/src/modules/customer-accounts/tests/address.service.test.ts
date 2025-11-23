@@ -1,96 +1,33 @@
 import { assertEquals } from "@std/assert";
-import { assertSpyCalls, stub } from "@std/testing/mock";
-import router from "../controllers/address.controller.ts";
+import { AddressService } from "../services/address.service.ts";
+import { AddressRepository } from "../repositories/address.repository.ts";
 
-// Types minimaux pour éviter any
-interface TestContext {
-  params: Record<string, string>;
-  request?: {
-    body?: {
-      json: () => unknown;
-    };
-  };
-  response: {
-    status?: number;
-    body?: unknown;
-  };
-}
-
-// Typage minimal du router Oak
-interface OakRoute {
-  method: string;
-  path: string;
-  handler: (ctx: TestContext) => Promise<void> | void;
-}
-
-// Fonction utilitaire typée
-function getRoute(method: string, path: string): OakRoute["handler"] {
-  const routes = router.routes() as unknown as Iterable<OakRoute>;
-  for (const r of routes) {
-    if (r.method === method && r.path === path) {
-      return r.handler;
-    }
-  }
-  throw new Error("Route not found");
-}
-
-Deno.test("GET /customers/:customerId/addresses → returns list", async () => {
-  const handler = getRoute("GET", "/customers/:customerId/addresses/");
-
-  const mockService = {
-    listAddresses: () =>
-      Promise.resolve([
-        { id: "1", customer_id: "123", line1: "Rue A", city: "Paris" },
-      ]),
+Deno.test("AddressService.listAddresses returns repo data", async () => {
+  const fakeRepo = {
+    listByCustomer: () =>
+      Promise.resolve([{ id: "1", customer_id: "abc", line1: "Rue X" }]),
   };
 
-  // Remplace le service interne du router pour le test
-  (router as unknown as { __service: unknown }).__service = mockService;
+  const service = new AddressService(fakeRepo as unknown as AddressRepository);
 
-  const ctx: TestContext = {
-    params: { customerId: "123" },
-    response: {},
-  };
+  const rows = await service.listAddresses("abc");
 
-  const listStub = stub(mockService, "listAddresses");
-
-  await handler(ctx);
-
-  assertEquals((ctx.response.body as { city: string }[])[0].city, "Paris");
-  assertSpyCalls(listStub, 1);
+  assertEquals(rows.length, 1);
+  assertEquals(rows[0].line1, "Rue X");
 });
 
-Deno.test("POST /customers/:customerId/addresses → creates address", async () => {
-  const handler = getRoute("POST", "/customers/:customerId/addresses/");
-
-  const mockService = {
-    addAddress: () =>
-      Promise.resolve({
-        id: "1",
-        customer_id: "123",
-        line1: "Rue X",
-        city: "Lyon",
-      }),
+Deno.test("AddressService.addAddress calls repo", async () => {
+  const fakeRepo = {
+    create: (data: Record<string, unknown>) =>
+      Promise.resolve({ id: "2", ...data }),
   };
 
-  // Remplace le service interne du router
-  (router as unknown as { __service: unknown }).__service = mockService;
+  const service = new AddressService(fakeRepo as unknown as AddressRepository);
 
-  const ctx: TestContext = {
-    params: { customerId: "123" },
-    request: {
-      body: {
-        json: () => ({ line1: "Rue X" }),
-      },
-    },
-    response: {},
-  };
+  const result = await service.addAddress({
+    customer_id: "abc",
+    line1: "Rue Y",
+  });
 
-  const createStub = stub(mockService, "addAddress");
-
-  await handler(ctx);
-
-  assertEquals(ctx.response.status, 201);
-  assertEquals((ctx.response.body as { city: string }).city, "Lyon");
-  assertSpyCalls(createStub, 1);
+  assertEquals(result.customer_id, "abc");
 });
