@@ -1,3 +1,4 @@
+//front/src/app/routes/admin/dashboard/Settings.tsx
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Save, Store, CreditCard, Truck, Bell, Shield, Globe } from "lucide-react";

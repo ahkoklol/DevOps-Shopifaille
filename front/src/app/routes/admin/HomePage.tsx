@@ -1,3 +1,4 @@
+//front/src/app/routes/admin/HomePage.tsx
 import { Store, Zap, Palette, TrendingUp, ArrowRight } from "lucide-react";
 import { Button } from "../../../shared/components/ui/Button";
 import { Card } from "../../../shared/components/ui/Card";

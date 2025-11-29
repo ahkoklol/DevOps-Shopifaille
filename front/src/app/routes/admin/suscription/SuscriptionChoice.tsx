@@ -1,3 +1,4 @@
+//front/src/app/routes/admin/suscription/SuscriptionChoice.tsx
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../../../shared/components/ui/Button";
 import { Card } from "../../../../shared/components/ui/Card";

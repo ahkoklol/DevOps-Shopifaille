@@ -1,3 +1,4 @@
+//front/src/app/routes/admin/platfom/CreateShopPage.tsx
 import { useState } from 'react';
 import { ArrowRight, ArrowLeft, Check, Loader2 } from 'lucide-react';
 import { Button } from './../../../../shared/components/ui/Button';

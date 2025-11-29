@@ -1,3 +1,4 @@
+//front/src/app/routes/admin/auth/AdminLoginPage.tsx
 import { Store, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../shared/components/ui/Button";
