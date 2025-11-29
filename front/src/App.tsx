@@ -1,4 +1,5 @@
 // src/App.tsx
+//pas sûre de si c'est la bonne version
 import { Suspense } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./app/routes";
