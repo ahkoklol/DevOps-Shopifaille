@@ -1,55 +1,82 @@
-name: Checkout Microservice CD - Build, Push to GHCR
+name: Checkout Microservice CD - Build, Push to GHCR & Docker Hub
 
 on:
   push:
     branches:
       - main # Trigger CD only on merges to main
+      - wayne-kubernetes # Temporary branch for Kubernetes testing
     paths:
-      - 'back/checkout/**'
-      - 'kubernetes/checkout-deployment.yaml' # Also run if deployment config changes
-      
+      - "back/checkout/**"
+      - "kubernetes/checkout-deployment.yaml"
+      - ".github/workflows/**"
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write # Necessary to push Docker image to GHCR
-      
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # --- 1. CI/Build (Must be repeated to create the build output for Docker) ---
-      
+      # --- 1. CI/Build (Maven) ---
+
       - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
-          
+          java-version: "21"
+          distribution: "temurin"
+          cache: "maven"
+
       - name: Build and Test with Maven
-        # Set working directory to the service folder for Maven execution
-        working-directory: back/checkout 
+        working-directory: back/checkout
         run: mvn -B package -DskipTests
-          
-      # --- 2. Docker Build and Push to GHCR ---
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        
+
+      # --- 2. Docker Login for Dual Push ---
+
+      # Log in to GitHub Container Registry (GHCR)
       - name: Log in to GitHub Container Registry (GHCR)
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }} 
+          username: ${{ github.actor }} # Uses GITHUB_TOKEN
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          # Uses ${{ github.repository_owner }} as the confirmed Docker Hub username
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # --- 3. Build and Push to Both Registries ---
 
       - name: Build and Push Docker image
         uses: docker/build-push-action@v6
         with:
-          # Use the service directory as the build context
           context: ./back/checkout
           file: ./back/checkout/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/checkout-service:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/checkout-service:latest
+            ${{ github.repository_owner }}/checkout-service:latest
+
+      # --- 4. Kubernetes Deployment ---
+
+      - name: Configure Kubernetes Context (Kubeconfig)
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
+
+      - name: Deploy to Kubernetes
+        run: kubectl apply -f kubernetes/checkout-deployment.yaml
+
+      - name: Force Rollout Restart for new Image
+        run: kubectl rollout restart deployment/checkout-service # Force restart to pick up the new image, can be changed later with SHA tags

@@ -1,45 +1,61 @@
-name: Core Microservice CD - Build, Push to GHCR (Deno)
+name: Core Microservice CD - Build, Push to GHCR & Docker Hub (Deno)
 
 on:
   push:
     branches:
       - main # Trigger CD only on merges to main
+      - wayne-kubernetes # Temporary branch for Kubernetes testing
     paths:
-      - 'back/core/**'
+      - "back/core/**"
       # Keep the deployment path trigger, even though deployment is skipped for now
-      - 'kubernetes/core-deployment.yaml' 
-      
+      - "kubernetes/core-deployment.yaml"
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write # Necessary to push Docker image to GHCR
-      
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # --- 1. Docker Build and Push to GHCR ---
-      
+      # --- 1. Setup Build Environment ---
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
+
+      # --- 2. Docker Logins ---
+
       - name: Log in to GitHub Container Registry (GHCR)
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }} 
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Log in to Docker Hub using GitHub account name
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          # Uses ${{ github.repository_owner }} as the confirmed Docker Hub username
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }} # Assumes you have this secret set up
+
+      # --- 3. Build and Push to Both Registries ---
 
       - name: Build and Push Deno Docker image
         uses: docker/build-push-action@v6
         with:
           # Context must point to the directory containing the Dockerfile and source files
-          context: ./back/core 
+          context: ./back/core
           file: ./back/core/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/core-service:latest
+          # Tags for both registries: GHCR (full URL) and Docker Hub (username/repo)
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/core-service:latest
+            ${{ github.repository_owner }}/core-service:latest
 
       - name: Image Pushed Confirmation
-        run: echo "Deno service image successfully pushed to ghcr.io/${{ github.repository_owner }}/core-service:latest"
+        run: echo "Deno service image successfully pushed to GHCR and Docker Hub (${{ github.repository_owner }}/core-service:latest)"

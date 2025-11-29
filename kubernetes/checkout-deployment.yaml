@@ -1,0 +1,56 @@
+# 1. Deployment: Manages the application container
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-service
+  labels:
+    app: checkout
+spec:
+  replicas: 1 # Start with a single replica
+  selector:
+    matchLabels:
+      app: checkout
+  template:
+    metadata:
+      labels:
+        app: checkout
+    spec:
+      containers:
+        - name: checkout
+          image: ahkoklol/checkout-service:latest
+          ports:
+            - containerPort: 8080
+
+          # --- ADD THIS ENVIRONMENT BLOCK ---
+          env:
+            # 1. DB_URL: Use the internal service name and checkout DB
+            - name: DB_URL
+              value: jdbc:postgresql://postgres-service:5432/checkout
+
+            # 2. DB_USERNAME: Reference the username from the existing secret
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+
+            # 3. DB_PASSWORD: Reference the password from the existing secret
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+---
+# 2. Service: Provides a stable, internal network address
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkout-service
+spec:
+  # ClusterIP: Only accessible internally by other services (like Store Gateway)
+  type: ClusterIP
+  selector:
+    app: checkout
+  ports:
+    - port: 8080
+      targetPort: 8080
