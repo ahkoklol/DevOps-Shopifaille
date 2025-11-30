@@ -56,12 +56,12 @@ export function OrderManagement({ shopId }: OrderManagementProps) {
   const rawOrders = useMemo(() => getOrdersByShopId(shopId) ?? [], [shopId]);
 
   // Normalize to ensure items/status/paymentStatus exist
-  const orders = useMemo(
-    () =>
-      rawOrders.map((o: any) => {
-        const s: StatusKey = (o?.status in statusConfig ? o.status : "pending") as StatusKey;
-        const p: PayStatusKey = (o?.paymentStatus in paymentStatusConfig ? o.paymentStatus : "pending") as PayStatusKey;
-        return {
+const orders = useMemo(
+  () =>
+    rawOrders.map((o) => {   // ⬅️ enlève le `: any`
+      const s: StatusKey = (o?.status in statusConfig ? o.status : "pending") as StatusKey;
+      const p: PayStatusKey = (o?.paymentStatus in paymentStatusConfig ? o.paymentStatus : "pending") as PayStatusKey;
+      return {
           ...o,
           id: o?.id ?? "N/A",
           date: o?.date ?? new Date().toISOString(),

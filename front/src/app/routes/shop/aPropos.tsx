@@ -8,7 +8,7 @@ import datas from '../../../data/data.json';
 function APropos() {
   const navigate = useNavigate();
   const { shopId } = useParams<{ shopId: string }>();
-  const foundShop = datas.shops.find((s: any) => s.id === shopId);
+  const foundShop = datas.shops.find((s) => s.id === shopId);
 
   if (!foundShop) {
     return (
@@ -23,6 +23,13 @@ function APropos() {
 
   const { about } = foundShop; // ✅ pas "shop"
   const brandColor = foundShop.codeColor ?? '#3B82F6';
+
+  type TeamMember = {
+  image: string;
+  name: string;
+  role: string;
+  bio: string;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b">
@@ -104,7 +111,7 @@ function APropos() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(about?.team ?? []).map((member: any, index: number) => (
+            {(about?.team ?? []).map((member: TeamMember, index: number) => (
               <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="aspect-square overflow-hidden bg-gray-100">
                   <img

@@ -1,4 +1,5 @@
 // src/app/routes/index.tsx
+/* eslint-disable react-refresh/only-export-components */
 import { createBrowserRouter, Navigate, useParams } from "react-router-dom";
 
 import AdminLoginPage from "./admin/auth/AdminLoginPage";
