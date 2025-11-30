@@ -1,12 +1,11 @@
-// back/core/src/modules/order-management/repositories/order.repository.ts
-import { connectToModuleDB } from "../../../shared/db/index.ts";
+import type { Client } from "postgres";
 import { Order, OrderStatus } from "../order.type.ts";
 
-const db = await connectToModuleDB("order-management");
-
 export class OrderRepository {
+  constructor(private db: Client) {}
+
   async findById(id: string): Promise<Order | null> {
-    const result = await db.queryObject<Order>(
+    const result = await this.db.queryObject<Order>(
       `SELECT * FROM orders WHERE id = $1`,
       [id],
     );
@@ -14,32 +13,27 @@ export class OrderRepository {
   }
 
   async listByCustomer(customerId: string): Promise<Order[]> {
-    const result = await db.queryObject<Order>(
-      `SELECT *
-       FROM orders
-       WHERE customer_id = $1
-       ORDER BY created_at DESC`,
+    const result = await this.db.queryObject<Order>(
+      `SELECT * FROM orders WHERE customer_id = $1 ORDER BY created_at DESC`,
       [customerId],
     );
     return result.rows;
   }
 
-  async createOrderRow(
-    data: {
-      customer_id: string;
-      contact_email: string;
-      currency: string;
-      shipping_address_json: unknown;
-      billing_address_json?: unknown | null;
-      subtotal: number;
-      discount_total: number;
-      tax_total: number;
-      shipping_total: number;
-      grand_total: number;
-      status: OrderStatus;
-    },
-  ): Promise<Order> {
-    const result = await db.queryObject<Order>(
+  async createOrderRow(data: {
+    customer_id: string;
+    contact_email: string;
+    currency: string;
+    shipping_address_json: unknown;
+    billing_address_json?: unknown | null;
+    subtotal: number;
+    discount_total: number;
+    tax_total: number;
+    shipping_total: number;
+    grand_total: number;
+    status: OrderStatus;
+  }): Promise<Order> {
+    const result = await this.db.queryObject<Order>(
       `INSERT INTO orders (
          customer_id,
          contact_email,
@@ -72,16 +66,12 @@ export class OrderRepository {
           : null,
       ],
     );
-
     return result.rows[0];
   }
 
   async updateStatus(id: string, status: OrderStatus): Promise<Order> {
-    const result = await db.queryObject<Order>(
-      `UPDATE orders
-       SET status = $2
-       WHERE id = $1
-       RETURNING *`,
+    const result = await this.db.queryObject<Order>(
+      `UPDATE orders SET status = $2 WHERE id = $1 RETURNING *`,
       [id, status],
     );
     return result.rows[0];

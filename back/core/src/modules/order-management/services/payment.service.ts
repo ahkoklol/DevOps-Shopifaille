@@ -1,18 +1,17 @@
-// back/core/src/modules/order-management/services/payment.service.ts
 import { PaymentTransaction, TxStatus } from "../order.type.ts";
 import { PaymentRepository } from "../repositories/payment.repository.ts";
 
 export class PaymentService {
-  private repo = new PaymentRepository();
+  constructor(private repo: PaymentRepository) {}
 
-  async createTransaction(data: {
+  createTransaction(data: {
     order_id: string;
     provider: string;
     reference?: string | null;
     amount: number;
     status?: TxStatus;
   }): Promise<PaymentTransaction> {
-    return await this.repo.createTx({
+    return this.repo.createTx({
       order_id: data.order_id,
       provider: data.provider,
       reference: data.reference ?? null,
@@ -21,7 +20,7 @@ export class PaymentService {
     });
   }
 
-  async listTransactions(orderId: string): Promise<PaymentTransaction[]> {
-    return await this.repo.listByOrder(orderId);
+  listTransactions(orderId: string): Promise<PaymentTransaction[]> {
+    return this.repo.listByOrder(orderId);
   }
 }

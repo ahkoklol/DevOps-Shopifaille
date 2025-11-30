@@ -1,14 +1,19 @@
-// back/core/src/modules/order-management/controllers/order-status-event.controller.ts
 import { Router } from "@oak/oak";
 import { OrderStatusEventService } from "../services/order-status-event.service.ts";
 
-const router = new Router({ prefix: "/orders/:orderId/status-events" });
-const service = new OrderStatusEventService();
+function requireParam(value: string | undefined, name: string): string {
+  if (!value) throw new Error(`Missing route param: ${name}`);
+  return value;
+}
 
-router.get("/", async (ctx) => {
-  const { orderId } = ctx.params;
-  const events = await service.listEvents(orderId!);
-  ctx.response.body = events;
-});
+export function createOrderStatusEventRouter(service: OrderStatusEventService) {
+  const router = new Router({ prefix: "/orders/:orderId/status-events" });
 
-export default router;
+  router.get("/", async (ctx) => {
+    const orderId = requireParam(ctx.params.orderId, "orderId");
+    const events = await service.listByOrder(orderId);
+    ctx.response.body = events;
+  });
+
+  return router;
+}

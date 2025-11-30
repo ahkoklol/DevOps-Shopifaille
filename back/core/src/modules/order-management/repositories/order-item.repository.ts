@@ -1,10 +1,9 @@
-// back/core/src/modules/order-management/repositories/order-item.repository.ts
-import { connectToModuleDB } from "../../../shared/db/index.ts";
+import type { Client } from "postgres";
 import { OrderItem } from "../order.type.ts";
 
-const db = await connectToModuleDB("order-management");
-
 export class OrderItemRepository {
+  constructor(private db: Client) {}
+
   async createItemsForOrder(
     orderId: string,
     items: Array<{
@@ -22,7 +21,7 @@ export class OrderItemRepository {
     for (const item of items) {
       const lineTotal = item.qty * item.unit_price;
 
-      const result = await db.queryObject<OrderItem>(
+      const result = await this.db.queryObject<OrderItem>(
         `INSERT INTO order_item (
            order_id,
            product_id,
@@ -56,11 +55,8 @@ export class OrderItemRepository {
   }
 
   async listByOrder(orderId: string): Promise<OrderItem[]> {
-    const result = await db.queryObject<OrderItem>(
-      `SELECT *
-       FROM order_item
-       WHERE order_id = $1
-       ORDER BY id`,
+    const result = await this.db.queryObject<OrderItem>(
+      `SELECT * FROM order_item WHERE order_id = $1 ORDER BY id`,
       [orderId],
     );
     return result.rows;

@@ -1,21 +1,22 @@
+// category.service.ts
 import { CreateCategoryDto, StoreCategory } from "../store.type.ts";
-import { CategoryRepository } from "../repositories/category.repository.ts";
+import type { CategoryRepository } from "../repositories/category.repository.ts";
 
 export class CategoryService {
-  private repo = new CategoryRepository();
+  constructor(private repo: CategoryRepository) {}
 
-  async createCategory(
+  createCategory(
     storeId: string,
     dto: CreateCategoryDto,
   ): Promise<StoreCategory> {
-    return await this.repo.create(storeId, dto);
+    return this.repo.create(storeId, dto);
   }
 
-  async listCategories(storeId: string): Promise<StoreCategory[]> {
-    return await this.repo.list(storeId);
+  listCategories(storeId: string): Promise<StoreCategory[]> {
+    return this.repo.list(storeId);
   }
 
-  async deleteCategory(id: string): Promise<void> {
-    return await this.repo.delete(id);
+  deleteCategory(id: string): Promise<void> {
+    return this.repo.delete(id);
   }
 }
