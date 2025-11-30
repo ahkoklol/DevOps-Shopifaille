@@ -13,7 +13,6 @@ interface NavbarProps {
 
 export function Navbar({
 }: NavbarProps) {
-  // Fallback navigation using React Router if onNavigate is not provided
   const navigate = useNavigate();
   const location = useLocation();
   const shopId = useParams();

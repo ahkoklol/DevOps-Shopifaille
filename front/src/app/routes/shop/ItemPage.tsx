@@ -10,11 +10,7 @@ import { Navbar } from "./NavBar";
 import { Filter, Grid3x3, List, Star, Timer, Heart, Minus, Plus, ShoppingCart, Share2 } from "lucide-react";
 
 import datas from "../../../data/data.json";
-// interface ProductDetailProps {
-//   shopId: string;
-//   productId: string;
-//   onNavigate: (path: string) => void;
-// }
+
 
 function ItemPage() {
     const navigate = useNavigate();
@@ -40,7 +36,6 @@ function ItemPage() {
             <div className="min-h-screen bg-white">
 
                 <div className="max-w-7xl mx-auto px-4 py-8">
-                    {/* Breadcrumb */}
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
                         <button
                             onClick={() => navigate(`/shop/${foundShop.id}`)}
@@ -60,7 +55,6 @@ function ItemPage() {
                     </div>
 
                     <div className="grid lg:grid-cols-2 gap-12 mb-16">
-                        {/* Product Image */}
                         <div className="space-y-4">
                             <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
                                 <img
@@ -85,7 +79,6 @@ function ItemPage() {
                             </div>
                         </div>
 
-                        {/* Product Info */}
                         <div>
                             <div className="flex items-start justify-between mb-4">
                                 <div>
@@ -111,9 +104,7 @@ function ItemPage() {
 
                             <div className="flex items-baseline gap-3 mb-6">
                                 <span className="text-4xl text-gray-900">{product.price.toFixed(2)} €</span>
-                                {/* <Badge variant={product.stock > 10 ? 'default' : 'secondary'}>
-                                    {product.stock > 0 ? 'En stock' : 'Rupture de stock'}
-                                </Badge> */}
+                              
                             </div>
 
                             <div className="prose mb-8">
@@ -142,8 +133,6 @@ function ItemPage() {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            // onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                                            // disabled={quantity >= product.stock}
                                         >
                                             <Plus className="w-4 h-4" />
                                         </Button>
@@ -155,18 +144,14 @@ function ItemPage() {
                                     size="lg"
                                     style={{ backgroundColor: foundShop?.codeColor }}
                                     onClick={handleAddToCart}
-                                    // disabled={product.stock === 0}
                                 >
                                     <ShoppingCart className="w-5 h-5 mr-2" />
                                     Ajouter au panier
                                 </Button>
 
-                                {/* <div className="text-sm text-gray-600 text-center mt-4">
-                                    {product.stock} unité{product.stock > 1 ? 's' : ''} disponible{product.stock > 1 ? 's' : ''}
-                                </div> */}
+                               
                             </Card>
 
-                            {/* Trust Badges */}
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                                     <div className="text-2xl mb-1">✓</div>
@@ -184,7 +169,6 @@ function ItemPage() {
                         </div>
                     </div>
 
-                    {/* Reviews Section */}
                     <div className="border-t pt-12">
                         <h2 className="text-2xl text-gray-900 mb-6">Avis clients</h2>
 
@@ -212,7 +196,7 @@ function ItemPage() {
                     </div>
                 </div>
             </div>
-            {/* CTA / Footer avec couleur du shop */}
+         
             <div
                 className="text-white py-16"
                 style={{ backgroundColor: foundShop.codeColor ?? "#000" }}

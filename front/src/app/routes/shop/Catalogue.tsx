@@ -10,7 +10,7 @@ import { Filter, Grid3x3, List, Star, Timer, Heart } from "lucide-react";
 
 import datas from "../../../data/data.json";
 
-// (Facultatif) dictionnaire si tu veux mapper des noms d'icônes venant du JSON
+
 const ICONS = {
   Timer,
   Star,
@@ -39,8 +39,8 @@ function Catalogue() {
         .filter((p: any) => {
           if (selectedPrice === "100") return p.price > 100;
           if (selectedPrice === "50-100") return p.price >= 50 && p.price <= 100;
-          if (selectedPrice === "50") return p.price === 50;
-          return true; // si aucun filtre prix sélectionné
+          if (selectedPrice === "50") return p.price >= 50;
+          return true; 
         })
     : products;
 
@@ -93,7 +93,7 @@ function Catalogue() {
               <div className="mb-6">
                 <h4 className="text-sm text-gray-900 mb-3">Catégories</h4>
                 <div className="space-y-2">
-                  <button
+                  <button data-cy="filter-category"
                     onClick={() => setSelectedCategory(null)}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedCategory === null
                         ? "bg-blue-50 text-blue-700"
@@ -131,16 +131,17 @@ function Catalogue() {
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm text-gray-700">
                     <input type="checkbox" className="rounded"
+                    data-cy="filter-price"
                      onChange={(e) => setSelectedPrice(e.target.checked ? "50" : null)} />
                     Moins de 50€
                   </label>
                   <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded"
+                    <input type="checkbox" className="rounded" data-cy="filter-price"
                       onChange={(e) => setSelectedPrice(e.target.checked ? "50-100" : null)} />
                     50€ - 100€
                   </label>
                   <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded" 
+                    <input type="checkbox" className="rounded"  data-cy="filter-price"
                       onChange={(e) => setSelectedPrice(e.target.checked ? "100" : null)}/>
                     Plus de 100€
                   </label>
@@ -156,14 +157,14 @@ function Catalogue() {
             {/* Toolbar */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <Button
+                <Button data-cy="view-grid"
                   variant={viewMode === "grid" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
                 >
                   <Grid3x3 className="w-4 h-4" />
                 </Button>
-                <Button
+                <Button data-cy="view-list"
                   variant={viewMode === "list" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("list")}
@@ -196,6 +197,7 @@ function Catalogue() {
                 {filteredProducts.map((product: any) => (
                   <Card
                     key={product.id}
+                     data-cy="product-card"
                     className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group ${viewMode === "list" ? "flex" : ""
                       }`}
                     onClick={() =>
@@ -241,7 +243,9 @@ function Catalogue() {
                         <span className="text-xl text-gray-900">
                           {Number(product.price).toFixed(2)} €
                         </span>
-                        <Button size="sm" style={{ backgroundColor: foundShop.codeColor }}>
+                        <Button size="sm"
+                          data-cy="add-to-cart"
+                          style={{ backgroundColor: foundShop.codeColor }}>
                           Ajouter au panier
                         </Button>
                       </div>

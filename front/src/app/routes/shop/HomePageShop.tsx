@@ -33,10 +33,9 @@ function HomePageShop() {
     );
   }
 
-  // Mapper les icônes string -> composants
   const mappedFeatures = (foundShop.features || []).map((f) => ({
     ...f,
-    Icon: ICONS[f.icon as keyof typeof ICONS] ?? Star, // fallback Star
+    Icon: ICONS[f.icon as keyof typeof ICONS] ?? Star, 
   }));
 
   const featuredProducts = foundShop?.featuredProducts ?? [];
@@ -45,7 +44,6 @@ function HomePageShop() {
     <div className="min-h-screen bg-gradient-to-b">
       <Navbar variant="platform" onNavigate={() => { }} />
 
-      {/* Hero Section - utilise la couleur du shop si dispo */}
       <div
         className="mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16"
         style={{
@@ -84,7 +82,6 @@ function HomePageShop() {
         </div>
       </div>
 
-      {/* Produits en vedette */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">
           <h2 className="text-2xl sm:text-3xl font-semibold">Produits en vedette</h2>
@@ -126,7 +123,6 @@ function HomePageShop() {
           })}
         </div>
 
-        {/* Features Section (icônes mappées) */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid md:grid-cols-3 gap-8">
             {mappedFeatures.map((feature, index) => (
@@ -142,7 +138,6 @@ function HomePageShop() {
         </div>
       </div >
 
-      {/* CTA / Footer avec couleur du shop */}
       < div
         className="text-white py-16"
         style={{ backgroundColor: foundShop.codeColor ?? '#000' }
@@ -158,7 +153,6 @@ function HomePageShop() {
         </div>
       </div >
 
-      {/* Si tu utilises des routes enfant (ex: /shop/:shopId/contact), garde l'Outlet */}
       < Outlet />
     </div >
   );
