@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams, Outlet } from "react-router-dom";
 
 import { Button } from "../../../shared/components/ui/Button";
@@ -6,44 +6,67 @@ import { Card } from "../../../shared/components/ui/Card";
 import { Badge } from "../../../shared/components/ui/Badge";
 import { Navbar } from "./NavBar";
 
-import { Filter, Grid3x3, List, Star, Timer, Heart } from "lucide-react";
+import { Filter, Grid3x3, List, Star } from "lucide-react";
 
 import datas from "../../../data/data.json";
 
-// (Facultatif) dictionnaire si tu veux mapper des noms d'icônes venant du JSON
-const ICONS = {
-  Timer,
-  Star,
-  Heart,
-} as const;
+type ShopProduct = {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  description?: string;
+  categoryId: string;
+};
+
+type ShopCategory = {
+  id: string;
+  name: string;
+};
+
+type Shop = {
+  id: string;
+  name: string;
+  codeColor?: string;
+  featuredProducts?: ShopProduct[];
+  categories?: ShopCategory[];
+};
+
+type ShopData = {
+  shops: Shop[];
+};
 
 function Catalogue() {
   const navigate = useNavigate();
   const { shopId: paramShopId } = useParams();
-  const foundShop = datas.shops.find((shop) => shop.id === paramShopId);
 
-  const products = foundShop?.featuredProducts ?? [];
-  const categories = foundShop?.categories ?? []; // si ton data.json contient categories
+  const shopData = datas as ShopData;
+  const foundShop = shopData.shops.find((shop) => shop.id === paramShopId);
+
+  const products: ShopProduct[] = foundShop?.featuredProducts ?? [];
+  const categories: ShopCategory[] = foundShop?.categories ?? [];
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
-  
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
- const filteredProducts =
-  selectedCategory !== null || selectedPrice !== null
-    ? products
-        .filter((p: any) =>
-          selectedCategory !== null ? p.categoryId === selectedCategory : true
-        )
-        .filter((p: any) => {
-          if (selectedPrice === "100") return p.price > 100;
-          if (selectedPrice === "50-100") return p.price >= 50 && p.price <= 100;
-          if (selectedPrice === "50") return p.price === 50;
-          return true; // si aucun filtre prix sélectionné
-        })
-    : products;
-
+  const filteredProducts =
+    selectedCategory !== null || selectedPrice !== null
+      ? products
+          .filter((product) =>
+            selectedCategory !== null
+              ? product.categoryId === selectedCategory
+              : true
+          )
+          .filter((product) => {
+            if (selectedPrice === "100") return product.price > 100;
+            if (selectedPrice === "50-100") {
+              return product.price >= 50 && product.price <= 100;
+            }
+            if (selectedPrice === "50") return product.price === 50;
+            return true;
+          })
+      : products;
 
   if (!foundShop) {
     return (
@@ -55,19 +78,16 @@ function Catalogue() {
             onClick={() => navigate("/")}
             className="mt-4 px-4 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600"
           >
-            Revenir à l'accueil
+            Revenir à l&apos;accueil
           </button>
         </div>
       </div>
     );
   }
 
-  // Sécurise les données
-
-
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar variant="platform" onNavigate={() => { }} />
+      <Navbar variant="platform" onNavigate={() => {}} />
       {/* Page Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -95,26 +115,29 @@ function Catalogue() {
                 <div className="space-y-2">
                   <button
                     onClick={() => setSelectedCategory(null)}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedCategory === null
+                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                      selectedCategory === null
                         ? "bg-blue-50 text-blue-700"
                         : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    }`}
                   >
                     Tous les produits
                   </button>
 
-                  {categories.map((category: any) => {
+                  {categories.map((category) => {
                     const count = products.filter(
-                      (p: any) => p.categoryId === category.id
+                      (product) => product.categoryId === category.id
                     ).length;
+
                     return (
                       <button
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center justify-between ${selectedCategory === category.id
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center justify-between ${
+                          selectedCategory === category.id
                             ? "bg-blue-50 text-blue-700"
                             : "text-gray-700 hover:bg-gray-100"
-                          }`}
+                        }`}
                       >
                         <span>{category.name}</span>
                         <Badge variant="secondary" className="ml-2">
@@ -130,23 +153,42 @@ function Catalogue() {
                 <h4 className="text-sm text-gray-900 mb-3">Prix</h4>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded"
-                     onChange={(e) => setSelectedPrice(e.target.checked ? "50" : null)} />
+                    <input
+                      type="checkbox"
+                      className="rounded"
+                      onChange={(event) =>
+                        setSelectedPrice(
+                          event.target.checked ? "50" : null
+                        )
+                      }
+                    />
                     Moins de 50€
                   </label>
                   <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded"
-                      onChange={(e) => setSelectedPrice(e.target.checked ? "50-100" : null)} />
+                    <input
+                      type="checkbox"
+                      className="rounded"
+                      onChange={(event) =>
+                        setSelectedPrice(
+                          event.target.checked ? "50-100" : null
+                        )
+                      }
+                    />
                     50€ - 100€
                   </label>
                   <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded" 
-                      onChange={(e) => setSelectedPrice(e.target.checked ? "100" : null)}/>
+                    <input
+                      type="checkbox"
+                      className="rounded"
+                      onChange={(event) =>
+                        setSelectedPrice(
+                          event.target.checked ? "100" : null
+                        )
+                      }
+                    />
                     Plus de 100€
                   </label>
                 </div>
-
-                
               </div>
             </Card>
           </aside>
@@ -183,7 +225,9 @@ function Catalogue() {
             {/* Products */}
             {filteredProducts.length === 0 ? (
               <Card className="p-12 text-center">
-                <p className="text-gray-600">Aucun produit dans cette catégorie</p>
+                <p className="text-gray-600">
+                  Aucun produit dans cette catégorie
+                </p>
               </Card>
             ) : (
               <div
@@ -193,19 +237,21 @@ function Catalogue() {
                     : "space-y-4"
                 }
               >
-                {filteredProducts.map((product: any) => (
+                {filteredProducts.map((product) => (
                   <Card
                     key={product.id}
-                    className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group ${viewMode === "list" ? "flex" : ""
-                      }`}
+                    className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group ${
+                      viewMode === "list" ? "flex" : ""
+                    }`}
                     onClick={() =>
                       navigate(`/shop/${paramShopId}/product/${product.id}`)
                     }
                   >
                     {/* Image */}
                     <div
-                      className={`${viewMode === "list" ? "w-48" : "aspect-square"
-                        } overflow-hidden bg-gray-100`}
+                      className={`${
+                        viewMode === "list" ? "w-48" : "aspect-square"
+                      } overflow-hidden bg-gray-100`}
                     >
                       <img
                         src={product.image}
@@ -215,13 +261,16 @@ function Catalogue() {
                     </div>
 
                     {/* Content */}
-                    <div className={`p-6 ${viewMode === "list" ? "flex-1" : ""}`}>
+                    <div
+                      className={`p-6 ${
+                        viewMode === "list" ? "flex-1" : ""
+                      }`}
+                    >
                       <div className="flex items-center gap-1 mb-2">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <Star
                             key={star}
                             className="w-3 h-3 text-yellow-400"
-                            // pour remplir l'icône lucide :
                             fill="currentColor"
                           />
                         ))}
@@ -241,7 +290,10 @@ function Catalogue() {
                         <span className="text-xl text-gray-900">
                           {Number(product.price).toFixed(2)} €
                         </span>
-                        <Button size="sm" style={{ backgroundColor: foundShop.codeColor }}>
+                        <Button
+                          size="sm"
+                          style={{ backgroundColor: foundShop.codeColor }}
+                        >
                           Ajouter au panier
                         </Button>
                       </div>
@@ -263,7 +315,9 @@ function Catalogue() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <h2 className="text-3xl font-semibold">{foundShop.name}</h2>
           </div>
-          <p className="mt-8 text-sm">© 2025 {foundShop.name}. Tous droits réservés.</p>
+          <p className="mt-8 text-sm">
+            © 2025 {foundShop.name}. Tous droits réservés.
+          </p>
         </div>
       </div>
 

@@ -1,6 +1,4 @@
-import { User, LogOut } from 'lucide-react';
-import { Button } from '../../../shared/components/ui/Button';
-import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import datas from '../../../data/data.json';
 
 interface NavbarProps {
@@ -15,7 +13,6 @@ export function Navbar({
 }: NavbarProps) {
   // Fallback navigation using React Router if onNavigate is not provided
   const navigate = useNavigate();
-  const location = useLocation();
   const shopId = useParams();
   const foundShop = datas.shops.find(shop => shop.id === shopId.shopId);
 

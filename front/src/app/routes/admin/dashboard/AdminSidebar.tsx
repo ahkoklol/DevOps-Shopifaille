@@ -6,7 +6,6 @@ import {
   Users, 
   Palette, 
   Settings,
-  BarChart3
 } from 'lucide-react';
 import { cn } from '../../../../shared/components/ui/utils';
 

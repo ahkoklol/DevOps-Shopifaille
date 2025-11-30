@@ -3,13 +3,9 @@ import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { Button } from './../../../shared/components/ui/Button';
 import { Card } from './../../../shared/components/ui/Card';
 import data from './../../../data/data.json';
-import { useNavigate, useParams, Outlet } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Navbar } from "./NavBar";
 
-interface CartProps {
-  shopId: string;
-  onNavigate: (path: string) => void;
-}
 
 interface CartItem {
   productId: string;

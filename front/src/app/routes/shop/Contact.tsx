@@ -2,12 +2,10 @@ import { Phone, Mail, MapPin, Clock, Star, Heart, Timer } from "lucide-react";
 import { Button } from "../../../shared/components/ui/Button";
 import { Card } from "../../../shared/components/ui/Card";
 import { Navbar } from "./NavBar";
-import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import datas from '../../../data/data.json';
 
 function Contact() {
-  const navigate = useNavigate();
-  const location = useLocation();
   const { shopId: paramShopId } = useParams();
   const foundShop = datas.shops.find(shop => shop.id === paramShopId);
 

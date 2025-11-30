@@ -1,13 +1,12 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams, Outlet } from "react-router-dom";
 
 import { Button } from "../../../shared/components/ui/Button";
 import { Card } from "../../../shared/components/ui/Card";
-import { Badge } from "../../../shared/components/ui/Badge";
 import { Navbar } from "./NavBar";
 
-import { Filter, Grid3x3, List, Star, Timer, Heart, Minus, Plus, ShoppingCart, Share2 } from "lucide-react";
+import { Star, Heart, Minus, Plus, ShoppingCart, Share2 } from "lucide-react";
 
 import datas from "../../../data/data.json";
 // interface ProductDetailProps {

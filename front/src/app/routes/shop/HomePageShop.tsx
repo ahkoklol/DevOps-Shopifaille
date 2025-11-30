@@ -1,8 +1,7 @@
 import { ArrowRight, Heart, Timer, Star } from "lucide-react";
-import { Button } from "../../../shared/components/ui/Button";
 import { Card } from "../../../shared/components/ui/Card";
 import { Navbar } from "./NavBar";
-import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import datas from '../../../data/data.json';
 
 const ICONS = {
