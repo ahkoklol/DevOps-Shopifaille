@@ -30,7 +30,6 @@ function ItemPage() {
 
             <div className="min-h-screen bg-white">
                 <div className="max-w-7xl mx-auto px-4 py-8">
-                    {/* Breadcrumb */}
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
                         <button
                             type="button"
@@ -52,7 +51,6 @@ function ItemPage() {
                     </div>
 
                     <div className="grid lg:grid-cols-2 gap-12 mb-16">
-                        {/* Product Image */}
                         <div className="space-y-4">
                             <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
                                 <img
@@ -78,7 +76,6 @@ function ItemPage() {
                             </div>
                         </div>
 
-                        {/* Product Info */}
                         <div>
                             <div className="flex items-start justify-between mb-4">
                                 <div>
@@ -104,6 +101,7 @@ function ItemPage() {
 
                             <div className="flex items-baseline gap-3 mb-6">
                                 <span className="text-4xl text-gray-900">{product.price.toFixed(2)} €</span>
+                              
                             </div>
 
                             <div className="prose mb-8">
@@ -147,9 +145,10 @@ function ItemPage() {
                                     <ShoppingCart className="w-5 h-5 mr-2" />
                                     Ajouter au panier
                                 </Button>
+
+                               
                             </Card>
 
-                            {/* Trust Badges */}
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                                     <div className="text-2xl mb-1">✓</div>
@@ -167,7 +166,6 @@ function ItemPage() {
                         </div>
                     </div>
 
-                    {/* Reviews Section */}
                     <div className="border-t pt-12">
                         <h2 className="text-2xl text-gray-900 mb-6">Avis clients</h2>
 
@@ -195,8 +193,7 @@ function ItemPage() {
                     </div>
                 </div>
             </div>
-
-            {/* CTA / Footer */}
+         
             <div
                 className="text-white py-16"
                 style={{ backgroundColor: foundShop.codeColor ?? "#000" }}

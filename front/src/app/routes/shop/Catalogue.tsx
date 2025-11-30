@@ -115,7 +115,7 @@ function Catalogue() {
               <div className="mb-6">
                 <h4 className="text-sm text-gray-900 mb-3">Catégories</h4>
                 <div className="space-y-2">
-                  <button
+                  <button data-cy="filter-category"
                     type="button"
                     onClick={() => setSelectedCategory(null)}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
@@ -198,14 +198,14 @@ function Catalogue() {
             {/* Toolbar */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <Button
+                <Button data-cy="view-grid"
                   variant={viewMode === "grid" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
                 >
                   <Grid3x3 className="w-4 h-4" />
                 </Button>
-                <Button
+                <Button data-cy="view-list"
                   variant={viewMode === "list" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("list")}

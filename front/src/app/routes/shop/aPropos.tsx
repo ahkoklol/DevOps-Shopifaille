@@ -21,7 +21,7 @@ function APropos() {
     );
   }
 
-  const { about } = foundShop; // ✅ pas "shop"
+  const { about } = foundShop; 
   const brandColor = foundShop.codeColor ?? '#3B82F6';
 
   type TeamMember = {
@@ -68,7 +68,6 @@ function APropos() {
           </div>
         </div>
 
-        {/* Mission & Valeurs */}
         <div className="bg-gray-50 py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">

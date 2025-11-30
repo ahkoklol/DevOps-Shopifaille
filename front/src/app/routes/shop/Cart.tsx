@@ -17,6 +17,7 @@ function Cart() {
   const foundShop = data.shops.find((shop) => shop.id === paramShopId);
   const products = foundShop?.featuredProducts ?? [];
 
+
   const [cartItems, setCartItems] = useState<CartItem[]>([
     { productId: 'prod-1', quantity: 2 },
     { productId: 'prod-3', quantity: 1 }
@@ -24,11 +25,12 @@ function Cart() {
 
   if (!foundShop) return <div>Boutique introuvable</div>;
 
-  const cartDetails = cartItems
-    .map(item => ({
+  const cartDetails = cartItems.map(item => {
+    const product = products.find(p => p.id === item.productId);
+    return {
       ...item,
       product: products.find(p => p.id === item.productId)
-    }))
+    }})
     .filter(item => item.product);
 
   const subtotal = cartDetails.reduce(
@@ -88,7 +90,7 @@ function Cart() {
                 if (!product) return null;
 
                 return (
-                  <Card key={productId} className="p-6">
+                  <Card key={productId} className="p-6" data-cy="cart-item">
                     <div className="flex gap-6">
                       <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                         <img
@@ -108,6 +110,7 @@ function Cart() {
                           <button
                             type="button"
                             onClick={() => removeItem(productId)}
+                            data-cy="btn-remove"
                             className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="w-5 h-5" />
@@ -117,6 +120,7 @@ function Cart() {
                         <div className="flex items-center justify-between mt-4">
                           <div className="flex items-center gap-3">
                             <Button
+                              data-cy="btn-minus"
                               variant="outline"
                               size="sm"
                               onClick={() => updateQuantity(productId, -1)}
@@ -128,6 +132,7 @@ function Cart() {
                             <span className="w-8 text-center text-gray-900">{quantity}</span>
 
                             <Button
+                              data-cy="btn-plus"
                               variant="outline"
                               size="sm"
                               onClick={() => updateQuantity(productId, 1)}
@@ -136,7 +141,7 @@ function Cart() {
                             </Button>
                           </div>
 
-                          <div className="text-xl text-gray-900">
+                          <div className="text-xl text-gray-900" data-cy="quantity">
                             {(product.price * quantity).toFixed(2)} €
                           </div>
                         </div>
