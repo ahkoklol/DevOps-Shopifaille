@@ -1,21 +1,19 @@
-import { CreateStoreDto, MerchantStore } from "../store.type.ts";
-import { StoreRepository } from "../repositories/store.repository.ts";
+// store.service.ts
+import type { StoreRepository } from "../repositories/store.repository.ts";
+import type { CreateStoreDto, MerchantStore } from "../store.type.ts";
 
 export class StoreService {
-  private repo = new StoreRepository();
+  constructor(private repo: StoreRepository) {}
 
-  async createStore(dto: CreateStoreDto): Promise<MerchantStore> {
-    const existing = await this.repo.findBySubdomain(dto.subdomain);
-    if (existing) throw new Error("Subdomain already in use");
-
-    return await this.repo.create(dto);
+  createStore(dto: CreateStoreDto): Promise<MerchantStore> {
+    return this.repo.create(dto);
   }
 
-  async getStore(id: string): Promise<MerchantStore | null> {
-    return await this.repo.findById(id);
+  getStore(id: string): Promise<MerchantStore | null> {
+    return this.repo.findById(id);
   }
 
-  async listStoresForOwner(ownerId: string): Promise<MerchantStore[]> {
-    return await this.repo.listByOwner(ownerId);
+  listStoresForOwner(ownerId: string): Promise<MerchantStore[]> {
+    return this.repo.listByOwner(ownerId);
   }
 }

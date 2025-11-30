@@ -1,10 +1,9 @@
-// back/core/src/modules/order-management/repositories/order-status-event.repository.ts
-import { connectToModuleDB } from "../../../shared/db/index.ts";
+import type { Client } from "postgres";
 import { OrderStatus, OrderStatusEvent } from "../order.type.ts";
 
-const db = await connectToModuleDB("order-management");
-
 export class OrderStatusEventRepository {
+  constructor(private db: Client) {}
+
   async createEvent(data: {
     order_id: string;
     from_status?: OrderStatus | null;
@@ -12,7 +11,7 @@ export class OrderStatusEventRepository {
     reason?: string | null;
     metadata_json?: unknown;
   }): Promise<OrderStatusEvent> {
-    const result = await db.queryObject<OrderStatusEvent>(
+    const result = await this.db.queryObject<OrderStatusEvent>(
       `INSERT INTO order_status_event (
          order_id,
          from_status,
@@ -35,11 +34,8 @@ export class OrderStatusEventRepository {
   }
 
   async listByOrder(orderId: string): Promise<OrderStatusEvent[]> {
-    const result = await db.queryObject<OrderStatusEvent>(
-      `SELECT *
-       FROM order_status_event
-       WHERE order_id = $1
-       ORDER BY occurred_at ASC`,
+    const result = await this.db.queryObject<OrderStatusEvent>(
+      `SELECT * FROM order_status_event WHERE order_id = $1 ORDER BY occurred_at ASC`,
       [orderId],
     );
     return result.rows;

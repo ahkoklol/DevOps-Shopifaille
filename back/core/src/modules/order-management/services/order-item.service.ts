@@ -1,11 +1,25 @@
-// back/core/src/modules/order-management/services/order-item.service.ts
 import { OrderItem } from "../order.type.ts";
 import { OrderItemRepository } from "../repositories/order-item.repository.ts";
 
 export class OrderItemService {
-  private repo = new OrderItemRepository();
+  constructor(private repo: OrderItemRepository) {}
 
-  async listItems(orderId: string): Promise<OrderItem[]> {
-    return await this.repo.listByOrder(orderId);
+  listItems(orderId: string): Promise<OrderItem[]> {
+    return this.repo.listByOrder(orderId);
+  }
+
+  createItems(
+    orderId: string,
+    items: Array<{
+      product_id: string;
+      variant_id: string;
+      qty: number;
+      unit_price: number;
+      title: string;
+      sku: string;
+      attrs?: unknown;
+    }>,
+  ): Promise<OrderItem[]> {
+    return this.repo.createItemsForOrder(orderId, items);
   }
 }

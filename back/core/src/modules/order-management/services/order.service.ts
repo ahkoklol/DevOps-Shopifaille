@@ -1,4 +1,3 @@
-// back/core/src/modules/order-management/services/order.service.ts
 import {
   CreateOrderDto,
   Order,
@@ -11,19 +10,20 @@ import { OrderLifecycleRepository } from "../repositories/order-lifecycle.reposi
 import { OrderStatusEventRepository } from "../repositories/order-status-event.repository.ts";
 
 export class OrderService {
-  private orderRepo = new OrderRepository();
-  private itemRepo = new OrderItemRepository();
-  private lifecycleRepo = new OrderLifecycleRepository();
-  private statusEventRepo = new OrderStatusEventRepository();
+  constructor(
+    private orderRepo: OrderRepository,
+    private itemRepo: OrderItemRepository,
+    private lifecycleRepo: OrderLifecycleRepository,
+    private statusEventRepo: OrderStatusEventRepository,
+  ) {}
 
-  async createOrder(dto: CreateOrderDto): Promise<{
-    order: Order;
-    items: OrderItem[];
-  }> {
-    const subtotal = dto.items.reduce((sum, item) => {
-      return sum + item.qty * item.unit_price;
-    }, 0);
-
+  async createOrder(
+    dto: CreateOrderDto,
+  ): Promise<{ order: Order; items: OrderItem[] }> {
+    const subtotal = dto.items.reduce(
+      (sum, item) => sum + item.qty * item.unit_price,
+      0,
+    );
     const discount_total = dto.discounts ?? 0;
     const tax_total = dto.tax ?? 0;
     const shipping_total = dto.shipping ?? 0;
@@ -57,12 +57,12 @@ export class OrderService {
     return { order, items };
   }
 
-  async getOrder(id: string): Promise<Order | null> {
-    return await this.orderRepo.findById(id);
+  getOrder(id: string): Promise<Order | null> {
+    return this.orderRepo.findById(id);
   }
 
-  async listOrdersForCustomer(customerId: string): Promise<Order[]> {
-    return await this.orderRepo.listByCustomer(customerId);
+  listOrdersForCustomer(customerId: string): Promise<Order[]> {
+    return this.orderRepo.listByCustomer(customerId);
   }
 
   async updateStatus(
@@ -71,9 +71,7 @@ export class OrderService {
     opts?: { reason?: string; metadata?: unknown },
   ): Promise<Order> {
     const existing = await this.orderRepo.findById(orderId);
-    if (!existing) {
-      throw new Error("Order not found");
-    }
+    if (!existing) throw new Error("Order not found");
 
     const updated = await this.orderRepo.updateStatus(orderId, toStatus);
 

@@ -1,17 +1,18 @@
+// settings.service.ts
 import { StoreSettings, UpsertSettingsDto } from "../store.type.ts";
-import { SettingsRepository } from "../repositories/settings.repository.ts";
+import type { SettingsRepository } from "../repositories/settings.repository.ts";
 
 export class SettingsService {
-  private repo = new SettingsRepository();
+  constructor(private repo: SettingsRepository) {}
 
-  async upsertSettings(
+  upsertSettings(
     storeId: string,
     dto: UpsertSettingsDto,
   ): Promise<StoreSettings> {
-    return await this.repo.upsert(storeId, dto);
+    return this.repo.upsert(storeId, dto);
   }
 
-  async getSettings(storeId: string): Promise<StoreSettings | null> {
-    return await this.repo.findByStore(storeId);
+  getSettings(storeId: string): Promise<StoreSettings | null> {
+    return this.repo.findByStore(storeId);
   }
 }

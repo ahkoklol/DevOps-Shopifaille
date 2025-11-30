@@ -1,13 +1,15 @@
-import { SubscriptionRepository } from "../repositories/subscription.repository.ts";
-import { SubscribeDto, WebhookSubscription } from "../webhook.type.ts";
+// back/core/src/modules/event-webhooks/services/subscription.service.ts
+
+import type { SubscriptionRepository } from "../repositories/subscription.repository.ts";
+import type { SubscribeDto, WebhookSubscription } from "../webhook.type.ts";
 
 export class SubscriptionService {
-  private repo = new SubscriptionRepository();
+  constructor(private repo: SubscriptionRepository) {}
 
-  async createSubscription(dto: SubscribeDto): Promise<WebhookSubscription> {
+  createSubscription(dto: SubscribeDto): Promise<WebhookSubscription> {
     const event_csv = dto.event_types.join(",");
 
-    return await this.repo.create({
+    return this.repo.create({
       store_id: dto.store_id,
       target_url: dto.target_url,
       secret: dto.secret,
@@ -16,25 +18,23 @@ export class SubscriptionService {
     });
   }
 
-  async getSubscription(id: string): Promise<WebhookSubscription | null> {
-    return await this.repo.findById(id);
+  getSubscription(id: string): Promise<WebhookSubscription | null> {
+    return this.repo.findById(id);
   }
 
-  async listSubscriptionsByStore(
-    storeId: string,
-  ): Promise<WebhookSubscription[]> {
-    return await this.repo.listByStore(storeId);
+  listSubscriptionsByStore(storeId: string): Promise<WebhookSubscription[]> {
+    return this.repo.listByStore(storeId);
   }
 
-  async activate(id: string): Promise<WebhookSubscription> {
-    return await this.repo.updateActiveStatus(id, true);
+  activate(id: string): Promise<WebhookSubscription> {
+    return this.repo.updateActiveStatus(id, true);
   }
 
-  async deactivate(id: string): Promise<WebhookSubscription> {
-    return await this.repo.updateActiveStatus(id, false);
+  deactivate(id: string): Promise<WebhookSubscription> {
+    return this.repo.updateActiveStatus(id, false);
   }
 
-  async listActiveForEvent(storeId: string, eventType: string) {
-    return await this.repo.findActiveForEvent(storeId, eventType);
+  listActiveForEvent(storeId: string, eventType: string) {
+    return this.repo.findActiveForEvent(storeId, eventType);
   }
 }

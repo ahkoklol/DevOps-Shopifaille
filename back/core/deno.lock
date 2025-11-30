@@ -190,6 +190,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@hono/hono@^4.10.6",
+      "jsr:@oak/cors@1",
       "jsr:@oak/oak@12",
       "jsr:@std/assert@1.0.5",
       "jsr:@std/dotenv@~0.225.5",

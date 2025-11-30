@@ -1,14 +1,15 @@
-import { connectToModuleDB } from "../../../shared/db/index.ts";
+// branding.repository.ts
+import type { Client } from "postgres";
 import { StoreBranding, UpsertBrandingDto } from "../store.type.ts";
 
-const db = await connectToModuleDB("store-management");
-
 export class BrandingRepository {
+  constructor(private db: Client) {}
+
   async upsert(
     storeId: string,
     data: UpsertBrandingDto,
   ): Promise<StoreBranding> {
-    const result = await db.queryObject<StoreBranding>(
+    const result = await this.db.queryObject<StoreBranding>(
       `INSERT INTO store_branding (store_id, theme_preset, logo_url, colors_json)
        VALUES ($1,$2,$3,$4)
        ON CONFLICT (store_id)
@@ -24,12 +25,11 @@ export class BrandingRepository {
         data.colors_json ? JSON.stringify(data.colors_json) : null,
       ],
     );
-
     return result.rows[0];
   }
 
   async findByStore(storeId: string): Promise<StoreBranding | null> {
-    const result = await db.queryObject<StoreBranding>(
+    const result = await this.db.queryObject<StoreBranding>(
       `SELECT * FROM store_branding WHERE store_id = $1`,
       [storeId],
     );

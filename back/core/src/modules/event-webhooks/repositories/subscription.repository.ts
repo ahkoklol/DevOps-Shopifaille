@@ -1,9 +1,11 @@
-import { connectToModuleDB } from "../../../shared/db/index.ts";
+// back/core/src/modules/event-webhooks/repositories/subscription.repository.ts
+
+import type { Client } from "postgres";
 import { WebhookSubscription } from "../webhook.type.ts";
 
-const db = await connectToModuleDB("webhooks");
-
 export class SubscriptionRepository {
+  constructor(private db: Client) {}
+
   async create(data: {
     store_id: string;
     target_url: string;
@@ -11,7 +13,7 @@ export class SubscriptionRepository {
     event_types_csv: string;
     active: boolean;
   }): Promise<WebhookSubscription> {
-    const result = await db.queryObject<WebhookSubscription>(
+    const result = await this.db.queryObject<WebhookSubscription>(
       `INSERT INTO webhook_subscription
         (store_id, target_url, secret, event_types_csv, active)
        VALUES ($1, $2, $3, $4, $5)
@@ -24,11 +26,12 @@ export class SubscriptionRepository {
         data.active,
       ],
     );
+
     return result.rows[0];
   }
 
   async findById(id: string): Promise<WebhookSubscription | null> {
-    const result = await db.queryObject<WebhookSubscription>(
+    const result = await this.db.queryObject<WebhookSubscription>(
       `SELECT * FROM webhook_subscription WHERE id = $1`,
       [id],
     );
@@ -36,12 +39,13 @@ export class SubscriptionRepository {
   }
 
   async listByStore(storeId: string): Promise<WebhookSubscription[]> {
-    const result = await db.queryObject<WebhookSubscription>(
+    const result = await this.db.queryObject<WebhookSubscription>(
       `SELECT * FROM webhook_subscription
          WHERE store_id = $1
          ORDER BY created_at DESC`,
       [storeId],
     );
+
     return result.rows;
   }
 
@@ -49,13 +53,14 @@ export class SubscriptionRepository {
     id: string,
     active: boolean,
   ): Promise<WebhookSubscription> {
-    const result = await db.queryObject<WebhookSubscription>(
+    const result = await this.db.queryObject<WebhookSubscription>(
       `UPDATE webhook_subscription
          SET active = $2
          WHERE id = $1
          RETURNING *`,
       [id, active],
     );
+
     return result.rows[0];
   }
 
@@ -65,7 +70,7 @@ export class SubscriptionRepository {
   ): Promise<WebhookSubscription[]> {
     const pattern = `%${eventType}%`;
 
-    const result = await db.queryObject<WebhookSubscription>(
+    const result = await this.db.queryObject<WebhookSubscription>(
       `SELECT * FROM webhook_subscription
         WHERE store_id = $1
         AND active = TRUE
