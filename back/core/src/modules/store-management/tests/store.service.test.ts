@@ -43,7 +43,7 @@ Deno.test("StoreService.getStore returns repo result", async () => {
             }
           : null,
       ),
-  };
+    };
 
   const service = new StoreService(fakeRepo as unknown as StoreRepository);
 
