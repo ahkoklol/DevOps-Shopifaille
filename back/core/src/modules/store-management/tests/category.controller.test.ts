@@ -86,9 +86,9 @@ Deno.test("DELETE /stores/:storeId/categories/:id deletes category", async () =>
 
   const req = new Request("http://test/stores/s1/categories/c1", {
     method: "DELETE",
+  });
   const res = await app.handle(req);
 
   assertEquals(res!.status, 204);
   assertSpyCalls(spy, 1);
-  });
 });

@@ -60,6 +60,7 @@ Deno.test("StoreRepository.listByOwner returns rows", async () => {
   const fakeDB: FakeDB = { queryObject: () => Promise.resolve({ rows: [{ id: "st1" }, { id: "st2" }] }) };
   const repo = new StoreRepository(
     fakeDB as unknown as Client,
+  );
   const results = await repo.listByOwner("u1");
   assertEquals(results.length, 2);
   assertEquals(results[0].id, "st1");

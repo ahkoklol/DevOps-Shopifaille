@@ -27,6 +27,7 @@ Deno.test("BrandingService.getBranding returns repo result", async () => {
 
   const service = new BrandingService(
     fakeRepo as unknown as BrandingRepository,
+  );
 
   const row = await service.getBranding("s1");
   assertEquals(row?.store_id, "s1");
