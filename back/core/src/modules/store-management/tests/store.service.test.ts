@@ -41,7 +41,7 @@ Deno.test("StoreService.getStore returns repo result", async () => {
           plan: "free",
           created_at: new Date().toISOString(),
           }
-        : null,
+          : null,
       ),
   };
 
