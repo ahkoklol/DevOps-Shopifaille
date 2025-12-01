@@ -33,7 +33,8 @@ Deno.test("StoreService.getStore returns repo result", async () => {
     findById: (id: string) =>
       Promise.resolve(
         id === "s1"
-        ? {id: "s1",
+        ? {
+          id: "s1",
           owner_user_id: "u1",
           name: "Store1",
           subdomain: "sub1",
