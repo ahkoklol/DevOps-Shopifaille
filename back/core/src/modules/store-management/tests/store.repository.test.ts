@@ -44,6 +44,7 @@ Deno.test("StoreRepository.findBySubdomain returns row or null", async () => {
   const fakeDB: FakeDB = { queryObject: () => Promise.resolve({ rows: [{ id: "st3", subdomain: "s3" }] }) };
   const repo = new StoreRepository(
     fakeDB as unknown as Client,
+  );
   const row = await repo.findBySubdomain("s3");
   assertEquals(row?.id, "st3");
 

@@ -69,6 +69,7 @@ Deno.test("GET /stores/owner/:ownerId returns list of stores", async () => {
     mockService,
     "listStoresForOwner",
     mockService.listStoresForOwner,
+  );
 
   const router = createStoreRouter(mockService as unknown as StoreService);
   const app = buildTestApp(router);

@@ -11,6 +11,7 @@ Deno.test("BrandingService.upsertBranding calls repo.upsert", async () => {
 
   const service = new BrandingService(
     fakeRepo as unknown as BrandingRepository,
+  );
 
   const result = await service.upsertBranding("s1", { theme_preset: "dark" });
 

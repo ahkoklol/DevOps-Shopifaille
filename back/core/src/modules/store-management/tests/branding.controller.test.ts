@@ -29,7 +29,9 @@ Deno.test("GET /stores/:storeId/branding returns branding", async () => {
 
   const router = createBrandingRouter(
     mockService as unknown as BrandingService,
+  );
   const app = buildTestApp(router);
+  
 
   const req = new Request("http://test/stores/s1/branding", { method: "GET" });
   const res = await app.handle(req);

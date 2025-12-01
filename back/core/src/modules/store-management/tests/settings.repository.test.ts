@@ -16,6 +16,7 @@ Deno.test("SettingsRepository.upsert inserts or updates and returns StoreSetting
   };
   const repo = new SettingsRepository(
     fakeDB as unknown as Client,
+  );
   const result = await repo.upsert("s1", { currency: "USD" });
 
   assertEquals(result.store_id, "s1");
