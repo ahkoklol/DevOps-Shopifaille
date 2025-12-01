@@ -20,8 +20,8 @@ Deno.test("CategoryRepository.create inserts and returns StoreCategory", async (
           name: "Cat1",
           slug: "cat1",
           sort_order: 0,
-      }],
-    }),
+        }],
+      }),
   };
   const repo = new CategoryRepository(fakeDB as unknown as Client);
   const result = await repo.create("s1", { name: "Cat1", slug: "cat1" });

@@ -31,7 +31,8 @@ Deno.test("StoreService.createStore calls repo.create", async () => {
 Deno.test("StoreService.getStore returns repo result", async () => {
   const fakeRepo = {
     findById: (id: string) =>
-      Promise.resolve(id === "s1" ? {
+      Promise.resolve(
+        id === "s1" ? {
         id: "s1",
         owner_user_id: "u1",
         name: "Store1",
