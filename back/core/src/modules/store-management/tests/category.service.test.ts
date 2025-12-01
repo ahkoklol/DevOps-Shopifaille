@@ -27,7 +27,9 @@ Deno.test("CategoryService.listCategories returns repo list", async () => {
     list: (_storeId: string) => Promise.resolve([{ id: "c1" }, { id: "c2" }]),
   };
 
-  const service = new CategoryService(fakeRepo as unknown as CategoryRepository);
+  const service = new CategoryService(
+    fakeRepo as unknown as CategoryRepository,
+  );
 
   const list = await service.listCategories("s1");
 

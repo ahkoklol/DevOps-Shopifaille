@@ -13,7 +13,8 @@ interface FakeDB {
 Deno.test("CategoryRepository.create inserts and returns StoreCategory", async () => {
   const fakeDB: FakeDB = {
     queryObject: (_sql, _params) =>
-      Promise.resolve({ rows: [{
+      Promise.resolve({
+        rows: [{
         id: "c1",
         store_id: "s1",
         name: "Cat1",
