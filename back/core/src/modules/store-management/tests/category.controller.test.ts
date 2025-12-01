@@ -55,6 +55,7 @@ Deno.test("POST /stores/:storeId/categories creates a category", async () => {
 
   const router = createCategoryRouter(
     mockService as unknown as CategoryService,
+  );
   const app = buildTestApp(router);
 
   const req = new Request("http://test/stores/s1/categories", {
@@ -80,6 +81,7 @@ Deno.test("DELETE /stores/:storeId/categories/:id deletes category", async () =>
 
   const router = createCategoryRouter(
     mockService as unknown as CategoryService,
+  );
   const app = buildTestApp(router);
 
   const req = new Request("http://test/stores/s1/categories/c1", {
@@ -88,4 +90,5 @@ Deno.test("DELETE /stores/:storeId/categories/:id deletes category", async () =>
 
   assertEquals(res!.status, 204);
   assertSpyCalls(spy, 1);
+  });
 });

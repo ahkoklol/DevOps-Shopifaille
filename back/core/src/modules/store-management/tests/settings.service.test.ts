@@ -27,6 +27,7 @@ Deno.test("SettingsService.getSettings returns repo result", async () => {
 
   const service = new SettingsService(
     fakeRepo as unknown as SettingsRepository,
+  );
 
   const row = await service.getSettings("s1");
   assertEquals(row?.store_id, "s1");
