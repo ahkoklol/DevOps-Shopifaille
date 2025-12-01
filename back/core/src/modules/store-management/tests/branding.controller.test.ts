@@ -27,7 +27,8 @@ Deno.test("GET /stores/:storeId/branding returns branding", async () => {
 
   const spy = stub(mockService, "getBranding", mockService.getBranding);
 
-  const router = createBrandingRouter(mockService as unknown as BrandingService);
+  const router = createBrandingRouter(
+    mockService as unknown as BrandingService,
   const app = buildTestApp(router);
 
   const req = new Request("http://test/stores/s1/branding", { method: "GET" });
@@ -47,7 +48,9 @@ Deno.test("PUT /stores/:storeId/branding updates branding", async () => {
 
   const spy = stub(mockService, "upsertBranding", mockService.upsertBranding);
 
-  const router = createBrandingRouter(mockService as unknown as BrandingService);
+  const router = createBrandingRouter(
+    mockService as unknown as BrandingService,
+  );
   const app = buildTestApp(router);
 
   const req = new Request("http://test/stores/s1/branding", {

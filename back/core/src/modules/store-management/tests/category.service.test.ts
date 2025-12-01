@@ -9,9 +9,14 @@ Deno.test("CategoryService.createCategory calls repo.create", async () => {
       Promise.resolve({ id: "c1", store_id: storeId, ...dto }),
   };
 
-  const service = new CategoryService(fakeRepo as unknown as CategoryRepository);
+  const service = new CategoryService(
+    fakeRepo as unknown as CategoryRepository,
+  );
 
-  const result = await service.createCategory("s1", { name: "Cat1", slug: "cat1" });
+  const result = await service.createCategory("s1", {
+    name: "Cat1",
+    slug: "cat1",
+    });
 
   assertEquals(result.id, "c1");
   assertEquals(result.store_id, "s1");
@@ -19,8 +24,7 @@ Deno.test("CategoryService.createCategory calls repo.create", async () => {
 
 Deno.test("CategoryService.listCategories returns repo list", async () => {
   const fakeRepo = {
-    list: (_storeId: string) =>
-      Promise.resolve([{ id: "c1" }, { id: "c2" }]),
+    list: (_storeId: string) => Promise.resolve([{ id: "c1" }, { id: "c2" }]),
   };
 
   const service = new CategoryService(fakeRepo as unknown as CategoryRepository);
@@ -40,7 +44,9 @@ Deno.test("CategoryService.deleteCategory calls repo.delete", async () => {
     },
   };
 
-  const service = new CategoryService(fakeRepo as unknown as CategoryRepository);
+  const service = new CategoryService(
+    fakeRepo as unknown as CategoryRepository,
+  );
 
   await service.deleteCategory("c1");
 

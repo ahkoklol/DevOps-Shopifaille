@@ -12,7 +12,12 @@ Deno.test("BrandingRepository.upsert inserts or updates and returns StoreBrandin
     queryObject: () =>
       Promise.resolve({
         rows: [
-          { store_id: "s1", theme_preset: "dark", logo_url: null, colors_json: null },
+          {
+            store_id: "s1",
+            theme_preset: "dark",
+            logo_url: null,
+            colors_json: null,
+          },
         ],
       }),
   };
@@ -26,14 +31,20 @@ Deno.test("BrandingRepository.upsert inserts or updates and returns StoreBrandin
 
 Deno.test("BrandingRepository.findByStore returns row or null", async () => {
   const fakeSuccessDB: FakeDB = {
-    queryObject: () => Promise.resolve({ rows: [{ store_id: "s2", theme_preset: "light" }] }),
+    queryObject: () =>
+      Promise.resolve({ rows: [{ store_id: "s2", theme_preset: "light" }] }),
   };
-  const repoSuccess = new BrandingRepository(fakeSuccessDB as unknown as Client);
+  const repoSuccess = new BrandingRepository(
+    fakeSuccessDB as unknown as Client,
+  );
   const row = await repoSuccess.findByStore("s2");
   assertEquals(row?.store_id, "s2");
 
-  const fakeEmptyDB: FakeDB = { queryObject: () => Promise.resolve({ rows: [] }) };
-  const repoEmpty = new BrandingRepository(fakeEmptyDB as unknown as Client);
+  const fakeEmptyDB: FakeDB = { queryObject: () =>
+    Promise.resolve({ rows: [] }) };
+  const repoEmpty = new BrandingRepository(
+    fakeEmptyDB as unknown as Client,
+  );
   const empty = await repoEmpty.findByStore("xxx");
   assertEquals(empty, null);
 });

@@ -9,7 +9,9 @@ Deno.test("SettingsService.upsertSettings calls repo.upsert", async () => {
       Promise.resolve({ store_id: storeId, ...dto }),
   };
 
-  const service = new SettingsService(fakeRepo as unknown as SettingsRepository);
+  const service = new SettingsService(
+    fakeRepo as unknown as SettingsRepository,
+  );
 
   const result = await service.upsertSettings("s1", { currency: "USD" });
 
@@ -23,7 +25,8 @@ Deno.test("SettingsService.getSettings returns repo result", async () => {
       Promise.resolve(storeId === "s1" ? { store_id: "s1" } : null),
   };
 
-  const service = new SettingsService(fakeRepo as unknown as SettingsRepository);
+  const service = new SettingsService(
+    fakeRepo as unknown as SettingsRepository,
 
   const row = await service.getSettings("s1");
   assertEquals(row?.store_id, "s1");

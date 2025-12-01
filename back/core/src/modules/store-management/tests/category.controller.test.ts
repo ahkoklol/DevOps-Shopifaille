@@ -17,15 +17,25 @@ function buildTestApp(router: ReturnType<typeof createCategoryRouter>) {
 Deno.test("GET /stores/:storeId/categories returns categories", async () => {
   const mockService = {
     listCategories: (_storeId: string) =>
-      Promise.resolve([{ id: "c1", store_id: "s1", name: "Cat1", slug: "cat1", sort_order: 0 }]),
+      Promise.resolve([{
+        id: "c1",
+        store_id: "s1",
+        name: "Cat1",
+        slug: "cat1",
+        sort_order: 0,
+      }]),
   };
 
   const spy = stub(mockService, "listCategories", mockService.listCategories);
 
-  const router = createCategoryRouter(mockService as unknown as CategoryService);
+  const router = createCategoryRouter(
+    mockService as unknown as CategoryService,
+  );
   const app = buildTestApp(router);
 
-  const req = new Request("http://test/stores/s1/categories", { method: "GET" });
+  const req = new Request("http://test/stores/s1/categories", {
+    method: "GET",
+  });
   const res = await app.handle(req);
 
   assertEquals(res!.status, 200);
@@ -43,7 +53,8 @@ Deno.test("POST /stores/:storeId/categories creates a category", async () => {
 
   const spy = stub(mockService, "createCategory", mockService.createCategory);
 
-  const router = createCategoryRouter(mockService as unknown as CategoryService);
+  const router = createCategoryRouter(
+    mockService as unknown as CategoryService,
   const app = buildTestApp(router);
 
   const req = new Request("http://test/stores/s1/categories", {
@@ -67,10 +78,12 @@ Deno.test("DELETE /stores/:storeId/categories/:id deletes category", async () =>
 
   const spy = stub(mockService, "deleteCategory", mockService.deleteCategory);
 
-  const router = createCategoryRouter(mockService as unknown as CategoryService);
+  const router = createCategoryRouter(
+    mockService as unknown as CategoryService,
   const app = buildTestApp(router);
 
-  const req = new Request("http://test/stores/s1/categories/c1", { method: "DELETE" });
+  const req = new Request("http://test/stores/s1/categories/c1", {
+    method: "DELETE",
   const res = await app.handle(req);
 
   assertEquals(res!.status, 204);

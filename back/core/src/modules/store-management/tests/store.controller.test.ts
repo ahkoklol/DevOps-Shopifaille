@@ -26,7 +26,10 @@ Deno.test("POST /stores creates a store", async () => {
 
   const req = new Request("http://test/stores", {
     method: "POST",
-    body: JSON.stringify({ owner_user_id: "u1", name: "Store1", subdomain: "store1" }),
+    body: JSON.stringify({ owner_user_id: "u1",
+      name: "Store1",
+      subdomain: "store1",
+    }),
     headers: { "Content-Type": "application/json" },
   });
 
@@ -62,7 +65,10 @@ Deno.test("GET /stores/owner/:ownerId returns list of stores", async () => {
     listStoresForOwner: (_ownerId: string) => Promise.resolve([{ id: "s1" }, { id: "s2" }]),
   };
 
-  const spy = stub(mockService, "listStoresForOwner", mockService.listStoresForOwner);
+  const spy = stub(
+    mockService,
+    "listStoresForOwner",
+    mockService.listStoresForOwner,
 
   const router = createStoreRouter(mockService as unknown as StoreService);
   const app = buildTestApp(router);

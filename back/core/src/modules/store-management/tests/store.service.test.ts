@@ -31,7 +31,13 @@ Deno.test("StoreService.createStore calls repo.create", async () => {
 Deno.test("StoreService.getStore returns repo result", async () => {
   const fakeRepo = {
     findById: (id: string) =>
-      Promise.resolve(id === "s1" ? { id: "s1", owner_user_id: "u1", name: "Store1", subdomain: "sub1", plan: "free", created_at: new Date().toISOString() } : null),
+      Promise.resolve(id === "s1" ? {
+        id: "s1",
+        owner_user_id: "u1",
+        name: "Store1",
+        subdomain: "sub1",
+        plan: "free",
+        created_at: new Date().toISOString() } : null),
   };
 
   const service = new StoreService(fakeRepo as unknown as StoreRepository);
@@ -47,8 +53,22 @@ Deno.test("StoreService.listStoresForOwner returns repo list", async () => {
   const fakeRepo = {
     listByOwner: (_ownerId: string) =>
       Promise.resolve([
-        { id: "s1", owner_user_id: "u1", name: "Store1", subdomain: "sub1", plan: "free", created_at: new Date().toISOString() },
-        { id: "s2", owner_user_id: "u1", name: "Store2", subdomain: "sub2", plan: "free", created_at: new Date().toISOString() },
+        {
+          id: "s1",
+          owner_user_id: "u1",
+          name: "Store1",
+          subdomain: "sub1",
+          plan: "free",
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: "s2",
+          owner_user_id: "u1",
+          name: "Store2",
+          subdomain: "sub2",
+          plan: "free",
+          created_at: new Date().toISOString(),
+        },
       ]),
   };
 
