@@ -15,11 +15,11 @@ Deno.test("CategoryRepository.create inserts and returns StoreCategory", async (
     queryObject: (_sql, _params) =>
       Promise.resolve({
         rows: [{
-        id: "c1",
-        store_id: "s1",
-        name: "Cat1",
-        slug: "cat1",
-        sort_order: 0,
+          id: "c1",
+          store_id: "s1",
+          name: "Cat1",
+          slug: "cat1",
+          sort_order: 0,
       }],
     }),
   };
