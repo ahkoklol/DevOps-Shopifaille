@@ -33,12 +33,11 @@ Deno.test("StoreService.getStore returns repo result", async () => {
     findById: (id: string) =>
       Promise.resolve(
         id === "s1"
-        ? {
-        id: "s1",
-        owner_user_id: "u1",
-        name: "Store1",
-        subdomain: "sub1",
-        plan: "free",
+        ? {id: "s1",
+          owner_user_id: "u1",
+          name: "Store1",
+          subdomain: "sub1",
+          plan: "free",
         created_at: new Date().toISOString(),
           }
       : null,
