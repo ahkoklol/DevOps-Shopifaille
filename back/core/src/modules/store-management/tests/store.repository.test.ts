@@ -46,7 +46,8 @@ Deno.test("StoreRepository.findById returns row or null", async () => {
 
 Deno.test("StoreRepository.findBySubdomain returns row or null", async () => {
   const fakeDB: FakeDB = {
-    queryObject: () => Promise.resolve({ rows: [{ id: "st3", subdomain: "s3" }] }),
+    queryObject: () =>
+      Promise.resolve({ rows: [{ id: "st3", subdomain: "s3" }] }),
   };
   const repo = new StoreRepository(
     fakeDB as unknown as Client,
@@ -66,7 +67,8 @@ Deno.test("StoreRepository.findBySubdomain returns row or null", async () => {
 
 Deno.test("StoreRepository.listByOwner returns rows", async () => {
   const fakeDB: FakeDB = {
-    queryObject: () => Promise.resolve({ rows: [{ id: "st1" }, { id: "st2" }] }),
+    queryObject: () =>
+      Promise.resolve({ rows: [{ id: "st1" }, { id: "st2" }] }),
   };
   const repo = new StoreRepository(
     fakeDB as unknown as Client,
