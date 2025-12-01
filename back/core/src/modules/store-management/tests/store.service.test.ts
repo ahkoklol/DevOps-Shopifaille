@@ -34,16 +34,16 @@ Deno.test("StoreService.getStore returns repo result", async () => {
       Promise.resolve(
         id === "s1"
           ? {
-              id: "s1",
-              owner_user_id: "u1",
-              name: "Store1",
-              subdomain: "sub1",
-              plan: "free",
-              created_at: new Date().toISOString(),
-            }
+            id: "s1",
+            owner_user_id: "u1",
+            name: "Store1",
+            subdomain: "sub1",
+            plan: "free",
+            created_at: new Date().toISOString(),
+          }
           : null,
       ),
-    };
+  };
 
   const service = new StoreService(fakeRepo as unknown as StoreRepository);
 
