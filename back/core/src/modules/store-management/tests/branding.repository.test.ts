@@ -41,7 +41,8 @@ Deno.test("BrandingRepository.findByStore returns row or null", async () => {
   assertEquals(row?.store_id, "s2");
 
   const fakeEmptyDB: FakeDB = { queryObject: () =>
-    Promise.resolve({ rows: [] }) };
+    Promise.resolve({ rows: [] }),
+  };
   const repoEmpty = new BrandingRepository(
     fakeEmptyDB as unknown as Client,
   );

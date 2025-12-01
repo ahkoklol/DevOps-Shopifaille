@@ -37,7 +37,10 @@ Deno.test("StoreService.getStore returns repo result", async () => {
         name: "Store1",
         subdomain: "sub1",
         plan: "free",
-        created_at: new Date().toISOString() } : null),
+        created_at: new Date().toISOString(),
+      }
+      : null,
+      ),
   };
 
   const service = new StoreService(fakeRepo as unknown as StoreRepository);

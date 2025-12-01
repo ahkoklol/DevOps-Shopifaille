@@ -16,7 +16,7 @@ Deno.test("CategoryService.createCategory calls repo.create", async () => {
   const result = await service.createCategory("s1", {
     name: "Cat1",
     slug: "cat1",
-    });
+  });
 
   assertEquals(result.id, "c1");
   assertEquals(result.store_id, "s1");
