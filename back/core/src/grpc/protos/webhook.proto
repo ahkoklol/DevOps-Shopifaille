@@ -2,10 +2,6 @@ syntax = "proto3";
 
 package webhook;
 
-// ---------------------------------------------
-// Enums
-// ---------------------------------------------
-
 enum WebhookDeliveryStatus {
   WEBHOOK_DELIVERY_STATUS_UNSPECIFIED = 0;
   WEBHOOK_DELIVERY_STATUS_PENDING = 1;
@@ -13,16 +9,11 @@ enum WebhookDeliveryStatus {
   WEBHOOK_DELIVERY_STATUS_FAILED = 3;
 }
 
-// ---------------------------------------------
-// Webhook Subscription
-// ---------------------------------------------
-
 message WebhookSubscription {
   string id = 1;
   string store_id = 2;
   string target_url = 3;
   string secret = 4;
-  // This is the logical representation; server will map to event_types_csv internally
   repeated string event_types = 5;
   bool active = 6;
   string created_at = 7;
@@ -33,7 +24,7 @@ message CreateSubscriptionRequest {
   string target_url = 2;
   string secret = 3;
   repeated string event_types = 4;
-  bool active = 5; // optional, default true
+  bool active = 5;
 }
 
 message CreateSubscriptionResponse {
@@ -74,24 +65,21 @@ message GetActiveSubscriptionsForEventResponse {
   repeated WebhookSubscription subscriptions = 1;
 }
 
-// ---------------------------------------------
-// Webhook Delivery
-// ---------------------------------------------
-
+// Delivery
 message WebhookDelivery {
   string id = 1;
   string subscription_id = 2;
   string event_type = 3;
-  string payload_json = 4;   // JSON as string
+  string payload_json = 4;
   WebhookDeliveryStatus status = 5;
   int32 attempts = 6;
-  string last_attempt_at = 7; // optional (can be empty)
+  string last_attempt_at = 7;
 }
 
 message EnqueueDeliveryRequest {
   string subscription_id = 1;
   string event_type = 2;
-  string payload_json = 3; // JSON as string
+  string payload_json = 3;
 }
 
 message EnqueueDeliveryResponse {
@@ -123,10 +111,6 @@ message ListDeliveriesForSubscriptionRequest {
 message ListDeliveriesForSubscriptionResponse {
   repeated WebhookDelivery deliveries = 1;
 }
-
-// ---------------------------------------------
-// gRPC Services
-// ---------------------------------------------
 
 service WebhookSubscriptionService {
   rpc CreateSubscription(CreateSubscriptionRequest) returns (CreateSubscriptionResponse);
