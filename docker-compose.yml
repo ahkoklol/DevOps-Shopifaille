@@ -10,7 +10,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   core-service:
-    image: ghcr.io/ahkoklol/core-service:latest
+    image: ${DOCKERHUB_CORE_USERNAME}/core-service:latest
     restart: on-failure
     environment:
       # PG_URL overrides the Deno default
@@ -41,7 +41,7 @@ services:
       - postgres
 
   store-gateway:
-    image: ghcr.io/ahkoklol/store-gateway-service:latest
+    image:  ${DOCKERHUB_STORE_GATEWAY_USERNAME}/store-gateway-service:latest
     restart: always
     ports:
       - "8080:8080"
