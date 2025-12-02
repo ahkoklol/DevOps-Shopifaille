@@ -17,6 +17,7 @@ console.log("📦 Connected to PostgreSQL root");
 
 const databases = [
   Deno.env.get("DB_CUSTOMER_ACCOUNTS")!,
+  Deno.env.get("DB_ADMIN_ACCOUNTS")!,
   Deno.env.get("DB_ORDER_MANAGEMENT")!,
   Deno.env.get("DB_STORE_MANAGEMENT")!,
   Deno.env.get("DB_EVENT_WEBHOOKS")!,

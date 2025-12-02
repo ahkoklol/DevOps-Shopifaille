@@ -4,78 +4,76 @@ import { createCustomerRouter } from "./modules/customer-accounts/controllers/cu
 import { createAddressRouter } from "./modules/customer-accounts/controllers/address.controller.ts";
 import { createOrderRefRouter } from "./modules/customer-accounts/controllers/order-ref.controller.ts";
 
-import { CustomerService } from "./modules/customer-accounts/services/customer.service.ts";
-import { AddressService } from "./modules/customer-accounts/services/address.service.ts";
-import { OrderRefService } from "./modules/customer-accounts/services/order-ref.service.ts";
+import { connectToModuleDB } from "./shared/db/index.ts";
 
+// Repositories / Services
 import { CustomerRepository } from "./modules/customer-accounts/repositories/customer.repository.ts";
 import { AddressRepository } from "./modules/customer-accounts/repositories/address.repository.ts";
 import { OrderRefRepository } from "./modules/customer-accounts/repositories/order-ref.repository.ts";
+
+import { CustomerService } from "./modules/customer-accounts/services/customer.service.ts";
+import { AddressService } from "./modules/customer-accounts/services/address.service.ts";
+import { OrderRefService } from "./modules/customer-accounts/services/order-ref.service.ts";
 
 import { AuthRepository } from "./auth/auth.repository.ts";
 import { AuthService } from "./auth/auth.service.ts";
 import { createAuthRouter } from "./auth/auth.controller.ts";
 
-import { connectToModuleDB } from "./shared/db/index.ts";
-
-// CUSTOMER - ACCOUNTS MODULE
-// ------------------------------------------------------------
-// ⚡ Chargement des connexions DB (une par module)
+// ====== LOAD MODULE DATABASES ======
 const customerDb = await connectToModuleDB("customer-accounts");
-const addressDb = customerDb; // même DB module customer-accounts
-const orderRefDb = customerDb; // idem
-// ⚡ Instanciation des repositories
+const addressDb = customerDb;
+const orderRefDb = customerDb;
+
+// ====== INIT REPOSITORIES ======
 const customerRepo = new CustomerRepository(customerDb);
 const addressRepo = new AddressRepository(addressDb);
 const orderRefRepo = new OrderRefRepository(orderRefDb);
-// ⚡ Instanciation des services
+
+// ====== INIT SERVICES ======
 const customerService = new CustomerService(customerRepo);
 const addressService = new AddressService(addressRepo);
 const orderRefService = new OrderRefService(orderRefRepo);
-// ⚡ Création des routers
+
+// Auth
+const authRepo = new AuthRepository(customerDb);
+const authService = new AuthService(customerRepo, authRepo);
+
+// ====== INIT ROUTERS ======
 const customerRouter = createCustomerRouter(customerService);
 const addressRouter = createAddressRouter(addressService);
 const orderRefRouter = createOrderRefRouter(orderRefService);
-
-// ORDER - MANAGEMENT MODULE
-
-// STORE - MANAGEMENT MODULE
-
-// EVENT - WEBHOOKS MODULE
-
-// AUTH MODULE
-const authRepo = new AuthRepository(customerDb);
-const authService = new AuthService(customerRepo, authRepo);
 const authRouter = createAuthRouter(authService);
 
-// ⚡ Application Oak
-
+// ====== OAK APP ======
 const app = new Application();
 
-// CUSTOMER - ACCOUNTS MODULE
+// Generic error handler
+app.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    console.error("Unhandled error:", err);
+    ctx.response.status = 500;
+    ctx.response.body = { error: "Internal Server Error" };
+  }
+});
+
+// Register routers
 app.use(customerRouter.routes());
 app.use(customerRouter.allowedMethods());
 app.use(addressRouter.routes());
 app.use(addressRouter.allowedMethods());
 app.use(orderRefRouter.routes());
 app.use(orderRefRouter.allowedMethods());
-
-// ORDER - MANAGEMENT MODULE
-
-// STORE - MANAGEMENT MODULE
-
-// EVENT - WEBHOOKS MODULE
-
-// AUTH MODULE
 app.use(authRouter.routes());
 app.use(authRouter.allowedMethods());
 
-// ------------------------------------------------------------
-// Launch server
-// ------------------------------------------------------------
+// ====== START HTTP SERVER ======
+const port = Number(Deno.env.get("PORT") ?? 8000);
+
 if (!Deno.env.get("DENO_TEST")) {
-  console.log("🚀 Server running on http://localhost:8000");
-  await app.listen({ port: 8000 });
+  console.log(`🚀 HTTP server running at http://localhost:${port}`);
+  await app.listen({ port });
 }
 
 export default app;

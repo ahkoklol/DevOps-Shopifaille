@@ -7,6 +7,9 @@
     "dev": "deno run --watch main.ts"
   },
   "imports": {
+    "@bufbuild/connect-web": "npm:@bufbuild/connect-web@^0.13.0",
+    "@bufbuild/protobuf": "npm:@bufbuild/protobuf@^2.10.1",
+    "@connectrpc/connect-web": "npm:@connectrpc/connect-web@^2.1.1",
     "@hono/hono": "jsr:@hono/hono@^4.10.6",
     "@oak/oak": "jsr:@oak/oak@12",
     "@oak/cors": "jsr:@oak/cors@1",
@@ -17,7 +20,7 @@
     "@std/fs": "jsr:@std/fs@^1.0.19",
     "@std/testing": "jsr:@std/testing@^1.0.16",
     "postgres": "https://deno.land/x/postgres@v0.17.0/mod.ts",
-    "@connectrpc/connect": "https://esm.sh/@connectrpc/connect@1.5.0",
-    "@connectrpc/connect-node": "https://esm.sh/@connectrpc/connect-node@1.5.0"
+    "@connectrpc/connect": "npm:@connectrpc/connect@^2.1.1",
+    "@connectrpc/connect-node": "npm:@connectrpc/connect-node@^2.1.1"
   }
 }
