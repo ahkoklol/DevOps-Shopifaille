@@ -15,11 +15,12 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy all source files
+
 COPY . .
 
 # Build the application
 # Output the static executable binary (e.g., "products-api")
-RUN go build -o products-api ./cmd/main.go 
+RUN go build -o products-api ./cmd/products/main.go 
 
 
 # ---

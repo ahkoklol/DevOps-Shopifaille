@@ -1,23 +1,13 @@
-# Stage 1: Build the React application
-FROM node:22-alpine AS builder
-WORKDIR /app
-
-# Copy lock file and package files
-COPY package.json package-lock.json ./
-COPY tsconfig*.json vite.config.ts ./
-
-COPY index.html ./
-COPY src/ ./src/
-COPY public/ ./public/
-
-# Install dependencies and build the static assets
-RUN npm install
-RUN npm run build
-
-# Stage 2: Serve the static files with Nginx
+# Image de base : Nginx léger
 FROM nginx:alpine
-# Copy the built static assets from the builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
 
+# On remplace la config par la nôtre
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# On copie les fichiers buildés dans le répertoire servi par Nginx
+# Si ton dossier s’appelle "build", remplace "dist" par "build"
+COPY dist/ /usr/share/nginx/html
+
+# Nginx écoute sur le port 80 dans le conteneur
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]

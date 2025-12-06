@@ -1,0 +1,157 @@
+syntax = "proto3";
+
+package store;
+
+// Basic
+message UUID {
+  string value = 1;
+}
+
+// Merchant Store
+message MerchantStore {
+  string id = 1;
+  string owner_user_id = 2;
+  string name = 3;
+  string subdomain = 4;
+  string custom_domain = 5;
+  string plan = 6;
+  string created_at = 7;
+}
+
+message CreateStoreRequest {
+  string owner_user_id = 1;
+  string name = 2;
+  string subdomain = 3;
+  string custom_domain = 4;
+  string plan = 5;
+}
+
+message CreateStoreResponse {
+  MerchantStore store = 1;
+}
+
+message GetStoreRequest {
+  string id = 1;
+}
+
+message GetStoreResponse {
+  MerchantStore store = 1;
+}
+
+message ListStoresForOwnerRequest {
+  string owner_user_id = 1;
+}
+
+message ListStoresForOwnerResponse {
+  repeated MerchantStore stores = 1;
+}
+
+// Branding
+message StoreBranding {
+  string store_id = 1;
+  string theme_preset = 2;
+  string logo_url = 3;
+  string colors_json = 4;
+}
+
+message UpsertBrandingRequest {
+  string store_id = 1;
+  string theme_preset = 2;
+  string logo_url = 3;
+  string colors_json = 4;
+}
+
+message UpsertBrandingResponse {
+  StoreBranding branding = 1;
+}
+
+message GetBrandingRequest {
+  string store_id = 1;
+}
+
+message GetBrandingResponse {
+  StoreBranding branding = 1;
+}
+
+// Settings
+message StoreSettings {
+  string store_id = 1;
+  string currency = 2;
+  string checkout_rules_json = 3;
+}
+
+message UpsertSettingsRequest {
+  string store_id = 1;
+  string currency = 2;
+  string checkout_rules_json = 3;
+}
+
+message UpsertSettingsResponse {
+  StoreSettings settings = 1;
+}
+
+message GetSettingsRequest {
+  string store_id = 1;
+}
+
+message GetSettingsResponse {
+  StoreSettings settings = 1;
+}
+
+// Categories
+message StoreCategory {
+  string id = 1;
+  string store_id = 2;
+  string parent_category_id = 3;
+  string name = 4;
+  string slug = 5;
+  int32 sort_order = 6;
+}
+
+message CreateCategoryRequest {
+  string store_id = 1;
+  string name = 2;
+  string slug = 3;
+  string parent_category_id = 4;
+  int32 sort_order = 5;
+}
+
+message CreateCategoryResponse {
+  StoreCategory category = 1;
+}
+
+message ListCategoriesRequest {
+  string store_id = 1;
+}
+
+message ListCategoriesResponse {
+  repeated StoreCategory categories = 1;
+}
+
+message DeleteCategoryRequest {
+  string id = 1;
+}
+
+message DeleteCategoryResponse {}
+
+service StoreService {
+  rpc CreateStore(CreateStoreRequest) returns (CreateStoreResponse);
+  rpc GetStore(GetStoreRequest) returns (GetStoreResponse);
+  rpc ListStoresForOwner(ListStoresForOwnerRequest) returns (ListStoresForOwnerResponse);
+}
+
+service BrandingService {
+  rpc UpsertBranding(UpsertBrandingRequest) returns (UpsertBrandingResponse);
+  rpc GetBranding(GetBrandingRequest) returns (GetBrandingResponse);
+}
+
+service SettingsService {
+  rpc UpsertSettings(UpsertSettingsRequest) returns (UpsertSettingsResponse);
+  rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse);
+}
+
+service CategoryService {
+  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse);
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse);
+  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse);
+}

@@ -1,0 +1,54 @@
+# 1. Deployment : lance le container du service products
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: products-service
+  labels:
+    app: products
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: products
+  template:
+    metadata:
+      labels:
+        app: products
+    spec:
+      containers:
+        - name: products
+          image: ahkoklol/products-service:latest   # 🔥 À ADAPTER si ton image est ailleurs
+          ports:
+            - containerPort: 8082    # ⚠️ mets le port réel de TON service Go
+
+          env:
+            # URL de connexion PostgreSQL (service interne Kubernetes)
+            - name: DATABASE_URL
+              value: postgres://$(DB_USERNAME):$(DB_PASSWORD)@postgres-service:5432/products?sslmode=disable
+
+            # user/password du secret existant
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+
+---
+# 2. Service : adresse réseau interne
+apiVersion: v1
+kind: Service
+metadata:
+  name: products-service
+spec:
+  type: ClusterIP
+  selector:
+    app: products
+  ports:
+    - port: 8082        # port interne
+      targetPort: 8082

@@ -8,8 +8,20 @@ CREATE TABLE IF NOT EXISTS customer (
   last_name TEXT NOT NULL,
   phone TEXT,
   is_guest BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP DEFAULT NOW()
+  created_at TIMESTAMP DEFAULT NOW(),
+  password_hash text,
 );
+
+-- Table pour stocker les refresh tokens (hashés)
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id uuid NOT NULL REFERENCES customer(id) ON DELETE CASCADE,
+  token_hash text NOT NULL,
+  expires_at timestamptz NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_refresh_customer ON refresh_tokens(customer_id);
 
 CREATE TABLE IF NOT EXISTS customer_address (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
