@@ -1,9 +1,9 @@
-import { Store, User, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../shared/components/ui/Button';
+import { LogOut, Store, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "../../../shared/components/ui/Button.tsx";
 
 interface NavbarProps {
-  variant?: 'platform' | 'admin' | 'shop';
+  variant?: "platform" | "admin" | "shop";
   shopName?: string;
   shopLogo?: string;
   primaryColor?: string;
@@ -11,59 +11,64 @@ interface NavbarProps {
 }
 
 export function Navbar({
-  variant = 'platform',
+  variant = "platform",
   shopName,
   shopLogo,
   primaryColor,
 }: NavbarProps) {
   const navigate = useNavigate();
 
-  if (variant === 'shop') {
+  if (variant === "shop") {
     return (
       <nav className="border-b bg-white sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <button
+            type="button"
               onClick={() => navigate(`/shop/${shopName}`)}
               className="flex items-center gap-3"
             >
               <div
                 className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-xl"
-                style={{ backgroundColor: primaryColor || '#3B82F6' }}
+                style={{ backgroundColor: primaryColor || "#3B82F6" }}
               >
-                {shopLogo || '🛍️'}
+                {shopLogo || "🛍️"}
               </div>
               <span className="text-gray-900">{shopName}</span>
             </button>
 
             <div className="hidden md:flex items-center gap-8">
               <button
+              type="button"
                 onClick={() => navigate(`/shop/${shopName}`)}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Accueil
               </button>
               <button
+              type="button"
                 onClick={() => navigate(`/shop/${shopName}/catalog`)}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Catalogue
               </button>
-              <button className="text-gray-600 hover:text-gray-900">
+              
+              <button  type="button" className="text-gray-600 hover:text-gray-900">
                 À propos
               </button>
-              <button className="text-gray-600 hover:text-gray-900">
+              <button type="button" className="text-gray-600 hover:text-gray-900">
                 Contact
               </button>
             </div>
 
             <button
+              type="button"
               onClick={() => navigate(`/shop/${shopName}/cart`)}
               className="relative"
             >
               <div
                 className="px-4 py-2 rounded-lg text-white"
-                style={{ backgroundColor: primaryColor || '#3B82F6' }}
+                style={{ backgroundColor: primaryColor || "#3B82F6" }}
               >
                 Panier (0)
               </div>
@@ -75,7 +80,7 @@ export function Navbar({
   }
 
   // === ADMIN VARIANT ===
-  if (variant === 'admin') {
+  if (variant === "admin") {
     return (
       <nav className="border-b bg-white sticky top-0 z-50">
         <div className="px-6">
@@ -83,9 +88,9 @@ export function Navbar({
             <div className="flex items-center gap-3">
               <div
                 className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-xl"
-                style={{ backgroundColor: primaryColor || '#3B82F6' }}
+                style={{ backgroundColor: primaryColor || "#3B82F6" }}
               >
-                {shopLogo || '🛍️'}
+                {shopLogo || "🛍️"}
               </div>
               <div>
                 <div className="text-gray-900">{shopName}</div>
@@ -101,7 +106,7 @@ export function Navbar({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/admin/home')}
+                onClick={() => navigate("/admin/home")}
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Quitter l'admin
@@ -119,7 +124,8 @@ export function Navbar({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <button
-            onClick={() => navigate('/homepage')}
+            type="button"
+            onClick={() => navigate("/homepage")}
             className="flex items-center gap-2 text-blue-600"
           >
             <Store className="w-6 h-6" />
@@ -127,10 +133,10 @@ export function Navbar({
           </button>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate('/admin/login')}>
+            <Button variant="ghost" onClick={() => navigate("/admin/login")}>
               Connexion
             </Button>
-            <Button onClick={() => navigate('/subscribe')}>
+            <Button onClick={() => navigate("/subscribe")}>
               Créer un compte
             </Button>
           </div>

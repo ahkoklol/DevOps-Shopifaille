@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe("Page Contact", () => {
-  const shopId = "shop-1"; 
+  const shopId = "shop-1";
   const url = `/shop/${shopId}/contact`;
 
   beforeEach(() => {

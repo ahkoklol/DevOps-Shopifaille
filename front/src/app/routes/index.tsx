@@ -2,69 +2,83 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createBrowserRouter, Navigate, useParams } from "react-router-dom";
 
-import AdminLoginPage from "./admin/auth/AdminLoginPage";
-import AdminRegisterPage from "./admin/auth/AdminRegisterPage";
-import AdminForgotPasswordPage from "./admin/auth/AdminForgotPasswordPage";
+import AdminLoginPage from "./admin/auth/AdminLoginPage.tsx";
+import AdminRegisterPage from "./admin/auth/AdminRegisterPage.tsx";
+import AdminForgotPasswordPage from "./admin/auth/AdminForgotPasswordPage.tsx";
 
-import SubscriptionChoice from "./admin/suscription/SuscriptionChoice";
-import CheckoutPage from "./admin/suscription/CheckoutPage";
+import SubscriptionChoice from "./admin/suscription/SuscriptionChoice.tsx";
+import CheckoutPage from "./admin/suscription/CheckoutPage.tsx";
 
-import AdminLayout from "./admin/AdminLayout";
-import HomePage from "./admin/HomePage";
-import AdminHomePage from "./admin/dashboard/AdminHomePage";
-import AdminDashboard from "./admin/dashboard/AdminDashboard";
-import { OrderManagement } from "./admin/dashboard/OrderManagement"; 
-import CustomerManagement from "./admin/dashboard/CustomerManagement";
-import { Customization } from "./admin/dashboard/Customization";
-import { Settings } from "./admin/dashboard/Settings";
-import {CreateShopPage,ShopCreatedPage} from "./admin/platfom/CreateShopPage"
+import AdminLayout from "./admin/AdminLayout.tsx";
+import HomePage from "./admin/HomePage.tsx";
+import AdminHomePage from "./admin/dashboard/AdminHomePage.tsx";
+import AdminDashboard from "./admin/dashboard/AdminDashboard.tsx";
+import { OrderManagement } from "./admin/dashboard/OrderManagement.tsx";
+import CustomerManagement from "./admin/dashboard/CustomerManagement.tsx";
+import { Customization } from "./admin/dashboard/Customization.tsx";
+import { Settings } from "./admin/dashboard/Settings.tsx";
+import {
+  CreateShopPage,
+  ShopCreatedPage,
+} from "./admin/platfom/CreateShopPage.tsx";
 
 // Import direct
-import { ProductList } from "./admin/dashboard/ProductManagement";
-import { CategoryList } from "./admin/dashboard/CategoryManagement";
-import HomePageShop from "./shop/HomePageShop";
-import Contact from "./shop/Contact";
-import Catalogue from "./shop/Catalogue";
-import ItemPage from "./shop/ItemPage";
-import APropos from "./shop/aPropos";
-import Cart from "./shop/Cart";
+import { ProductList } from "./admin/dashboard/ProductManagement.tsx";
+import { CategoryList } from "./admin/dashboard/CategoryManagement.tsx";
+import HomePageShop from "./shop/HomePageShop.tsx";
+import Contact from "./shop/Contact.tsx";
+import Catalogue from "./shop/Catalogue.tsx";
+import ItemPage from "./shop/ItemPage.tsx";
+import APropos from "./shop/aPropos.tsx";
+import Cart from "./shop/Cart.tsx";
 
 // ⬇️ Petits wrappers internes (déclarés dans CE fichier) pour injecter le shopId param
 function ProductsRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <ProductList shopId={shopId ?? saved ?? "1"} />;
 }
 function CategoriesRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <CategoryList shopId={shopId ?? saved ?? "1"} />;
 }
 function OrdersRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <OrderManagement shopId={shopId ?? saved ?? "1"} />;
 }
 
 // ⬇️ Internal wrapper to inject shopId param (add this near the other wrappers)
 function CustomersRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <CustomerManagement shopId={shopId ?? saved ?? "1"} />;
 }
 
 function CustomizationRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <Customization shopId={shopId ?? saved ?? "1"} />;
 }
 
 function SettingsRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <Settings shopId={shopId ?? saved ?? "1"} />;
 }
-
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/homepage" replace /> },
@@ -84,7 +98,7 @@ export const router = createBrowserRouter([
   // ⬇️ AdminHomePage SANS sidebar (hors layout)
   { path: "/admin/home", element: <AdminHomePage /> },
   { path: "/admin/platform/create-shop", element: <CreateShopPage /> },
-   { path: "/admin/platform/shop-created", element: <ShopCreatedPage /> },
+  { path: "/admin/platform/shop-created", element: <ShopCreatedPage /> },
 
   // ⬇️ Espace admin AVEC sidebar par boutique
   {
@@ -109,10 +123,6 @@ export const router = createBrowserRouter([
   { path: "/shop/:shopId/catalogue", element: <Catalogue /> },
   { path: "/shop/:shopId/product/:productId", element: <ItemPage /> },
   { path: "/shop/:shopId/panier", element: <Cart /> },
-
-
-
-
 
   { path: "*", element: <div>404 - Page non trouvée</div> },
 ]);

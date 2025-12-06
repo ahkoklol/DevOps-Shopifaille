@@ -1,12 +1,12 @@
 // front/src/app/routes/admin/dashboard/ProductManagement.tsx
-import { useState } from 'react';
-import { Plus, Edit, Trash2, ArrowLeft } from 'lucide-react';
+import { useState } from "react";
+import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react";
 import { Button } from "../../../../shared/components/ui/Button";
-import { Card } from '../../../../shared/components/ui/Card';
-import { Input } from '../../../../shared/components/ui/Input';
-import { Label } from '../../../../shared/components/ui/Label';
-import { Textarea } from '../../../../shared/components/ui/TextArea';
-import { Badge } from '../../../../shared/components/ui/Badge';
+import { Card } from "../../../../shared/components/ui/Card";
+import { Input } from "../../../../shared/components/ui/Input";
+import { Label } from "../../../../shared/components/ui/Label";
+import { Textarea } from "../../../../shared/components/ui/TextArea";
+import { Badge } from "../../../../shared/components/ui/Badge";
 import {
   Table,
   TableBody,
@@ -14,12 +14,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../../../../shared/components/ui/Table';
-import { 
-  getProductsByShopId, 
+} from "../../../../shared/components/ui/Table";
+import {
   getCategoriesByShopId,
-  type Product 
-} from '../../../../shared/lib/mock-data';
+  getProductsByShopId,
+  type Product,
+} from "../../../../shared/lib/mock-data";
 
 interface ProductManagementProps {
   shopId: string;
@@ -32,7 +32,7 @@ export function ProductList({ shopId }: ProductManagementProps) {
 
   if (showForm || editingProduct) {
     return (
-      <ProductForm 
+      <ProductForm
         shopId={shopId}
         product={editingProduct}
         onBack={() => {
@@ -72,8 +72,8 @@ export function ProductList({ shopId }: ProductManagementProps) {
             {products.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>
-                  <img 
-                    src={product.image} 
+                  <img
+                    src={product.image}
                     alt={product.name}
                     className="w-12 h-12 object-cover rounded"
                   />
@@ -82,14 +82,18 @@ export function ProductList({ shopId }: ProductManagementProps) {
                 <TableCell>{product.price.toFixed(2)} €</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>
-                  <Badge variant={product.status === 'active' ? 'default' : 'secondary'}>
-                    {product.status === 'active' ? 'Actif' : 'Brouillon'}
+                  <Badge
+                    variant={product.status === "active"
+                      ? "default"
+                      : "secondary"}
+                  >
+                    {product.status === "active" ? "Actif" : "Brouillon"}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => setEditingProduct(product)}
                     >
@@ -118,17 +122,17 @@ interface ProductFormProps {
 function ProductForm({ shopId, product, onBack }: ProductFormProps) {
   const categories = getCategoriesByShopId(shopId);
   const [formData, setFormData] = useState({
-    name: product?.name || '',
-    description: product?.description || '',
-    price: product?.price || '',
-    stock: product?.stock || '',
-    image: product?.image || '',
-    categoryId: product?.categoryId || categories[0]?.id || ''
+    name: product?.name || "",
+    description: product?.description || "",
+    price: product?.price || "",
+    stock: product?.stock || "",
+    image: product?.image || "",
+    categoryId: product?.categoryId || categories[0]?.id || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(product ? 'Produit mis à jour !' : 'Produit créé !');
+    alert(product ? "Produit mis à jour !" : "Produit créé !");
     onBack();
   };
 
@@ -141,7 +145,7 @@ function ProductForm({ shopId, product, onBack }: ProductFormProps) {
 
       <Card className="max-w-2xl p-8">
         <h2 className="text-2xl text-gray-900 mb-6">
-          {product ? 'Modifier le produit' : 'Nouveau produit'}
+          {product ? "Modifier le produit" : "Nouveau produit"}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -150,7 +154,8 @@ function ProductForm({ shopId, product, onBack }: ProductFormProps) {
             <Input
               id="name"
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })}
               placeholder="Ex: Robe d'été"
               required
             />
@@ -161,7 +166,8 @@ function ProductForm({ shopId, product, onBack }: ProductFormProps) {
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })}
               placeholder="Décrivez votre produit..."
               rows={4}
               required
@@ -176,7 +182,8 @@ function ProductForm({ shopId, product, onBack }: ProductFormProps) {
                 type="number"
                 step="0.01"
                 value={formData.price}
-                onChange={(e) => setFormData({...formData, price: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: e.target.value })}
                 placeholder="0.00"
                 required
               />
@@ -188,7 +195,8 @@ function ProductForm({ shopId, product, onBack }: ProductFormProps) {
                 id="stock"
                 type="number"
                 value={formData.stock}
-                onChange={(e) => setFormData({...formData, stock: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, stock: e.target.value })}
                 placeholder="0"
                 required
               />
@@ -200,7 +208,8 @@ function ProductForm({ shopId, product, onBack }: ProductFormProps) {
             <select
               id="category"
               value={formData.categoryId}
-              onChange={(e) => setFormData({...formData, categoryId: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, categoryId: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg"
               required
             >
@@ -218,15 +227,16 @@ function ProductForm({ shopId, product, onBack }: ProductFormProps) {
               id="image"
               type="url"
               value={formData.image}
-              onChange={(e) => setFormData({...formData, image: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, image: e.target.value })}
               placeholder="https://..."
               required
             />
             {formData.image && (
               <div className="mt-3 p-3 border rounded-lg">
                 <p className="text-sm text-gray-600 mb-2">Aperçu:</p>
-                <img 
-                  src={formData.image} 
+                <img
+                  src={formData.image}
                   alt="Preview"
                   className="w-32 h-32 object-cover rounded"
                 />
@@ -236,7 +246,7 @@ function ProductForm({ shopId, product, onBack }: ProductFormProps) {
 
           <div className="flex gap-3 pt-4">
             <Button type="submit" className="flex-1">
-              {product ? 'Mettre à jour' : 'Créer le produit'}
+              {product ? "Mettre à jour" : "Créer le produit"}
             </Button>
             <Button type="button" variant="outline" onClick={onBack}>
               Annuler
