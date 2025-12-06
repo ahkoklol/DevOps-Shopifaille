@@ -2,14 +2,14 @@ import datas from "../../../data/data.json";
 import { useNavigate, useParams } from "react-router-dom";
 
 interface NavbarProps {
-  variant?: "platform" | "admin" | "shop"|"admin-nav";
+  variant?: "platform" | "admin" | "shop" | "admin-nav";
   shopName?: string;
   shopLogo?: string;
   primaryColor?: string;
   onNavigate?: (path: string) => void;
 }
 
-export function Navbar({  variant,shopName}: NavbarProps) {
+export function Navbar({ variant, shopName }: NavbarProps) {
   const navigate = useNavigate();
   const shopId = useParams();
   const foundShop = datas.shops.find((shop) => shop.id === shopId.shopId);

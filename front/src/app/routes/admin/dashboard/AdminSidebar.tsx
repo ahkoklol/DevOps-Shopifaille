@@ -66,7 +66,7 @@ export function AdminSidebar(
 
       <div className="absolute bottom-4 left-4 right-4">
         <button
-        type="button"
+          type="button"
           onClick={() => globalThis.open(`/shop/${shopId}`, "_blank")}
           className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
         >

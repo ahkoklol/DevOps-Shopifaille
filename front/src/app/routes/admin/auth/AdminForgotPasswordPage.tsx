@@ -51,7 +51,7 @@ export default function AdminForgotPasswordPage() {
         </form>
 
         <button
-        type="button"
+          type="button"
           onClick={() => navigate("/admin/login")}
           className="mt-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 mx-auto"
         >

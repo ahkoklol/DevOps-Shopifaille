@@ -22,7 +22,7 @@ export default function SubscriptionChoice() {
         {/* Back button */}
         <div className="mb-6">
           <button
-          type="button"
+            type="button"
             onClick={() => navigate(-1)}
             className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-200 bg-white text-sm text-gray-700 shadow-sm hover:bg-gray-50"
           >

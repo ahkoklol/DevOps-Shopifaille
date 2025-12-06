@@ -80,7 +80,7 @@ export default function AdminRegisterPage() {
         <div className="mt-6 text-center">
           <span className="text-gray-600">Déjà un compte ?</span>
           <button
-          type="button"
+            type="button"
             onClick={() => navigate("/admin/login")}
             className="text-blue-600 hover:underline"
           >

@@ -169,7 +169,7 @@ export function CreateShopPage() {
                 <div className="grid grid-cols-6 gap-4">
                   {colors.map((color) => (
                     <button
-                    type="button"
+                      type="button"
                       key={color}
                       onClick={() =>
                         setShopData({ ...shopData, primaryColor: color })}
