@@ -2,8 +2,12 @@ describe("Home Page", () => {
   it("affiche le hero avec le texte principal", () => {
     cy.visit("/");
 
-    cy.contains("Plateforme e-commerce nouvelle génération").should("be.visible");
-    cy.contains("Créez votre boutique e-commerce en quelques clics").should("be.visible");
+    cy.contains("Plateforme e-commerce nouvelle génération").should(
+      "be.visible",
+    );
+    cy.contains("Créez votre boutique e-commerce en quelques clics").should(
+      "be.visible",
+    );
     cy.contains("Commencer gratuitement").should("be.visible");
     cy.contains("Se connecter").should("be.visible");
   });

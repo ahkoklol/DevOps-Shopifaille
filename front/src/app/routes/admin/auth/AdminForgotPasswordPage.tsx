@@ -1,5 +1,5 @@
 //front/src/app/routes/admin/auth/AdminForgotPasswordPage.tsx
-import { Store, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../shared/components/ui/Button";
 import { Input } from "../../../../shared/components/ui/Input";
@@ -37,7 +37,12 @@ export default function AdminForgotPasswordPage() {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="jean@example.com" required />
+            <Input
+              id="email"
+              type="email"
+              placeholder="jean@example.com"
+              required
+            />
           </div>
 
           <Button type="submit" className="w-full">

@@ -31,11 +31,13 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
-type ButtonProps = React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
+type ButtonProps =
+  & React.ComponentProps<"button">
+  & VariantProps<typeof buttonVariants>
+  & {
     asChild?: boolean;
   };
 

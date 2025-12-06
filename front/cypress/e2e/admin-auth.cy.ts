@@ -6,8 +6,8 @@ describe("Admin Auth", () => {
     cy.contains("Connexion").should("be.visible");
     cy.contains("Accédez à votre espace administrateur").should("be.visible");
 
-    cy.get('input#email').should("exist");
-    cy.get('input#password').should("exist");
+    cy.get("input#email").should("exist");
+    cy.get("input#password").should("exist");
 
     cy.contains("Se souvenir de moi").should("be.visible");
     cy.contains("Mot de passe oublié ?").should("be.visible");
@@ -39,9 +39,10 @@ describe("Admin Auth", () => {
     cy.visit("/admin/login");
 
     cy.contains("Retour à l’accueil").click();
-    
-    cy.contains("Créez votre boutique e-commerce en quelques clics").should("be.visible");
+
+    cy.contains("Créez votre boutique e-commerce en quelques clics").should(
+      "be.visible",
+    );
     cy.contains("Commencer gratuitement").should("be.visible");
   });
-
 });

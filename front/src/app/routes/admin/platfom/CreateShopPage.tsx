@@ -1,24 +1,23 @@
 //front/src/app/routes/admin/platfom/CreateShopPage.tsx
-import { useState } from 'react';
-import { ArrowRight, ArrowLeft, Check, Loader2 } from 'lucide-react';
-import { Button } from './../../../../shared/components/ui/Button';
-import { Input } from './../../../../shared/components/ui/Input';
-import { Label } from './../../../../shared/components/ui/Label';
-import { Card } from './../../../../shared/components/ui/Card';
-import { Progress } from './../../../../shared/components/ui/progress';
-import { Navbar } from '../Navbar';
+import { useState } from "react";
+import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
+import { Button } from "./../../../../shared/components/ui/Button";
+import { Input } from "./../../../../shared/components/ui/Input";
+import { Label } from "./../../../../shared/components/ui/Label";
+import { Card } from "./../../../../shared/components/ui/Card";
+import { Progress } from "./../../../../shared/components/ui/progress";
+import { Navbar } from "../Navbar";
 import { useNavigate } from "react-router-dom";
-
 
 export function CreateShopPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [shopData, setShopData] = useState({
-    name: '',
-    domain: '',
-    logo: '',
-    primaryColor: '#3B82F6',
-    template: 'modern'
+    name: "",
+    domain: "",
+    logo: "",
+    primaryColor: "#3B82F6",
+    template: "modern",
   });
 
   const totalSteps = 4;
@@ -29,7 +28,7 @@ export function CreateShopPage() {
       setStep(step + 1);
     } else {
       // Simulation création
-      navigate('/admin/platform/shop-created');
+      navigate("/admin/platform/shop-created");
     }
   };
 
@@ -37,13 +36,18 @@ export function CreateShopPage() {
     if (step > 1) {
       setStep(step - 1);
     } else {
-      navigate('/admin/platform/dashboard');
+      navigate("/admin/platform/dashboard");
     }
   };
 
- 
-
-  const colors = ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#F59E0B', '#EF4444'];
+  const colors = [
+    "#3B82F6",
+    "#8B5CF6",
+    "#EC4899",
+    "#10B981",
+    "#F59E0B",
+    "#EF4444",
+  ];
 
   return (
     <div>
@@ -53,8 +57,12 @@ export function CreateShopPage() {
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">Étape {step} sur {totalSteps}</span>
-              <span className="text-sm text-gray-600">{Math.round(progress)}%</span>
+              <span className="text-sm text-gray-600">
+                Étape {step} sur {totalSteps}
+              </span>
+              <span className="text-sm text-gray-600">
+                {Math.round(progress)}%
+              </span>
             </div>
             <Progress value={progress} className="h-2" />
           </div>
@@ -77,7 +85,8 @@ export function CreateShopPage() {
                     type="text"
                     placeholder="Ma Boutique Extraordinaire"
                     value={shopData.name}
-                    onChange={(e) => setShopData({ ...shopData, name: e.target.value })}
+                    onChange={(e) =>
+                      setShopData({ ...shopData, name: e.target.value })}
                     className="text-lg"
                   />
                 </div>
@@ -102,9 +111,12 @@ export function CreateShopPage() {
                       type="text"
                       placeholder="ma-boutique"
                       value={shopData.domain}
-                      onChange={(e) => setShopData({ ...shopData, domain: e.target.value })}
+                      onChange={(e) =>
+                        setShopData({ ...shopData, domain: e.target.value })}
                     />
-                    <span className="text-gray-600 whitespace-nowrap">.waynestore.com</span>
+                    <span className="text-gray-600 whitespace-nowrap">
+                      .waynestore.com
+                    </span>
                   </div>
                   <p className="text-sm text-gray-500 mt-2">
                     Exemple: ma-boutique.waynestore.com
@@ -130,7 +142,8 @@ export function CreateShopPage() {
                     type="text"
                     placeholder="🛍️ ou https://..."
                     value={shopData.logo}
-                    onChange={(e) => setShopData({ ...shopData, logo: e.target.value })}
+                    onChange={(e) =>
+                      setShopData({ ...shopData, logo: e.target.value })}
                   />
 
                   {shopData.logo && (
@@ -157,11 +170,14 @@ export function CreateShopPage() {
                   {colors.map((color) => (
                     <button
                       key={color}
-                      onClick={() => setShopData({ ...shopData, primaryColor: color })}
+                      onClick={() =>
+                        setShopData({ ...shopData, primaryColor: color })}
                       className="relative aspect-square rounded-lg border-2 transition-all hover:scale-110"
                       style={{
                         backgroundColor: color,
-                        borderColor: shopData.primaryColor === color ? '#000' : 'transparent'
+                        borderColor: shopData.primaryColor === color
+                          ? "#000"
+                          : "transparent",
                       }}
                     >
                       {shopData.primaryColor === color && (
@@ -173,7 +189,10 @@ export function CreateShopPage() {
                   ))}
                 </div>
 
-                <div className="mt-6 p-4 border rounded-lg" style={{ backgroundColor: `${shopData.primaryColor}10` }}>
+                <div
+                  className="mt-6 p-4 border rounded-lg"
+                  style={{ backgroundColor: `${shopData.primaryColor}10` }}
+                >
                   <p className="text-sm text-gray-600 mb-2">Aperçu:</p>
                   <Button style={{ backgroundColor: shopData.primaryColor }}>
                     Exemple de bouton
@@ -182,16 +201,15 @@ export function CreateShopPage() {
               </div>
             )}
 
-           
             {/* Navigation Buttons */}
             <div className="flex items-center justify-between mt-8 pt-6 border-t">
               <Button variant="outline" onClick={handleBack}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                {step === 1 ? 'Annuler' : 'Précédent'}
+                {step === 1 ? "Annuler" : "Précédent"}
               </Button>
 
               <Button onClick={handleNext}>
-                {step === totalSteps ? 'Créer ma boutique' : 'Suivant'}
+                {step === totalSteps ? "Créer ma boutique" : "Suivant"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
@@ -199,15 +217,10 @@ export function CreateShopPage() {
         </div>
       </div>
     </div>
-
   );
 }
 
-
-
-
 export function ShopCreatedPage() {
-
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
@@ -232,7 +245,6 @@ export function ShopCreatedPage() {
           </Card>
         </div>
       </div>
-
     );
   }
 
@@ -249,27 +261,28 @@ export function ShopCreatedPage() {
             Félicitations ! 🎉
           </h2>
           <p className="text-gray-600 mb-8">
-            Votre boutique est prête à être utilisée. Vous pouvez maintenant commencer à ajouter vos produits.
+            Votre boutique est prête à être utilisée. Vous pouvez maintenant
+            commencer à ajouter vos produits.
           </p>
 
           <div className="space-y-3">
             <Button
               className="w-full"
-              onClick={() => navigate('/admin/home')}
+              onClick={() => navigate("/admin/home")}
             >
               Accéder au back-office
             </Button>
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => navigate('/shop/shop-1')}
+              onClick={() => navigate("/shop/shop-1")}
             >
               Voir ma boutique publique
             </Button>
             <Button
               variant="ghost"
               className="w-full"
-              onClick={() => navigate('/admin/platform/dashboard')}
+              onClick={() => navigate("/admin/platform/dashboard")}
             >
               Retour au tableau de bord
             </Button>
@@ -277,8 +290,5 @@ export function ShopCreatedPage() {
         </Card>
       </div>
     </div>
-
   );
 }
-
-

@@ -1,7 +1,15 @@
 //front/src/app/routes/admin/dashboard/Settings.tsx
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Save, Store, CreditCard, Truck, Bell, Shield, Globe } from "lucide-react";
+import {
+  Bell,
+  CreditCard,
+  Globe,
+  Save,
+  Shield,
+  Store,
+  Truck,
+} from "lucide-react";
 
 // UI components (paths adapted to your repo)
 import { Button } from "../../../../shared/components/ui/Button";
@@ -10,7 +18,12 @@ import { Input } from "../../../../shared/components/ui/Input";
 import { Label } from "../../../../shared/components/ui/Label";
 import { Textarea } from "../../../../shared/components/ui/TextArea";
 import { Switch } from "../../../../shared/components/ui/Switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../shared/components/ui/Tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../../../shared/components/ui/Tabs";
 
 // Mock data (replace with real service later)
 import { getShopById } from "../../../../shared/lib/mock-data";
@@ -38,7 +51,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl text-gray-900 mb-2">Paramètres</h1>
-          <p className="text-gray-600">Configurez les paramètres de votre boutique</p>
+          <p className="text-gray-600">
+            Configurez les paramètres de votre boutique
+          </p>
         </div>
         {hasChanges && (
           <Button onClick={handleSave}>
@@ -76,7 +91,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
           {/* General Settings */}
           <TabsContent value="general" className="space-y-6">
             <Card className="p-6">
-              <h3 className="text-gray-900 mb-6">Informations de la boutique</h3>
+              <h3 className="text-gray-900 mb-6">
+                Informations de la boutique
+              </h3>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="shopName">Nom de la boutique</Label>
@@ -146,7 +163,11 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="city">Ville</Label>
-                    <Input id="city" placeholder="Paris" onChange={() => setHasChanges(true)} />
+                    <Input
+                      id="city"
+                      placeholder="Paris"
+                      onChange={() => setHasChanges(true)}
+                    />
                   </div>
                   <div>
                     <Label htmlFor="postalCode">Code postal</Label>
@@ -249,7 +270,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                     <CreditCard className="w-5 h-5 text-gray-600" />
                     <div>
                       <p className="text-gray-900">Carte bancaire</p>
-                      <p className="text-sm text-gray-500">Visa, Mastercard, American Express</p>
+                      <p className="text-sm text-gray-500">
+                        Visa, Mastercard, American Express
+                      </p>
                     </div>
                   </div>
                   <Switch defaultChecked onChange={() => setHasChanges(true)} />
@@ -260,7 +283,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                     <Globe className="w-5 h-5 text-gray-600" />
                     <div>
                       <p className="text-gray-900">PayPal</p>
-                      <p className="text-sm text-gray-500">Paiements via PayPal</p>
+                      <p className="text-sm text-gray-500">
+                        Paiements via PayPal
+                      </p>
                     </div>
                   </div>
                   <Switch defaultChecked onChange={() => setHasChanges(true)} />
@@ -271,7 +296,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                     <Store className="w-5 h-5 text-gray-600" />
                     <div>
                       <p className="text-gray-900">Virement bancaire</p>
-                      <p className="text-sm text-gray-500">Paiement par virement</p>
+                      <p className="text-sm text-gray-500">
+                        Paiement par virement
+                      </p>
                     </div>
                   </div>
                   <Switch onChange={() => setHasChanges(true)} />
@@ -307,8 +334,12 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-900">Inclure les taxes dans les prix</p>
-                    <p className="text-sm text-gray-500">Les prix affichés incluront la TVA</p>
+                    <p className="text-gray-900">
+                      Inclure les taxes dans les prix
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Les prix affichés incluront la TVA
+                    </p>
                   </div>
                   <Switch defaultChecked onChange={() => setHasChanges(true)} />
                 </div>
@@ -337,9 +368,14 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-gray-900">France métropolitaine</p>
-                      <p className="text-sm text-gray-500">Livraison standard : 3-5 jours</p>
+                      <p className="text-sm text-gray-500">
+                        Livraison standard : 3-5 jours
+                      </p>
                     </div>
-                    <Switch defaultChecked onChange={() => setHasChanges(true)} />
+                    <Switch
+                      defaultChecked
+                      onChange={() => setHasChanges(true)}
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -366,9 +402,14 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-gray-900">Europe</p>
-                      <p className="text-sm text-gray-500">Livraison standard : 5-7 jours</p>
+                      <p className="text-sm text-gray-500">
+                        Livraison standard : 5-7 jours
+                      </p>
                     </div>
-                    <Switch defaultChecked onChange={() => setHasChanges(true)} />
+                    <Switch
+                      defaultChecked
+                      onChange={() => setHasChanges(true)}
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -395,7 +436,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-gray-900">International</p>
-                      <p className="text-sm text-gray-500">Livraison standard : 7-14 jours</p>
+                      <p className="text-sm text-gray-500">
+                        Livraison standard : 7-14 jours
+                      </p>
                     </div>
                     <Switch onChange={() => setHasChanges(true)} />
                   </div>
@@ -428,7 +471,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-900">Retrait en magasin</p>
-                    <p className="text-sm text-gray-500">Permettre aux clients de récupérer leur commande</p>
+                    <p className="text-sm text-gray-500">
+                      Permettre aux clients de récupérer leur commande
+                    </p>
                   </div>
                   <Switch onChange={() => setHasChanges(true)} />
                 </div>
@@ -452,7 +497,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-900">Nouvelle commande</p>
-                    <p className="text-sm text-gray-500">Recevoir un email pour chaque nouvelle commande</p>
+                    <p className="text-sm text-gray-500">
+                      Recevoir un email pour chaque nouvelle commande
+                    </p>
                   </div>
                   <Switch defaultChecked onChange={() => setHasChanges(true)} />
                 </div>
@@ -460,7 +507,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-900">Commande expédiée</p>
-                    <p className="text-sm text-gray-500">Notification quand une commande est expédiée</p>
+                    <p className="text-sm text-gray-500">
+                      Notification quand une commande est expédiée
+                    </p>
                   </div>
                   <Switch defaultChecked onChange={() => setHasChanges(true)} />
                 </div>
@@ -468,7 +517,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-900">Stock faible</p>
-                    <p className="text-sm text-gray-500">Alerte quand un produit est en rupture de stock</p>
+                    <p className="text-sm text-gray-500">
+                      Alerte quand un produit est en rupture de stock
+                    </p>
                   </div>
                   <Switch defaultChecked onChange={() => setHasChanges(true)} />
                 </div>
@@ -476,7 +527,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-900">Nouveau client</p>
-                    <p className="text-sm text-gray-500">Notification pour chaque nouveau client</p>
+                    <p className="text-sm text-gray-500">
+                      Notification pour chaque nouveau client
+                    </p>
                   </div>
                   <Switch onChange={() => setHasChanges(true)} />
                 </div>
@@ -489,7 +542,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-900">Confirmation de commande</p>
-                    <p className="text-sm text-gray-500">Email de confirmation après chaque achat</p>
+                    <p className="text-sm text-gray-500">
+                      Email de confirmation après chaque achat
+                    </p>
                   </div>
                   <Switch defaultChecked onChange={() => setHasChanges(true)} />
                 </div>
@@ -497,7 +552,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-900">Suivi d'expédition</p>
-                    <p className="text-sm text-gray-500">Email avec le numéro de suivi de colis</p>
+                    <p className="text-sm text-gray-500">
+                      Email avec le numéro de suivi de colis
+                    </p>
                   </div>
                   <Switch defaultChecked onChange={() => setHasChanges(true)} />
                 </div>
@@ -505,7 +562,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-900">Newsletter</p>
-                    <p className="text-sm text-gray-500">Envoyer des newsletters aux clients</p>
+                    <p className="text-sm text-gray-500">
+                      Envoyer des newsletters aux clients
+                    </p>
                   </div>
                   <Switch onChange={() => setHasChanges(true)} />
                 </div>
@@ -529,11 +588,17 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
 
                 <div>
                   <Label htmlFor="newPassword">Nouveau mot de passe</Label>
-                  <Input id="newPassword" type="password" onChange={() => setHasChanges(true)} />
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    onChange={() => setHasChanges(true)}
+                  />
                 </div>
 
                 <div>
-                  <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+                  <Label htmlFor="confirmPassword">
+                    Confirmer le mot de passe
+                  </Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -544,7 +609,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-gray-900 mb-6">Authentification à deux facteurs</h3>
+              <h3 className="text-gray-900 mb-6">
+                Authentification à deux facteurs
+              </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -559,10 +626,14 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-gray-900 mb-6">Politique de confidentialité</h3>
+              <h3 className="text-gray-900 mb-6">
+                Politique de confidentialité
+              </h3>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="privacyPolicy">Page de politique de confidentialité</Label>
+                  <Label htmlFor="privacyPolicy">
+                    Page de politique de confidentialité
+                  </Label>
                   <Textarea
                     id="privacyPolicy"
                     rows={6}
@@ -572,7 +643,9 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                 </div>
 
                 <div>
-                  <Label htmlFor="termsOfService">Conditions d'utilisation</Label>
+                  <Label htmlFor="termsOfService">
+                    Conditions d'utilisation
+                  </Label>
                   <Textarea
                     id="termsOfService"
                     rows={6}
@@ -590,7 +663,8 @@ export function Settings({ shopId: propShopId }: SettingsProps) {
                   <div>
                     <p className="text-red-900">Supprimer la boutique</p>
                     <p className="text-sm text-red-700">
-                      Cette action est irréversible. Toutes vos données seront perdues.
+                      Cette action est irréversible. Toutes vos données seront
+                      perdues.
                     </p>
                   </div>
                   <Button variant="destructive">Supprimer</Button>

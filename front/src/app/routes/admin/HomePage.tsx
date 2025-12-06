@@ -1,5 +1,5 @@
 //front/src/app/routes/admin/HomePage.tsx
-import { Store, Zap, Palette, TrendingUp, ArrowRight } from "lucide-react";
+import { ArrowRight, Palette, Store, TrendingUp, Zap } from "lucide-react";
 import { Button } from "../../../shared/components/ui/Button";
 import { Card } from "../../../shared/components/ui/Card";
 import { useNavigate } from "react-router-dom";
@@ -9,20 +9,34 @@ function HomePage() {
   const navigate = useNavigate();
 
   const features = [
-    { icon: Zap, title: "Création rapide", description: "Créez votre boutique en moins de 5 minutes" },
-    { icon: Palette, title: "Personnalisable", description: "Adaptez le design à votre marque" },
-    { icon: TrendingUp, title: "Évolutif", description: "Faites grandir votre business facilement" },
+    {
+      icon: Zap,
+      title: "Création rapide",
+      description: "Créez votre boutique en moins de 5 minutes",
+    },
+    {
+      icon: Palette,
+      title: "Personnalisable",
+      description: "Adaptez le design à votre marque",
+    },
+    {
+      icon: TrendingUp,
+      title: "Évolutif",
+      description: "Faites grandir votre business facilement",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-    <Navbar variant="platform" onNavigate={() => { /* not used on home */ }} />
+      <Navbar variant="platform" onNavigate={() => {/* not used on home */}} />
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full mb-6">
             <Store className="w-4 h-4" />
-            <span className="text-sm">Plateforme e-commerce nouvelle génération</span>
+            <span className="text-sm">
+              Plateforme e-commerce nouvelle génération
+            </span>
           </div>
 
           <h1 className="text-5xl md:text-6xl text-gray-900 mb-6 max-w-4xl mx-auto">
@@ -30,12 +44,17 @@ function HomePage() {
           </h1>
 
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Shopifaille vous permet de lancer votre boutique en ligne professionnelle
-            sans aucune compétence technique. Simple, rapide et puissant.
+            Shopifaille vous permet de lancer votre boutique en ligne
+            professionnelle sans aucune compétence technique. Simple, rapide et
+            puissant.
           </p>
 
           <div className="flex items-center justify-center gap-4">
-            <Button size="lg" onClick={() => navigate("/subscribe")} className="text-lg px-8 py-6">
+            <Button
+              size="lg"
+              onClick={() => navigate("/subscribe")}
+              className="text-lg px-8 py-6"
+            >
               Commencer gratuitement
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
@@ -70,7 +89,10 @@ function HomePage() {
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
+              <Card
+                key={index}
+                className="p-6 text-center hover:shadow-lg transition-shadow"
+              >
                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <Icon className="w-6 h-6 text-blue-600" />
                 </div>

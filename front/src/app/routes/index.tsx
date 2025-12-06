@@ -12,11 +12,14 @@ import AdminLayout from "./admin/AdminLayout";
 import HomePage from "./admin/HomePage";
 import AdminHomePage from "./admin/dashboard/AdminHomePage";
 import AdminDashboard from "./admin/dashboard/AdminDashboard";
-import { OrderManagement } from "./admin/dashboard/OrderManagement"; 
+import { OrderManagement } from "./admin/dashboard/OrderManagement";
 import CustomerManagement from "./admin/dashboard/CustomerManagement";
 import { Customization } from "./admin/dashboard/Customization";
 import { Settings } from "./admin/dashboard/Settings";
-import {CreateShopPage,ShopCreatedPage} from "./admin/platfom/CreateShopPage"
+import {
+  CreateShopPage,
+  ShopCreatedPage,
+} from "./admin/platfom/CreateShopPage";
 
 // Import direct
 import { ProductList } from "./admin/dashboard/ProductManagement";
@@ -31,39 +34,50 @@ import Cart from "./shop/Cart";
 // ⬇️ Petits wrappers internes (déclarés dans CE fichier) pour injecter le shopId param
 function ProductsRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <ProductList shopId={shopId ?? saved ?? "1"} />;
 }
 function CategoriesRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <CategoryList shopId={shopId ?? saved ?? "1"} />;
 }
 function OrdersRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <OrderManagement shopId={shopId ?? saved ?? "1"} />;
 }
 
 // ⬇️ Internal wrapper to inject shopId param (add this near the other wrappers)
 function CustomersRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <CustomerManagement shopId={shopId ?? saved ?? "1"} />;
 }
 
 function CustomizationRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <Customization shopId={shopId ?? saved ?? "1"} />;
 }
 
 function SettingsRoute() {
   const { shopId } = useParams();
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const saved = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   return <Settings shopId={shopId ?? saved ?? "1"} />;
 }
-
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/homepage" replace /> },
@@ -83,7 +97,7 @@ export const router = createBrowserRouter([
   // ⬇️ AdminHomePage SANS sidebar (hors layout)
   { path: "/admin/home", element: <AdminHomePage /> },
   { path: "/admin/platform/create-shop", element: <CreateShopPage /> },
-   { path: "/admin/platform/shop-created", element: <ShopCreatedPage /> },
+  { path: "/admin/platform/shop-created", element: <ShopCreatedPage /> },
 
   // ⬇️ Espace admin AVEC sidebar par boutique
   {
@@ -108,10 +122,6 @@ export const router = createBrowserRouter([
   { path: "/shop/:shopId/catalogue", element: <Catalogue /> },
   { path: "/shop/:shopId/product/:productId", element: <ItemPage /> },
   { path: "/shop/:shopId/panier", element: <Cart /> },
-
-
-
-
 
   { path: "*", element: <div>404 - Page non trouvée</div> },
 ]);
