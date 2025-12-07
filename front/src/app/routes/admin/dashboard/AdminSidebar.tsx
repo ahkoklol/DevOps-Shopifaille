@@ -35,6 +35,7 @@ export function AdminSidebar({ activeSection, onNavigate, shopId }: AdminSidebar
           
           return (
             <button
+              type="button"
               key={item.id}
               onClick={() => onNavigate(item.id)}
               className={cn(
@@ -61,7 +62,8 @@ export function AdminSidebar({ activeSection, onNavigate, shopId }: AdminSidebar
 
       <div className="absolute bottom-4 left-4 right-4">
         <button
-          onClick={() => window.open(`/shop/${shopId}`, '_blank')}
+          type="button"
+          onClick={() => globalThis.open(`/shop/${shopId}`, "_blank")}
           className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
         >
           <Package className="w-4 h-4" />

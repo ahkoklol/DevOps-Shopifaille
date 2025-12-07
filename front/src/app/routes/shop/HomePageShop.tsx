@@ -22,6 +22,7 @@ function HomePageShop() {
           <h1 className="text-2xl font-semibold">Boutique introuvable</h1>
           <p className="text-gray-600 mt-2">ID : {paramShopId}</p>
           <button
+            type="button"
             onClick={() => navigate('/')}
             className="mt-4 px-4 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600"
           >
@@ -32,10 +33,9 @@ function HomePageShop() {
     );
   }
 
-  // Mapper les icônes string -> composants
   const mappedFeatures = (foundShop.features || []).map((f) => ({
     ...f,
-    Icon: ICONS[f.icon as keyof typeof ICONS] ?? Star, // fallback Star
+    Icon: ICONS[f.icon as keyof typeof ICONS] ?? Star,
   }));
 
   const featuredProducts = foundShop?.featuredProducts ?? [];
@@ -44,7 +44,7 @@ function HomePageShop() {
     <div className="min-h-screen bg-gradient-to-b">
       <Navbar variant="platform" onNavigate={() => { }} />
 
-      {/* Hero Section - utilise la couleur du shop si dispo */}
+      {/* Hero Section */}
       <div
         className="mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16"
         style={{
@@ -60,7 +60,6 @@ function HomePageShop() {
           {foundShop.logo}
         </div>
 
-
         <div className="text-center">
           <h1 className="text-5xl md:text-6xl text-gray-900 mb-6 max-w-4xl mx-auto">
             {foundShop?.description}
@@ -72,7 +71,8 @@ function HomePageShop() {
 
           <div className="flex justify-center">
             <button
-                 onClick={() => navigate(`/shop/${foundShop.id}/catalogue`)}
+              type="button"
+              onClick={() => navigate(`/shop/${foundShop.id}/catalogue`)}
               className="flex items-center gap-2 text-white px-6 py-3 rounded-2xl font-medium text-lg"
               style={{ backgroundColor: foundShop?.codeColor || '#3B82F6' }}
             >
@@ -93,24 +93,27 @@ function HomePageShop() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {featuredProducts.map((p) => {
             const price = typeof p.price === 'number' ? p.price : Number(p.price ?? 0);
-            return (
 
+            return (
               <div key={p.id} className="rounded-2xl border border-gray-200 overflow-hidden bg-white shadow-sm">
                 <Card
-                className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group `}
-                onClick={() =>
-                      navigate(`/shop/${paramShopId}/product/${p.id}`)
-                    }>
+                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
+                  onClick={() => navigate(`/shop/${paramShopId}/product/${p.id}`)}
+                >
                   <div className="flex justify-center items-center">
-                    <img src={p.image}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                    <img
+                      src={p.image}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold">{p.name}</h3>
                     <p className="text-sm text-gray-600 mt-1">{p.description}</p>
+
                     <div className="mt-4 flex items-center justify-between">
                       <div className="text-lg font-semibold">{price.toFixed(2)} €</div>
                       <button
+                        type="button"
                         onClick={() => navigate(`/shop/${foundShop.id}/product/${p.id}`)}
                         className="px-3 py-1.5 text-sm rounded-xl bg-purple-500 text-white hover:bg-purple-600"
                       >
@@ -120,12 +123,11 @@ function HomePageShop() {
                   </div>
                 </Card>
               </div>
-
             );
           })}
         </div>
 
-        {/* Features Section (icônes mappées) */}
+        {/* Features Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid md:grid-cols-3 gap-8">
             {mappedFeatures.map((feature, index) => (
@@ -139,13 +141,12 @@ function HomePageShop() {
             ))}
           </div>
         </div>
-      </div >
+      </div>
 
-      {/* CTA / Footer avec couleur du shop */}
-      < div
+      {/* Footer */}
+      <div
         className="text-white py-16"
-        style={{ backgroundColor: foundShop.codeColor ?? '#000' }
-        }
+        style={{ backgroundColor: foundShop.codeColor ?? '#000' }}
       >
         <div className="max-w-4xl mx-auto text-center px-4">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -155,11 +156,10 @@ function HomePageShop() {
             © 2025 {foundShop.name}. Tous droits réservés.
           </p>
         </div>
-      </div >
+      </div>
 
-      {/* Si tu utilises des routes enfant (ex: /shop/:shopId/contact), garde l'Outlet */}
-      < Outlet />
-    </div >
+      <Outlet />
+    </div>
   );
 }
 

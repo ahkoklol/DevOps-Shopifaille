@@ -1,4 +1,3 @@
-//front/src/app/routes/admin/auth/AdminLoginPage.tsx
 import { Store, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../shared/components/ui/Button";
@@ -14,7 +13,6 @@ export default function AdminLoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: vérification des identifiants
     navigate("/admin/home");
   };
 
@@ -49,6 +47,7 @@ export default function AdminLoginPage() {
               <input type="checkbox" className="rounded" />
               <span className="text-sm text-gray-600">Se souvenir de moi</span>
             </label>
+
             <button
               type="button"
               onClick={() => navigate("/admin/forgot-password")}
@@ -66,6 +65,7 @@ export default function AdminLoginPage() {
         <div className="mt-6 text-center">
           <span className="text-gray-600">Pas encore de compte ? </span>
           <button
+            type="button"
             onClick={() => navigate("/subscribe")}
             className="text-blue-600 hover:underline"
           >
@@ -74,6 +74,7 @@ export default function AdminLoginPage() {
         </div>
 
         <button
+          type="button"
           onClick={() => navigate("/")}
           className="mt-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 mx-auto"
         >

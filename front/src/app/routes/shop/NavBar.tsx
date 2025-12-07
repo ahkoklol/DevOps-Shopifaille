@@ -43,6 +43,7 @@ export function Navbar({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <button
+            type="button"
             onClick={() => handleNavigate(`/shop/${shopId}`)}
             className="flex items-center gap-3"
           >
@@ -57,12 +58,14 @@ export function Navbar({
 
           <div className="hidden md:flex items-center gap-8">
             <button
+              type="button"
               onClick={() => handleNavigate(`/shop/${shopId}`)}
               className="text-gray-600 hover:text-gray-900"
             >
               Accueil
             </button>
             <button
+              type="button"
               onClick={() =>
                 handleNavigate(`/shop/${shopId}/catalogue`)
               }
@@ -71,6 +74,7 @@ export function Navbar({
               Catalogue
             </button>
             <button
+              type="button"
               className="text-gray-600 hover:text-gray-900"
               onClick={() =>
                 handleNavigate(`/shop/${shopId}/apropos`)
@@ -79,6 +83,7 @@ export function Navbar({
               À propos
             </button>
             <button
+              type="button"
               onClick={() =>
                 handleNavigate(`/shop/${shopId}/contact`)
               }
@@ -89,6 +94,7 @@ export function Navbar({
           </div>
 
           <button
+            type="button"
             onClick={() =>
               handleNavigate(`/shop/${shopId}/panier`)
             }
