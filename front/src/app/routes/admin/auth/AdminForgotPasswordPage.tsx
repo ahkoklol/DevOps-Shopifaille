@@ -1,4 +1,3 @@
-//front/src/app/routes/admin/auth/AdminForgotPasswordPage.tsx
 import { Store, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../shared/components/ui/Button";
@@ -46,6 +45,7 @@ export default function AdminForgotPasswordPage() {
         </form>
 
         <button
+          type="button"
           onClick={() => navigate("/admin/login")}
           className="mt-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 mx-auto"
         >

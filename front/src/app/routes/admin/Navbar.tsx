@@ -24,6 +24,7 @@ export function Navbar({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <button
+              type="button"
               onClick={() => navigate(`/shop/${shopName}`)}
               className="flex items-center gap-3"
             >
@@ -38,26 +39,35 @@ export function Navbar({
 
             <div className="hidden md:flex items-center gap-8">
               <button
+                type="button"
                 onClick={() => navigate(`/shop/${shopName}`)}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Accueil
               </button>
               <button
+                type="button"
                 onClick={() => navigate(`/shop/${shopName}/catalog`)}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Catalogue
               </button>
-              <button className="text-gray-600 hover:text-gray-900">
+              <button
+                type="button"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 À propos
               </button>
-              <button className="text-gray-600 hover:text-gray-900">
+              <button
+                type="button"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Contact
               </button>
             </div>
 
             <button
+              type="button"
               onClick={() => navigate(`/shop/${shopName}/cart`)}
               className="relative"
             >
@@ -119,6 +129,7 @@ export function Navbar({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <button
+            type="button"
             onClick={() => navigate('/homepage')}
             className="flex items-center gap-2 text-blue-600"
           >
