@@ -1,9 +1,10 @@
-import { Store, ArrowLeft } from "lucide-react";
+//front/src/app/routes/admin/auth/AdminLoginPage.tsx
+import { ArrowLeft, Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Input } from "../../../../shared/components/ui/Input";
-import { Label } from "../../../../shared/components/ui/Label";
-import { Card } from "../../../../shared/components/ui/Card";
+import { Button } from "../../../../shared/components/ui/Button.tsx";
+import { Input } from "../../../../shared/components/ui/Input.tsx";
+import { Label } from "../../../../shared/components/ui/Label.tsx";
+import { Card } from "../../../../shared/components/ui/Card.tsx";
 
 /**
  * Page de connexion du back-office (accessible à /admin/login)
@@ -34,12 +35,22 @@ export default function AdminLoginPage() {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="jean@example.com" required />
+            <Input
+              id="email"
+              type="email"
+              placeholder="jean@example.com"
+              required
+            />
           </div>
 
           <div>
             <Label htmlFor="password">Mot de passe</Label>
-            <Input id="password" type="password" placeholder="••••••••" required />
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
           </div>
 
           <div className="flex items-center justify-between">
@@ -63,7 +74,7 @@ export default function AdminLoginPage() {
         </form>
 
         <div className="mt-6 text-center">
-          <span className="text-gray-600">Pas encore de compte ? </span>
+          <span className="text-gray-600">Pas encore de compte ?</span>
           <button
             type="button"
             onClick={() => navigate("/subscribe")}

@@ -1,7 +1,15 @@
 // front/src/app/routes/admin/dashboard/CustomerManagement.tsx
 
 import { useState } from "react";
-import { UserPlus, Search, Mail, Phone, MapPin, ShoppingBag, Euro } from "lucide-react";
+import {
+  Euro,
+  Mail,
+  MapPin,
+  Phone,
+  Search,
+  ShoppingBag,
+  UserPlus,
+} from "lucide-react";
 
 // ⚠️ Adapt these imports to YOUR repo structure (shared shadcn components in PascalCase).
 import { Button } from "../../../../shared/components/ui/Button";
@@ -17,13 +25,18 @@ import {
   TableRow,
 } from "../../../../shared/components/ui/Table";
 
-import { getCustomersByShopId, type Customer } from "../../../../shared/lib/mock-data";
+import {
+  type Customer,
+  getCustomersByShopId,
+} from "../../../../shared/lib/mock-data";
 
 interface CustomerManagementProps {
   shopId: string;
 }
 
-function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () => void }) {
+function CustomerDetail(
+  { customer, onBack }: { customer: Customer; onBack: () => void },
+) {
   return (
     <div className="p-8">
       <Button variant="ghost" onClick={onBack} className="mb-6">
@@ -37,7 +50,8 @@ function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () =
               {customer.firstName} {customer.lastName}
             </h1>
             <p className="text-gray-600">
-              Client depuis le {new Date(customer.createdAt).toLocaleDateString("fr-FR")}
+              Client depuis le{" "}
+              {new Date(customer.createdAt).toLocaleDateString("fr-FR")}
             </p>
           </div>
           <div className="flex gap-2">
@@ -88,7 +102,9 @@ function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () =
 
           <Card className="p-6">
             <p className="text-sm text-gray-600 mb-2">Total dépensé</p>
-            <p className="text-3xl text-gray-900">{customer.totalSpent.toFixed(2)} €</p>
+            <p className="text-3xl text-gray-900">
+              {customer.totalSpent.toFixed(2)} €
+            </p>
           </Card>
 
           <Card className="p-6">
@@ -96,8 +112,7 @@ function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () =
             <p className="text-3xl text-gray-900">
               {customer.totalOrders > 0
                 ? (customer.totalSpent / customer.totalOrders).toFixed(2)
-                : "0.00"}{" "}
-              €
+                : "0.00"} €
             </p>
           </Card>
         </div>
@@ -105,16 +120,22 @@ function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () =
         {/* Order history placeholder */}
         <Card className="p-6">
           <h3 className="text-gray-900 mb-4">Historique des commandes</h3>
-          <p className="text-gray-500 text-sm">Les commandes de ce client apparaîtront ici</p>
+          <p className="text-gray-500 text-sm">
+            Les commandes de ce client apparaîtront ici
+          </p>
         </Card>
       </div>
     </div>
   );
 }
 
-export default function CustomerManagement({ shopId }: CustomerManagementProps) {
+export default function CustomerManagement(
+  { shopId }: CustomerManagementProps,
+) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null,
+  );
 
   // NOTE: Replace with API call later if needed.
   const customers = getCustomersByShopId(shopId);
@@ -129,7 +150,12 @@ export default function CustomerManagement({ shopId }: CustomerManagementProps) 
   });
 
   if (selectedCustomer) {
-    return <CustomerDetail customer={selectedCustomer} onBack={() => setSelectedCustomer(null)} />;
+    return (
+      <CustomerDetail
+        customer={selectedCustomer}
+        onBack={() => setSelectedCustomer(null)}
+      />
+    );
   }
 
   return (
@@ -138,7 +164,9 @@ export default function CustomerManagement({ shopId }: CustomerManagementProps) 
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl text-gray-900 mb-2">Clients</h1>
-          <p className="text-gray-600">Gérez vos clients et leur historique d'achats</p>
+          <p className="text-gray-600">
+            Gérez vos clients et leur historique d'achats
+          </p>
         </div>
         <Button>
           <UserPlus className="w-4 h-4 mr-2" />
@@ -182,7 +210,9 @@ export default function CustomerManagement({ shopId }: CustomerManagementProps) 
             <div>
               <p className="text-sm text-gray-600">Revenus totaux</p>
               <p className="text-2xl text-gray-900">
-                {customers.reduce((sum, c) => sum + c.totalSpent, 0).toFixed(2)} €
+                {customers.reduce((sum, c) => sum + c.totalSpent, 0).toFixed(2)}
+                {" "}
+                €
               </p>
             </div>
           </div>
@@ -198,11 +228,10 @@ export default function CustomerManagement({ shopId }: CustomerManagementProps) 
               <p className="text-2xl text-gray-900">
                 {customers.length > 0
                   ? (
-                      customers.reduce((sum, c) => sum + c.totalSpent, 0) /
-                      customers.reduce((sum, c) => sum + c.totalOrders, 0)
-                    ).toFixed(2)
-                  : "0.00"}{" "}
-                €
+                    customers.reduce((sum, c) => sum + c.totalSpent, 0) /
+                    customers.reduce((sum, c) => sum + c.totalOrders, 0)
+                  ).toFixed(2)
+                  : "0.00"} €
               </p>
             </div>
           </div>
@@ -244,7 +273,9 @@ export default function CustomerManagement({ shopId }: CustomerManagementProps) 
                     <div className="text-gray-900">
                       {customer.firstName} {customer.lastName}
                     </div>
-                    <div className="text-sm text-gray-500">{customer.email}</div>
+                    <div className="text-sm text-gray-500">
+                      {customer.email}
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>
@@ -266,14 +297,22 @@ export default function CustomerManagement({ shopId }: CustomerManagementProps) 
                 <TableCell className="text-right">
                   <Badge variant="secondary">{customer.totalOrders}</Badge>
                 </TableCell>
-                <TableCell className="text-right">{customer.totalSpent.toFixed(2)} €</TableCell>
+                <TableCell className="text-right">
+                  {customer.totalSpent.toFixed(2)} €
+                </TableCell>
                 <TableCell>
                   {customer.lastOrderDate
-                    ? new Date(customer.lastOrderDate).toLocaleDateString("fr-FR")
+                    ? new Date(customer.lastOrderDate).toLocaleDateString(
+                      "fr-FR",
+                    )
                     : "-"}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="sm" onClick={() => setSelectedCustomer(customer)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedCustomer(customer)}
+                  >
                     Voir détails
                   </Button>
                 </TableCell>

@@ -29,6 +29,6 @@ spec:
   selector:
     app: shopyfaille-frontend
   ports:
-    - port: 80        # Port du service dans le cluster
-      targetPort: 80  # Port dans le conteneur Nginx
+    - port: 80 # Port du service dans le cluster
+      targetPort: 80 # Port dans le conteneur Nginx
       nodePort: 30080 # Port exposé sur ta machine via Minikube

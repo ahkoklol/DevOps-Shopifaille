@@ -1,9 +1,10 @@
-import { Store, ArrowLeft } from "lucide-react";
+//front/src/app/routes/admin/auth/AdminForgotPasswordPage.tsx
+import { ArrowLeft, Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Input } from "../../../../shared/components/ui/Input";
-import { Label } from "../../../../shared/components/ui/Label";
-import { Card } from "../../../../shared/components/ui/Card";
+import { Button } from "../../../../shared/components/ui/Button.tsx";
+import { Input } from "../../../../shared/components/ui/Input.tsx";
+import { Label } from "../../../../shared/components/ui/Label.tsx";
+import { Card } from "../../../../shared/components/ui/Card.tsx";
 
 /**
  * Page de récupération du mot de passe (accessible à /admin/forgot-password)
@@ -36,7 +37,12 @@ export default function AdminForgotPasswordPage() {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="jean@example.com" required />
+            <Input
+              id="email"
+              type="email"
+              placeholder="jean@example.com"
+              required
+            />
           </div>
 
           <Button type="submit" className="w-full">

@@ -1,8 +1,7 @@
 /// <reference types="cypress" />
 
 describe("Catalogue", () => {
-
-  const shopId = "shop-1"; 
+  const shopId = "shop-1";
   const url = `/shop/${shopId}/catalogue`;
 
   beforeEach(() => {
@@ -22,8 +21,6 @@ describe("Catalogue", () => {
     });
   });
 
- 
-
   it("Filtre par catégorie", () => {
     cy.get("[data-cy='filter-category']").first().click();
 
@@ -38,8 +35,6 @@ describe("Catalogue", () => {
     });
   });
 
-
-  
   it("Navigue vers un produit", () => {
     cy.get("[data-cy='product-card']").first().click();
 
@@ -51,5 +46,4 @@ describe("Catalogue", () => {
 
     cy.contains("Boutique introuvable").should("exist");
   });
-
 });

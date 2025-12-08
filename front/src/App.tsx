@@ -13,9 +13,9 @@ export default function App() {
     // Wrap with your providers here if you have them (ThemeProvider, QueryProvider, etc.)
     // <ThemeProvider>
     //   <QueryProvider>
-          <Suspense fallback={<div className="p-6">Loading...</div>}>
-            <RouterProvider router={router} />
-          </Suspense>
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <RouterProvider router={router} />
+    </Suspense>
     //   </QueryProvider>
     // </ThemeProvider>
   );
