@@ -17,9 +17,9 @@ spec:
     spec:
       containers:
         - name: products
-          image: ahkoklol/products-service:latest   # 🔥 À ADAPTER si ton image est ailleurs
+          image: ahkoklol/products-service:latest # 🔥 À ADAPTER si ton image est ailleurs
           ports:
-            - containerPort: 8082    # ⚠️ mets le port réel de TON service Go
+            - containerPort: 8082 # ⚠️ mets le port réel de TON service Go
 
           env:
             # URL de connexion PostgreSQL (service interne Kubernetes)
@@ -50,5 +50,5 @@ spec:
   selector:
     app: products
   ports:
-    - port: 8082        # port interne
+    - port: 8082 # port interne
       targetPort: 8082
