@@ -109,7 +109,7 @@ interface CategoryFormProps {
   onBack: () => void;
 }
 
-function CategoryForm({ _shopId, category, onBack }: CategoryFormProps) {
+function CategoryForm({ category, onBack }: CategoryFormProps) {
   const [formData, setFormData] = useState({
     name: category?.name || "",
     description: category?.description || "",
