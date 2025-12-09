@@ -75,6 +75,7 @@ function Catalogue() {
           <h1 className="text-2xl font-semibold">Boutique introuvable</h1>
           <p className="text-gray-600 mt-2">ID : {paramShopId}</p>
           <button
+            type="button"
             onClick={() => navigate("/")}
             className="mt-4 px-4 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600"
           >
@@ -88,6 +89,7 @@ function Catalogue() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar variant="platform" onNavigate={() => {}} />
+
       {/* Page Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -114,6 +116,7 @@ function Catalogue() {
                 <h4 className="text-sm text-gray-900 mb-3">Catégories</h4>
                 <div className="space-y-2">
                   <button
+                    type="button"
                     onClick={() => setSelectedCategory(null)}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                       selectedCategory === null
@@ -131,6 +134,7 @@ function Catalogue() {
 
                     return (
                       <button
+                        type="button"
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
                         className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center justify-between ${
@@ -157,9 +161,7 @@ function Catalogue() {
                       type="checkbox"
                       className="rounded"
                       onChange={(event) =>
-                        setSelectedPrice(
-                          event.target.checked ? "50" : null
-                        )
+                        setSelectedPrice(event.target.checked ? "50" : null)
                       }
                     />
                     Moins de 50€
@@ -181,9 +183,7 @@ function Catalogue() {
                       type="checkbox"
                       className="rounded"
                       onChange={(event) =>
-                        setSelectedPrice(
-                          event.target.checked ? "100" : null
-                        )
+                        setSelectedPrice(event.target.checked ? "100" : null)
                       }
                     />
                     Plus de 100€
@@ -247,7 +247,6 @@ function Catalogue() {
                       navigate(`/shop/${paramShopId}/product/${product.id}`)
                     }
                   >
-                    {/* Image */}
                     <div
                       className={`${
                         viewMode === "list" ? "w-48" : "aspect-square"
@@ -260,7 +259,6 @@ function Catalogue() {
                       />
                     </div>
 
-                    {/* Content */}
                     <div
                       className={`p-6 ${
                         viewMode === "list" ? "flex-1" : ""
@@ -306,7 +304,7 @@ function Catalogue() {
         </div>
       </div>
 
-      {/* CTA / Footer avec couleur du shop */}
+      {/* CTA / Footer */}
       <div
         className="text-white py-16"
         style={{ backgroundColor: foundShop.codeColor ?? "#000" }}

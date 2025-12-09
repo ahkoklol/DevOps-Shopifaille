@@ -1,4 +1,3 @@
-//front/src/app/routes/admin/auth/AdminRegisterPage.tsx
 import { Store, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../shared/components/ui/Button";
@@ -14,7 +13,6 @@ export default function AdminRegisterPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: appel API d'inscription ici
     navigate("/admin/home");
   };
 
@@ -65,6 +63,7 @@ export default function AdminRegisterPage() {
         <div className="mt-6 text-center">
           <span className="text-gray-600">Déjà un compte ? </span>
           <button
+            type="button"
             onClick={() => navigate("/admin/login")}
             className="text-blue-600 hover:underline"
           >
@@ -73,6 +72,7 @@ export default function AdminRegisterPage() {
         </div>
 
         <button
+          type="button"
           onClick={() => navigate("/")}
           className="mt-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 mx-auto"
         >

@@ -1,4 +1,3 @@
-// src/app/routes/admin/suscription/CheckoutPage.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../../../../shared/components/ui/Button";
@@ -15,7 +14,6 @@ export default function CheckoutPage() {
   const query = useQuery();
   const plan = (query.get("plan") as "trial" | "monthly" | "yearly") ?? "monthly";
 
-  // Plan metadata (displayed in summary)
   const planInfo = useMemo(() => {
     if (plan === "trial")
       return { title: "Essai gratuit — 14 jours", price: 0, frequency: "trial" };
@@ -23,7 +21,6 @@ export default function CheckoutPage() {
     return { title: "1 mois", price: 29, frequency: "mois" };
   }, [plan]);
 
-  // Form state
   const [cardName, setCardName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
@@ -37,13 +34,11 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (success) {
-      // After success, navigate to admin home (or adjust to your desired page)
       const t = setTimeout(() => navigate("/admin/home"), 1200);
       return () => clearTimeout(t);
     }
   }, [success, navigate]);
 
-  // Minimal client-side validation (for demo only)
   const validate = () => {
     setError(null);
 
@@ -79,10 +74,8 @@ export default function CheckoutPage() {
     setIsProcessing(true);
     setError(null);
 
-    // Fake processing to appear realistic
     await new Promise((r) => setTimeout(r, 1200));
 
-    // Fake failure example if card number starts with 4 (for demo) -> success otherwise
     const cleaned = cardNumber.replace(/\s+/g, "");
     if (cleaned && cleaned.startsWith("4")) {
       setIsProcessing(false);
@@ -94,7 +87,6 @@ export default function CheckoutPage() {
     setIsProcessing(false);
   };
 
-  // Formatting helpers
   const formatCardNumber = (v: string) =>
     v
       .replace(/\D/g, "")
@@ -105,6 +97,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -112,13 +105,13 @@ export default function CheckoutPage() {
             <p className="text-gray-600 text-sm">Finalise ton abonnement — page de paiement factice (demo).</p>
           </div>
 
-          {/* Back button */}
+          {/* 🔧 FIX: added type="button" */}
           <div>
             <button
+              type="button"
               onClick={() => navigate(-1)}
               className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-200 bg-white text-sm text-gray-700 shadow-sm hover:bg-gray-50"
             >
-              {/* simple chevron left */}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -128,18 +121,19 @@ export default function CheckoutPage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
+          
           {/* Payment form */}
           <Card className="p-6 lg:col-span-2">
             <form onSubmit={handlePay} className="flex flex-col gap-6">
+              
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">Détails de paiement</h2>
                 <p className="text-sm text-gray-600 mt-1">Informations de carte et facturation.</p>
               </div>
 
-              {/* Card visual / summary row */}
+              {/* Card visual */}
               <div className="flex items-center gap-4">
                 <div className="flex-shrink-0">
-                  {/* fake card svg */}
                   <div className="w-36 h-20 bg-gradient-to-r from-slate-700 to-slate-600 rounded-lg text-white p-3 shadow">
                     <div className="text-xs opacity-80">Card</div>
                     <div className="mt-3 font-mono text-sm">{cardNumber ? formatCardNumber(cardNumber) : "•••• •••• •••• ••••"}</div>
@@ -158,7 +152,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Cardholder name */}
+              {/* Inputs */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">Nom (tel qu'il apparaît sur la carte)</label>
                 <input
@@ -169,7 +163,6 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              {/* Card number / expiry / cvc */}
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-gray-700">Numéro de carte</label>
@@ -183,7 +176,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="col-span-1">
+                  <div>
                     <label className="block text-sm font-medium text-gray-700">MM/AA</label>
                     <input
                       value={expiry}
@@ -197,7 +190,7 @@ export default function CheckoutPage() {
                     />
                   </div>
 
-                  <div className="col-span-1">
+                  <div>
                     <label className="block text-sm font-medium text-gray-700">CVC</label>
                     <input
                       value={cvc}
@@ -244,48 +237,54 @@ export default function CheckoutPage() {
                     size="lg"
                     className="px-6 py-3"
                   >
-                    {plan === "trial" ? "Commencer l’essai (gratuit)" : isProcessing ? "Traitement…" : `Payer €${planInfo.price}`}
+                    {plan === "trial"
+                      ? "Commencer l’essai (gratuit)"
+                      : isProcessing
+                      ? "Traitement…"
+                      : `Payer €${planInfo.price}`}
                   </Button>
                 </div>
               </div>
 
-              {/* Small disclaimer */}
               <p className="text-xs text-gray-500">
-                Ceci est une page de paiement factice pour la démonstration. Aucun paiement réel n'est effectué. Ne pas saisir de vraies informations bancaires.
+                Ceci est une page de paiement factice pour la démonstration. Aucun paiement réel n'est effectué.
               </p>
             </form>
           </Card>
 
-          {/* Order summary */}
-          <div>
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Récapitulatif</h3>
-              <div className="text-sm text-gray-700 mb-4">
-                <div className="flex justify-between">
-                  <span>{planInfo.title}</span>
-                  <span>{planInfo.price === 0 ? "€0" : `€${planInfo.price}`}</span>
-                </div>
-                <div className="flex justify-between mt-2">
-                  <span>Frais</span>
-                  <span>€0</span>
-                </div>
+          {/* Summary */}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Récapitulatif</h3>
+
+            <div className="text-sm text-gray-700 mb-4">
+              <div className="flex justify-between">
+                <span>{planInfo.title}</span>
+                <span>{planInfo.price === 0 ? "€0" : `€${planInfo.price}`}</span>
               </div>
-              <div className="border-t pt-3">
-                <div className="flex justify-between items-baseline">
-                  <div>
-                    <div className="text-sm text-gray-600">Total</div>
-                    <div className="text-xs text-gray-500">TVA non incluse (simulation)</div>
-                  </div>
-                  <div className="text-xl font-semibold text-gray-900">{planInfo.price === 0 ? "€0" : `€${planInfo.price}`}</div>
+              <div className="flex justify-between mt-2">
+                <span>Frais</span>
+                <span>€0</span>
+              </div>
+            </div>
+
+            <div className="border-t pt-3">
+              <div className="flex justify-between items-baseline">
+                <div>
+                  <div className="text-sm text-gray-600">Total</div>
+                  <div className="text-xs text-gray-500">TVA non incluse (simulation)</div>
                 </div>
 
-                <div className="mt-4 text-sm text-gray-600">
-                  <div>Facturation : Carte de crédit</div>
-                  <div className="mt-2">Contact : support@tonshop.example</div>
+                <div className="text-xl font-semibold text-gray-900">
+                  {planInfo.price === 0 ? "€0" : `€${planInfo.price}`}
                 </div>
               </div>
-            </Card>
-          </div>
+
+              <div className="mt-4 text-sm text-gray-600">
+                <div>Facturation : Carte de crédit</div>
+                <div className="mt-2">Contact : support@tonshop.example</div>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>
