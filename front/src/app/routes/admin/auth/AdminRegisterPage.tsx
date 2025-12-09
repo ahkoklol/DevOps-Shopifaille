@@ -1,9 +1,10 @@
-import { Store, ArrowLeft } from "lucide-react";
+//front/src/app/routes/admin/auth/AdminRegisterPage.tsx
+import { ArrowLeft, Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Input } from "../../../../shared/components/ui/Input";
-import { Label } from "../../../../shared/components/ui/Label";
-import { Card } from "../../../../shared/components/ui/Card";
+import { Button } from "../../../../shared/components/ui/Button.tsx";
+import { Input } from "../../../../shared/components/ui/Input.tsx";
+import { Label } from "../../../../shared/components/ui/Label.tsx";
+import { Card } from "../../../../shared/components/ui/Card.tsx";
 
 /**
  * Page d'inscription du back-office (accessible à /admin/register)
@@ -42,17 +43,32 @@ export default function AdminRegisterPage() {
 
           <div>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="jean@example.com" required />
+            <Input
+              id="email"
+              type="email"
+              placeholder="jean@example.com"
+              required
+            />
           </div>
 
           <div>
             <Label htmlFor="password">Mot de passe</Label>
-            <Input id="password" type="password" placeholder="••••••••" required />
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
           </div>
 
           <div>
             <Label htmlFor="confirm">Confirmer le mot de passe</Label>
-            <Input id="confirm" type="password" placeholder="••••••••" required />
+            <Input
+              id="confirm"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
           </div>
 
           <Button type="submit" className="w-full">
@@ -61,7 +77,7 @@ export default function AdminRegisterPage() {
         </form>
 
         <div className="mt-6 text-center">
-          <span className="text-gray-600">Déjà un compte ? </span>
+          <span className="text-gray-600">Déjà un compte ?</span>
           <button
             type="button"
             onClick={() => navigate("/admin/login")}

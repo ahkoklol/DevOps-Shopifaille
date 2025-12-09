@@ -1,8 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Card } from "../../../../shared/components/ui/Card";
+import { Button } from "../../../../shared/components/ui/Button.tsx";
+import { Card } from "../../../../shared/components/ui/Card.tsx";
 
 // Keep comments in English as requested.
+// This page reuses the same visual system as AdminDashboardPage:
+// - min-h-screen bg-gray-50
+// - container: max-w-7xl, responsive paddings
+// - Card and Button from shared UI
 
 export default function SubscriptionChoice() {
   const navigate = useNavigate();
@@ -21,7 +25,13 @@ export default function SubscriptionChoice() {
             onClick={() => navigate(-1)}
             className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-200 bg-white text-sm text-gray-700 shadow-sm hover:bg-gray-50"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden
+            >
               <path
                 d="M15 6L9 12L15 18"
                 stroke="currentColor"
@@ -36,7 +46,9 @@ export default function SubscriptionChoice() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl text-gray-900 mb-2">Choisis ton abonnement</h1>
+          <h1 className="text-3xl text-gray-900 mb-2">
+            Choisis ton abonnement
+          </h1>
           <p className="text-gray-600">
             Sélectionne une offre pour créer ta boutique et démarrer rapidement.
           </p>
@@ -58,8 +70,11 @@ export default function SubscriptionChoice() {
               <li>• Teste thèmes et catalogue</li>
               <li>• Annule à tout moment</li>
             </ul>
-
-            <Button size="lg" onClick={() => choosePlan("trial")} className="mt-auto">
+            <Button
+              size="lg"
+              onClick={() => choosePlan("trial")}
+              className="mt-auto"
+            >
               Commencer l’essai
             </Button>
           </Card>
@@ -68,11 +83,14 @@ export default function SubscriptionChoice() {
           <Card className="p-6 relative flex flex-col">
             <div className="mb-4">
               <h2 className="text-xl text-gray-900">1 mois</h2>
-              <p className="mt-1 text-sm text-gray-600">Facturation mensuelle</p>
+              <p className="mt-1 text-sm text-gray-600">
+                Facturation mensuelle
+              </p>
             </div>
 
             <div className="text-3xl text-gray-900 font-semibold mb-4">
-              €29 <span className="text-base font-medium text-gray-700">/mois</span>
+              €29{" "}
+              <span className="text-base font-medium text-gray-700">/mois</span>
             </div>
 
             <ul className="text-sm text-gray-700 space-y-1 mb-6">
@@ -94,11 +112,14 @@ export default function SubscriptionChoice() {
 
             <div className="mb-4">
               <h2 className="text-xl text-gray-900">1 an</h2>
-              <p className="mt-1 text-sm text-gray-600">2 mois offerts équivalents</p>
+              <p className="mt-1 text-sm text-gray-600">
+                2 mois offerts équivalents
+              </p>
             </div>
 
             <div className="text-3xl text-gray-900 font-semibold mb-4">
-              €290 <span className="text-base font-medium text-gray-700">/an</span>
+              €290{" "}
+              <span className="text-base font-medium text-gray-700">/an</span>
             </div>
 
             <ul className="text-sm text-gray-700 space-y-1 mb-6">

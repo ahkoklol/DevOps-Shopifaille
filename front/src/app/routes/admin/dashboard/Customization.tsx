@@ -7,7 +7,12 @@ import { Button } from "../../../../shared/components/ui/Button";
 import { Card } from "../../../../shared/components/ui/Card";
 import { Input } from "../../../../shared/components/ui/Input";
 import { Label } from "../../../../shared/components/ui/Label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../shared/components/ui/Tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../../../shared/components/ui/Tabs";
 
 // Mock data (adapter si tu remplaces par un vrai service plus tard)
 import { getShopById } from "../../../../shared/lib/mock-data";
@@ -29,7 +34,14 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
     slogan: shop?.description || "",
   });
 
-  const colors = ["#3B82F6", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B", "#EF4444"];
+  const colors = [
+    "#3B82F6",
+    "#8B5CF6",
+    "#EC4899",
+    "#10B981",
+    "#F59E0B",
+    "#EF4444",
+  ];
 
   const handleSave = () => {
     // Replace with a real mutation / API call when backend is ready
@@ -40,7 +52,9 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2">Personnalisation</h1>
-        <p className="text-gray-600">Personnalisez l'apparence de votre boutique</p>
+        <p className="text-gray-600">
+          Personnalisez l'apparence de votre boutique
+        </p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
@@ -55,7 +69,9 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
 
             <TabsContent value="branding">
               <Card className="p-6">
-                <h3 className="text-lg text-gray-900 mb-4">Identité de marque</h3>
+                <h3 className="text-lg text-gray-900 mb-4">
+                  Identité de marque
+                </h3>
 
                 <div className="space-y-4">
                   <div>
@@ -63,7 +79,8 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
                     <Input
                       id="logo"
                       value={config.logo}
-                      onChange={(e) => setConfig({ ...config, logo: e.target.value })}
+                      onChange={(e) =>
+                        setConfig({ ...config, logo: e.target.value })}
                     />
                   </div>
 
@@ -72,7 +89,8 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
                     <Input
                       id="shop-name"
                       value={config.shopName}
-                      onChange={(e) => setConfig({ ...config, shopName: e.target.value })}
+                      onChange={(e) =>
+                        setConfig({ ...config, shopName: e.target.value })}
                     />
                   </div>
 
@@ -81,7 +99,8 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
                     <Input
                       id="slogan"
                       value={config.slogan}
-                      onChange={(e) => setConfig({ ...config, slogan: e.target.value })}
+                      onChange={(e) =>
+                        setConfig({ ...config, slogan: e.target.value })}
                       placeholder="Votre message de bienvenue"
                     />
                   </div>
@@ -91,17 +110,22 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
 
             <TabsContent value="colors">
               <Card className="p-6">
-                <h3 className="text-lg text-gray-900 mb-4">Couleur principale</h3>
+                <h3 className="text-lg text-gray-900 mb-4">
+                  Couleur principale
+                </h3>
 
                 <div className="grid grid-cols-6 gap-4 mb-6">
                   {colors.map((color) => (
                     <button
                       key={color}
-                      onClick={() => setConfig({ ...config, primaryColor: color })}
+                      onClick={() =>
+                        setConfig({ ...config, primaryColor: color })}
                       className="relative aspect-square rounded-lg border-2 transition-all hover:scale-110"
                       style={{
                         backgroundColor: color,
-                        borderColor: config.primaryColor === color ? "#000" : "transparent",
+                        borderColor: config.primaryColor === color
+                          ? "#000"
+                          : "transparent",
                       }}
                       aria-label={`Choisir la couleur ${color}`}
                       type="button"
@@ -122,13 +146,15 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
                       id="custom-color"
                       type="color"
                       value={config.primaryColor}
-                      onChange={(e) => setConfig({ ...config, primaryColor: e.target.value })}
+                      onChange={(e) =>
+                        setConfig({ ...config, primaryColor: e.target.value })}
                       className="w-20 h-10"
                     />
                     <Input
                       type="text"
                       value={config.primaryColor}
-                      onChange={(e) => setConfig({ ...config, primaryColor: e.target.value })}
+                      onChange={(e) =>
+                        setConfig({ ...config, primaryColor: e.target.value })}
                       className="flex-1"
                     />
                   </div>
@@ -138,8 +164,12 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
 
             <TabsContent value="layout">
               <Card className="p-6">
-                <h3 className="text-lg text-gray-900 mb-4">Options de mise en page</h3>
-                <p className="text-gray-600">Fonctionnalité disponible prochainement</p>
+                <h3 className="text-lg text-gray-900 mb-4">
+                  Options de mise en page
+                </h3>
+                <p className="text-gray-600">
+                  Fonctionnalité disponible prochainement
+                </p>
               </Card>
             </TabsContent>
           </Tabs>
@@ -183,17 +213,27 @@ export function Customization({ shopId: propShopId }: CustomizationProps) {
               {/* Mock Hero */}
               <div
                 className="p-8 text-center text-white"
-                style={{ backgroundColor: `${config.primaryColor}20`, color: config.primaryColor }}
+                style={{
+                  backgroundColor: `${config.primaryColor}20`,
+                  color: config.primaryColor,
+                }}
               >
-                <h2 className="text-2xl mb-2">{config.slogan || "Bienvenue dans notre boutique"}</h2>
-                <p className="opacity-80">Découvrez nos produits exceptionnels</p>
+                <h2 className="text-2xl mb-2">
+                  {config.slogan || "Bienvenue dans notre boutique"}
+                </h2>
+                <p className="opacity-80">
+                  Découvrez nos produits exceptionnels
+                </p>
               </div>
 
               {/* Mock Product Grid */}
               <div className="p-4 bg-gray-50">
                 <div className="grid grid-cols-2 gap-4">
                   {[1, 2].map((i) => (
-                    <div key={i} className="bg-white rounded-lg overflow-hidden border">
+                    <div
+                      key={i}
+                      className="bg-white rounded-lg overflow-hidden border"
+                    >
                       <div className="aspect-square bg-gray-200" />
                       <div className="p-3">
                         <div className="h-4 bg-gray-200 rounded mb-2" />

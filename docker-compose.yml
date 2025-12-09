@@ -41,7 +41,7 @@ services:
       - postgres
 
   store-gateway:
-    image:  ${DOCKERHUB_STORE_GATEWAY_USERNAME}/store-gateway-service:latest
+    image: ${DOCKERHUB_STORE_GATEWAY_USERNAME}/store-gateway-service:latest
     restart: always
     ports:
       - "8080:8080"

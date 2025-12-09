@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Card } from "../../../../shared/components/ui/Card";
+import { Button } from "../../../../shared/components/ui/Button.tsx";
+import { Card } from "../../../../shared/components/ui/Card.tsx";
 
 // Keep comments in English as requested.
 
@@ -12,12 +12,21 @@ function useQuery() {
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const query = useQuery();
-  const plan = (query.get("plan") as "trial" | "monthly" | "yearly") ?? "monthly";
+
+  const plan = (query.get("plan") as "trial" | "monthly" | "yearly") ??
+    "monthly";
 
   const planInfo = useMemo(() => {
-    if (plan === "trial")
-      return { title: "Essai gratuit — 14 jours", price: 0, frequency: "trial" };
-    if (plan === "yearly") return { title: "1 an (2 mois offerts)", price: 290, frequency: "an" };
+    if (plan === "trial") {
+      return {
+        title: "Essai gratuit — 14 jours",
+        price: 0,
+        frequency: "trial",
+      };
+    }
+    if (plan === "yearly") {
+      return { title: "1 an (2 mois offerts)", price: 290, frequency: "an" };
+    }
     return { title: "1 mois", price: 29, frequency: "mois" };
   }, [plan]);
 
@@ -79,7 +88,9 @@ export default function CheckoutPage() {
     const cleaned = cardNumber.replace(/\s+/g, "");
     if (cleaned && cleaned.startsWith("4")) {
       setIsProcessing(false);
-      setError("La transaction a été refusée par la banque (simulation). Essaie une autre carte.");
+      setError(
+        "La transaction a été refusée par la banque (simulation). Essaie une autre carte.",
+      );
       return;
     }
 
@@ -88,32 +99,34 @@ export default function CheckoutPage() {
   };
 
   const formatCardNumber = (v: string) =>
-    v
-      .replace(/\D/g, "")
-      .slice(0, 19)
-      .replace(/(.{4})/g, "$1 ")
-      .trim();
+    v.replace(/\D/g, "").slice(0, 19).replace(/(.{4})/g, "$1 ").trim();
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl text-gray-900 mb-1">Paiement</h1>
-            <p className="text-gray-600 text-sm">Finalise ton abonnement — page de paiement factice (demo).</p>
+            <p className="text-gray-600 text-sm">
+              Finalise ton abonnement — page de paiement factice (demo).
+            </p>
           </div>
 
-          {/* 🔧 FIX: added type="button" */}
           <div>
             <button
               type="button"
               onClick={() => navigate(-1)}
               className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-200 bg-white text-sm text-gray-700 shadow-sm hover:bg-gray-50"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M15 6L9 12L15 18"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
               Retour
             </button>
@@ -121,14 +134,16 @@ export default function CheckoutPage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
-          
           {/* Payment form */}
           <Card className="p-6 lg:col-span-2">
             <form onSubmit={handlePay} className="flex flex-col gap-6">
-              
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Détails de paiement</h2>
-                <p className="text-sm text-gray-600 mt-1">Informations de carte et facturation.</p>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Détails de paiement
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Informations de carte et facturation.
+                </p>
               </div>
 
               {/* Card visual */}
@@ -136,7 +151,11 @@ export default function CheckoutPage() {
                 <div className="flex-shrink-0">
                   <div className="w-36 h-20 bg-gradient-to-r from-slate-700 to-slate-600 rounded-lg text-white p-3 shadow">
                     <div className="text-xs opacity-80">Card</div>
-                    <div className="mt-3 font-mono text-sm">{cardNumber ? formatCardNumber(cardNumber) : "•••• •••• •••• ••••"}</div>
+                    <div className="mt-3 font-mono text-sm">
+                      {cardNumber
+                        ? formatCardNumber(cardNumber)
+                        : "•••• •••• •••• ••••"}
+                    </div>
                     <div className="mt-2 text-xs flex justify-between">
                       <span>{cardName || "Nom sur la carte"}</span>
                       <span>{expiry || "MM/AA"}</span>
@@ -147,14 +166,18 @@ export default function CheckoutPage() {
                 <div className="flex-1 text-sm text-gray-700">
                   <div className="font-medium">{planInfo.title}</div>
                   <div className="text-sm text-gray-600">
-                    {planInfo.price === 0 ? "Gratuit" : `Montant : €${planInfo.price} / ${planInfo.frequency}`}
+                    {planInfo.price === 0
+                      ? "Gratuit"
+                      : `Montant : €${planInfo.price} / ${planInfo.frequency}`}
                   </div>
                 </div>
               </div>
 
               {/* Inputs */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Nom (tel qu'il apparaît sur la carte)</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Nom (tel qu'il apparaît sur la carte)
+                </label>
                 <input
                   value={cardName}
                   onChange={(e) => setCardName(e.target.value)}
@@ -165,11 +188,14 @@ export default function CheckoutPage() {
 
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Numéro de carte</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Numéro de carte
+                  </label>
                   <input
                     inputMode="numeric"
                     value={cardNumber}
-                    onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+                    onChange={(e) =>
+                      setCardNumber(formatCardNumber(e.target.value))}
                     className="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     placeholder="4242 4242 4242 4242"
                   />
@@ -177,12 +203,19 @@ export default function CheckoutPage() {
 
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">MM/AA</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      MM/AA
+                    </label>
                     <input
                       value={expiry}
                       onChange={(e) => {
-                        const raw = e.target.value.replace(/\D/g, "").slice(0, 4);
-                        const formatted = raw.length >= 3 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw;
+                        const raw = e.target.value.replace(/\D/g, "").slice(
+                          0,
+                          4,
+                        );
+                        const formatted = raw.length >= 3
+                          ? `${raw.slice(0, 2)}/${raw.slice(2)}`
+                          : raw;
                         setExpiry(formatted);
                       }}
                       placeholder="MM/AA"
@@ -191,10 +224,13 @@ export default function CheckoutPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">CVC</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      CVC
+                    </label>
                     <input
                       value={cvc}
-                      onChange={(e) => setCvc(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                      onChange={(e) =>
+                        setCvc(e.target.value.replace(/\D/g, "").slice(0, 4))}
                       placeholder="123"
                       inputMode="numeric"
                       className="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -205,7 +241,9 @@ export default function CheckoutPage() {
 
               {/* Billing address */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Adresse de facturation (optionnelle)</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Adresse de facturation (optionnelle)
+                </label>
                 <input
                   value={billingAddress}
                   onChange={(e) => setBillingAddress(e.target.value)}
@@ -215,17 +253,32 @@ export default function CheckoutPage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <input id="saveCard" type="checkbox" checked={saveCard} onChange={() => setSaveCard((s) => !s)} />
+                <input
+                  id="saveCard"
+                  type="checkbox"
+                  checked={saveCard}
+                  onChange={() => setSaveCard((s) => !s)}
+                />
                 <label htmlFor="saveCard" className="text-sm text-gray-700">
-                  Enregistrer cette carte pour les prochains paiements (simulation)
+                  Enregistrer cette carte pour les prochains paiements
+                  (simulation)
                 </label>
               </div>
 
               {error && <div className="text-sm text-red-600">{error}</div>}
-              {success && <div className="text-sm text-green-600">Paiement réussi — redirection...</div>}
+              {success && (
+                <div className="text-sm text-green-600">
+                  Paiement réussi — redirection...
+                </div>
+              )}
 
               <div className="flex items-center justify-between gap-4">
-                <Button type="button" variant="ghost" onClick={() => navigate(-1)} className="px-4 py-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => navigate(-1)}
+                  className="px-4 py-2"
+                >
                   Annuler
                 </Button>
 
@@ -233,7 +286,6 @@ export default function CheckoutPage() {
                   <Button
                     type="submit"
                     disabled={isProcessing || plan === "trial"}
-                    onClick={handlePay}
                     size="lg"
                     className="px-6 py-3"
                   >
@@ -247,20 +299,27 @@ export default function CheckoutPage() {
               </div>
 
               <p className="text-xs text-gray-500">
-                Ceci est une page de paiement factice pour la démonstration. Aucun paiement réel n'est effectué.
+                Ceci est une page de paiement factice pour la démonstration.
+                Aucun paiement réel n'est effectué. Ne pas saisir de vraies
+                informations bancaires.
               </p>
             </form>
           </Card>
 
-          {/* Summary */}
+          {/* Order summary */}
           <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Récapitulatif</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Récapitulatif
+            </h3>
 
             <div className="text-sm text-gray-700 mb-4">
               <div className="flex justify-between">
                 <span>{planInfo.title}</span>
-                <span>{planInfo.price === 0 ? "€0" : `€${planInfo.price}`}</span>
+                <span>
+                  {planInfo.price === 0 ? "€0" : `€${planInfo.price}`}
+                </span>
               </div>
+
               <div className="flex justify-between mt-2">
                 <span>Frais</span>
                 <span>€0</span>
@@ -271,7 +330,9 @@ export default function CheckoutPage() {
               <div className="flex justify-between items-baseline">
                 <div>
                   <div className="text-sm text-gray-600">Total</div>
-                  <div className="text-xs text-gray-500">TVA non incluse (simulation)</div>
+                  <div className="text-xs text-gray-500">
+                    TVA non incluse (simulation)
+                  </div>
                 </div>
 
                 <div className="text-xl font-semibold text-gray-900">

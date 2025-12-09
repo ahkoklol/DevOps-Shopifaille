@@ -1,5 +1,5 @@
 // front/src/app/routes/admin/AdminLayout.tsx
-import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { AdminSidebar } from "./dashboard/AdminSidebar";
 
@@ -10,8 +10,9 @@ export default function AdminLayout() {
 
   const onNavigate = (path: string) => navigate(path);
 
-  const savedShopId =
-    typeof window !== "undefined" ? sessionStorage.getItem("activeShopId") : null;
+  const savedShopId = typeof window !== "undefined"
+    ? sessionStorage.getItem("activeShopId")
+    : null;
   const shopId = paramShopId ?? savedShopId ?? "1";
 
   const parts = location.pathname.split("/").filter(Boolean); // ["admin", ":shopId", "section?"]
@@ -30,7 +31,7 @@ export default function AdminLayout() {
       <div className="flex">
         <AdminSidebar
           activeSection={activeSection}
-          onNavigate={(section) => onNavigate(`/admin/${shopId}/${section}`)} 
+          onNavigate={(section) => onNavigate(`/admin/${shopId}/${section}`)}
           shopId={shopId}
         />
 

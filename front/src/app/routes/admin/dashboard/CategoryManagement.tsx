@@ -1,11 +1,11 @@
 // front/src/app/routes/admin/dashboard/CategoryManagement.tsx
-import { useState } from 'react';
-import { Plus, Edit, Trash2, ArrowLeft } from 'lucide-react';
-import { Button } from "../../../../shared/components/ui/Button";
-import { Card } from '../../../../shared/components/ui/Card';
-import { Input } from '../../../../shared/components/ui/Input';
-import { Label } from '../../../../shared/components/ui/Label';
-import { Textarea } from '../../../../shared/components/ui/TextArea';
+import { useState } from "react";
+import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react";
+import { Button } from "../../../../shared/components/ui/Button.tsx";
+import { Card } from "../../../../shared/components/ui/Card.tsx";
+import { Input } from "../../../../shared/components/ui/Input.tsx";
+import { Label } from "../../../../shared/components/ui/Label.tsx";
+import { Textarea } from "../../../../shared/components/ui/TextArea.tsx";
 import {
   Table,
   TableBody,
@@ -13,8 +13,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../../../../shared/components/ui/Table';
-import { getCategoriesByShopId, getProductsByShopId, type Category } from '../../../../shared/lib/mock-data';
+} from "../../../../shared/components/ui/Table.tsx";
+import {
+  type Category,
+  getCategoriesByShopId,
+  getProductsByShopId,
+} from "../../../../shared/lib/mock-data.tsx";
 
 interface CategoryManagementProps {
   shopId: string;
@@ -28,8 +32,8 @@ export function CategoryList({ shopId }: CategoryManagementProps) {
 
   if (showForm || editingCategory) {
     return (
-      <CategoryForm 
-        shopId={shopId}
+      <CategoryForm
+        _shopId={shopId}
         category={editingCategory}
         onBack={() => {
           setShowForm(false);
@@ -64,17 +68,21 @@ export function CategoryList({ shopId }: CategoryManagementProps) {
           </TableHeader>
           <TableBody>
             {categories.map((category) => {
-              const productCount = products.filter(p => p.categoryId === category.id).length;
-              
+              const productCount = products.filter((p) =>
+                p.categoryId === category.id
+              ).length;
+
               return (
                 <TableRow key={category.id}>
                   <TableCell>{category.name}</TableCell>
-                  <TableCell className="text-gray-600">{category.description}</TableCell>
+                  <TableCell className="text-gray-600">
+                    {category.description}
+                  </TableCell>
                   <TableCell>{productCount}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="sm"
                         onClick={() => setEditingCategory(category)}
                       >
@@ -96,20 +104,20 @@ export function CategoryList({ shopId }: CategoryManagementProps) {
 }
 
 interface CategoryFormProps {
-  shopId: string;
+  _shopId: string;
   category?: Category | null;
   onBack: () => void;
 }
 
 function CategoryForm({ category, onBack }: CategoryFormProps) {
   const [formData, setFormData] = useState({
-    name: category?.name || '',
-    description: category?.description || ''
+    name: category?.name || "",
+    description: category?.description || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(category ? 'Catégorie mise à jour !' : 'Catégorie créée !');
+    alert(category ? "Catégorie mise à jour !" : "Catégorie créée !");
     onBack();
   };
 
@@ -122,7 +130,7 @@ function CategoryForm({ category, onBack }: CategoryFormProps) {
 
       <Card className="max-w-2xl p-8">
         <h2 className="text-2xl text-gray-900 mb-6">
-          {category ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
+          {category ? "Modifier la catégorie" : "Nouvelle catégorie"}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -131,7 +139,8 @@ function CategoryForm({ category, onBack }: CategoryFormProps) {
             <Input
               id="name"
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })}
               placeholder="Ex: Vêtements"
               required
             />
@@ -142,7 +151,8 @@ function CategoryForm({ category, onBack }: CategoryFormProps) {
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })}
               placeholder="Décrivez cette catégorie..."
               rows={4}
               required
@@ -151,7 +161,7 @@ function CategoryForm({ category, onBack }: CategoryFormProps) {
 
           <div className="flex gap-3 pt-4">
             <Button type="submit" className="flex-1">
-              {category ? 'Mettre à jour' : 'Créer la catégorie'}
+              {category ? "Mettre à jour" : "Créer la catégorie"}
             </Button>
             <Button type="button" variant="outline" onClick={onBack}>
               Annuler

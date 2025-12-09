@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate, useParams, Outlet } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 
-import { Button } from "../../../shared/components/ui/Button";
-import { Card } from "../../../shared/components/ui/Card";
-import { Badge } from "../../../shared/components/ui/Badge";
-import { Navbar } from "./NavBar";
+import { Button } from "../../../shared/components/ui/Button.tsx";
+import { Card } from "../../../shared/components/ui/Card.tsx";
+import { Badge } from "../../../shared/components/ui/Badge.tsx";
+import { Navbar } from "./NavBar.tsx";
 
 import { Filter, Grid3x3, List, Star } from "lucide-react";
 
@@ -50,23 +50,22 @@ function Catalogue() {
   const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const filteredProducts =
-    selectedCategory !== null || selectedPrice !== null
-      ? products
-          .filter((product) =>
-            selectedCategory !== null
-              ? product.categoryId === selectedCategory
-              : true
-          )
-          .filter((product) => {
-            if (selectedPrice === "100") return product.price > 100;
-            if (selectedPrice === "50-100") {
-              return product.price >= 50 && product.price <= 100;
-            }
-            if (selectedPrice === "50") return product.price === 50;
-            return true;
-          })
-      : products;
+  const filteredProducts = selectedCategory !== null || selectedPrice !== null
+    ? products
+      .filter((product) =>
+        selectedCategory !== null
+          ? product.categoryId === selectedCategory
+          : true
+      )
+      .filter((product) => {
+        if (selectedPrice === "100") return product.price > 100;
+        if (selectedPrice === "50-100") {
+          return product.price >= 50 && product.price <= 100;
+        }
+        if (selectedPrice === "50") return product.price === 50;
+        return true;
+      })
+    : products;
 
   if (!foundShop) {
     return (
@@ -117,6 +116,7 @@ function Catalogue() {
                 <div className="space-y-2">
                   <button
                     type="button"
+                    data-cy="filter-category"
                     onClick={() => setSelectedCategory(null)}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                       selectedCategory === null
@@ -129,7 +129,7 @@ function Catalogue() {
 
                   {categories.map((category) => {
                     const count = products.filter(
-                      (product) => product.categoryId === category.id
+                      (product) => product.categoryId === category.id,
                     ).length;
 
                     return (
@@ -161,8 +161,9 @@ function Catalogue() {
                       type="checkbox"
                       className="rounded"
                       onChange={(event) =>
-                        setSelectedPrice(event.target.checked ? "50" : null)
-                      }
+                        setSelectedPrice(
+                          event.target.checked ? "50" : null,
+                        )}
                     />
                     Moins de 50€
                   </label>
@@ -172,9 +173,8 @@ function Catalogue() {
                       className="rounded"
                       onChange={(event) =>
                         setSelectedPrice(
-                          event.target.checked ? "50-100" : null
-                        )
-                      }
+                          event.target.checked ? "50-100" : null,
+                        )}
                     />
                     50€ - 100€
                   </label>
@@ -183,8 +183,9 @@ function Catalogue() {
                       type="checkbox"
                       className="rounded"
                       onChange={(event) =>
-                        setSelectedPrice(event.target.checked ? "100" : null)
-                      }
+                        setSelectedPrice(
+                          event.target.checked ? "100" : null,
+                        )}
                     />
                     Plus de 100€
                   </label>
@@ -199,6 +200,7 @@ function Catalogue() {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <Button
+                  data-cy="view-grid"
                   variant={viewMode === "grid" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
@@ -206,6 +208,7 @@ function Catalogue() {
                   <Grid3x3 className="w-4 h-4" />
                 </Button>
                 <Button
+                  data-cy="view-list"
                   variant={viewMode === "list" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("list")}
@@ -223,83 +226,82 @@ function Catalogue() {
             </div>
 
             {/* Products */}
-            {filteredProducts.length === 0 ? (
-              <Card className="p-12 text-center">
-                <p className="text-gray-600">
-                  Aucun produit dans cette catégorie
-                </p>
-              </Card>
-            ) : (
-              <div
-                className={
-                  viewMode === "grid"
+            {filteredProducts.length === 0
+              ? (
+                <Card className="p-12 text-center">
+                  <p className="text-gray-600">
+                    Aucun produit dans cette catégorie
+                  </p>
+                </Card>
+              )
+              : (
+                <div
+                  className={viewMode === "grid"
                     ? "grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-                    : "space-y-4"
-                }
-              >
-                {filteredProducts.map((product) => (
-                  <Card
-                    key={product.id}
-                    className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group ${
-                      viewMode === "list" ? "flex" : ""
-                    }`}
-                    onClick={() =>
-                      navigate(`/shop/${paramShopId}/product/${product.id}`)
-                    }
-                  >
-                    <div
-                      className={`${
-                        viewMode === "list" ? "w-48" : "aspect-square"
-                      } overflow-hidden bg-gray-100`}
-                    >
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                      />
-                    </div>
-
-                    <div
-                      className={`p-6 ${
-                        viewMode === "list" ? "flex-1" : ""
+                    : "space-y-4"}
+                >
+                  {filteredProducts.map((product) => (
+                    <Card
+                      key={product.id}
+                      className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group ${
+                        viewMode === "list" ? "flex" : ""
                       }`}
+                      onClick={() =>
+                        navigate(`/shop/${paramShopId}/product/${product.id}`)}
                     >
-                      <div className="flex items-center gap-1 mb-2">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            className="w-3 h-3 text-yellow-400"
-                            fill="currentColor"
-                          />
-                        ))}
+                      {/* Image */}
+                      <div
+                        className={`${
+                          viewMode === "list" ? "w-48" : "aspect-square"
+                        } overflow-hidden bg-gray-100`}
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
                       </div>
 
-                      <h3 className="text-lg text-gray-900 mb-2">
-                        {product.name}
-                      </h3>
+                      {/* Content */}
+                      <div
+                        className={`p-6 ${viewMode === "list" ? "flex-1" : ""}`}
+                      >
+                        <div className="flex items-center gap-1 mb-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className="w-3 h-3 text-yellow-400"
+                              fill="currentColor"
+                            />
+                          ))}
+                        </div>
 
-                      {product.description && (
-                        <p className="text-gray-600 mb-4 line-clamp-2">
-                          {product.description}
-                        </p>
-                      )}
+                        <h3 className="text-lg text-gray-900 mb-2">
+                          {product.name}
+                        </h3>
 
-                      <div className="flex items-center justify-between">
-                        <span className="text-xl text-gray-900">
-                          {Number(product.price).toFixed(2)} €
-                        </span>
-                        <Button
-                          size="sm"
-                          style={{ backgroundColor: foundShop.codeColor }}
-                        >
-                          Ajouter au panier
-                        </Button>
+                        {product.description && (
+                          <p className="text-gray-600 mb-4 line-clamp-2">
+                            {product.description}
+                          </p>
+                        )}
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-xl text-gray-900">
+                            {Number(product.price).toFixed(2)} €
+                          </span>
+                          <Button
+                            size="sm"
+                            style={{ backgroundColor: foundShop.codeColor }}
+                          >
+                            Ajouter au panier
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            )}
+                    </Card>
+                  ))}
+                </div>
+              )}
           </div>
         </div>
       </div>

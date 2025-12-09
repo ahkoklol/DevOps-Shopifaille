@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
-import { Button } from './../../../shared/components/ui/Button';
-import { Card } from './../../../shared/components/ui/Card';
-import data from './../../../data/data.json';
+import { useState } from "react";
+import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { Button } from "./../../../shared/components/ui/Button.tsx";
+import { Card } from "./../../../shared/components/ui/Card.tsx";
+import data from "./../../../data/data.json";
 import { useNavigate, useParams } from "react-router-dom";
-import { Navbar } from "./NavBar";
+import { Navbar } from "./NavBar.tsx";
 
 interface CartItem {
   productId: string;
@@ -18,30 +18,31 @@ function Cart() {
   const products = foundShop?.featuredProducts ?? [];
 
   const [cartItems, setCartItems] = useState<CartItem[]>([
-    { productId: 'prod-1', quantity: 2 },
-    { productId: 'prod-3', quantity: 1 }
+    { productId: "prod-1", quantity: 2 },
+    { productId: "prod-3", quantity: 1 },
   ]);
 
   if (!foundShop) return <div>Boutique introuvable</div>;
 
-  const cartDetails = cartItems
-    .map(item => ({
+  const cartDetails = cartItems.map((item) => {
+    const product = products.find((p) => p.id === item.productId);
+    return {
       ...item,
-      product: products.find(p => p.id === item.productId)
-    }))
-    .filter(item => item.product);
+      product,
+    };
+  }).filter((item) => item.product);
 
   const subtotal = cartDetails.reduce(
     (sum, item) => sum + (item.product?.price || 0) * item.quantity,
-    0
+    0,
   );
 
   const shipping = subtotal > 50 ? 0 : 5.90;
   const total = subtotal + shipping;
 
   const updateQuantity = (productId: string, delta: number) => {
-    setCartItems(items =>
-      items.map(item =>
+    setCartItems((items) =>
+      items.map((item) =>
         item.productId === productId
           ? { ...item, quantity: Math.max(1, item.quantity + delta) }
           : item
@@ -50,7 +51,9 @@ function Cart() {
   };
 
   const removeItem = (productId: string) => {
-    setCartItems(items => items.filter(item => item.productId !== productId));
+    setCartItems((items) =>
+      items.filter((item) => item.productId !== productId)
+    );
   };
 
   if (cartDetails.length === 0) {
@@ -88,7 +91,7 @@ function Cart() {
                 if (!product) return null;
 
                 return (
-                  <Card key={productId} className="p-6">
+                  <Card key={productId} className="p-6" data-cy="cart-item">
                     <div className="flex gap-6">
                       <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                         <img
@@ -101,13 +104,19 @@ function Cart() {
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <h3 className="text-lg text-gray-900">{product.name}</h3>
-                            <p className="text-sm text-gray-600">{product.description}</p>
+                            <h3 className="text-lg text-gray-900">
+                              {product.name}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {product.description}
+                            </p>
                           </div>
 
                           <button
                             type="button"
-                            onClick={() => removeItem(productId)}
+                            onClick={() =>
+                              removeItem(productId)}
+                            data-cy="btn-remove"
                             className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="w-5 h-5" />
@@ -117,26 +126,33 @@ function Cart() {
                         <div className="flex items-center justify-between mt-4">
                           <div className="flex items-center gap-3">
                             <Button
+                              data-cy="btn-minus"
                               variant="outline"
                               size="sm"
-                              onClick={() => updateQuantity(productId, -1)}
+                              onClick={() =>
+                                updateQuantity(productId, -1)}
                               disabled={quantity <= 1}
                             >
                               <Minus className="w-4 h-4" />
                             </Button>
-
-                            <span className="w-8 text-center text-gray-900">{quantity}</span>
-
+                            <span className="w-8 text-center text-gray-900">
+                              {quantity}
+                            </span>
                             <Button
+                              data-cy="btn-plus"
                               variant="outline"
                               size="sm"
-                              onClick={() => updateQuantity(productId, 1)}
+                              onClick={() =>
+                                updateQuantity(productId, 1)}
                             >
                               <Plus className="w-4 h-4" />
                             </Button>
                           </div>
 
-                          <div className="text-xl text-gray-900">
+                          <div
+                            className="text-xl text-gray-900"
+                            data-cy="quantity"
+                          >
                             {(product.price * quantity).toFixed(2)} €
                           </div>
                         </div>
@@ -150,7 +166,9 @@ function Cart() {
             {/* Summary */}
             <div className="lg:col-span-1">
               <Card className="p-6 sticky top-24">
-                <h2 className="text-xl text-gray-900 mb-6">Résumé de la commande</h2>
+                <h2 className="text-xl text-gray-900 mb-6">
+                  Résumé de la commande
+                </h2>
 
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center justify-between text-gray-600">
@@ -160,7 +178,9 @@ function Cart() {
 
                   <div className="flex items-center justify-between text-gray-600">
                     <span>Livraison</span>
-                    <span>{shipping === 0 ? "Gratuite" : `${shipping.toFixed(2)} €`}</span>
+                    <span>
+                      {shipping === 0 ? "Gratuite" : `${shipping.toFixed(2)} €`}
+                    </span>
                   </div>
 
                   {shipping > 0 && (
@@ -213,7 +233,6 @@ function Cart() {
                 </div>
               </Card>
             </div>
-
           </div>
         </div>
       </div>
